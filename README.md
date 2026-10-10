@@ -1,0 +1,195 @@
+# Statistics Lab · Statistics MSc
+
+An independent coursework website for the Statistics course in an MSc in Cybersecurity. Each future homework will have a standalone page that brings together the problem, mathematical reasoning, original JavaScript implementation, interactive demonstration, verification, and sources.
+
+**Current state: foundation only.** The first homework has not been released. There are no published assignments or statistical algorithms. The reusable template is deliberately outside the publishing directory. No remote configuration or deployment has been performed.
+
+## Academic constraints
+
+- Use modern standard JavaScript with ES modules; modules are strict by specification. Prefer `const`, use `let` when needed, and never use `var`.
+- Implement statistical algorithms from scratch, with general inputs and independent mathematical reasoning. Do not use third-party statistical, numerical, or visualization libraries.
+- Do not use Python, R, MATLAB, SAS, or other external languages to implement or generate statistical solutions.
+- Show and explain important implementation code directly on each homework page.
+- Quote accurately and attribute sources. Any AI assistance must comply with the professor’s academic-integrity policy. The student must understand and independently explain all submitted work.
+
+Assessment consists of weekly homework and a final written project/thesis. An oral exam is generally required for requested grades above 27/30 and may also be required at the professor’s discretion. Late homework incurs a one-point penalty. Homework URLs are submitted in the Excel spreadsheet provided by the professor. Confirm assignment-specific directions against the actual brief.
+
+## Technology and structure
+
+The website is static HTML5, CSS3, and vanilla JavaScript. It uses system fonts, native browser APIs, and no external runtime resources. Future graphs must use native SVG or Canvas. Development and testing use Node.js built-ins, with no dependencies, installation, framework, bundler, or build step.
+
+Shared CSS custom properties define colors, typography, spacing, borders, radii, shadows, and container widths. The two layout breakpoints, `56rem` and `40rem`, use literal media-query values because native CSS custom properties cannot define media-query thresholds. Light/dark appearance follows the operating system; reduced motion and print layouts are supported.
+
+```text
+docs/                         GitHub Pages publishing directory
+  .nojekyll                   Disable Jekyll processing
+  index.html                  Course landing page and homework list
+  assets/
+    favicon.svg               Local site icon
+    css/main.css              Shared design system, themes, code blocks
+    js/site.js                Shared progressive enhancement
+    js/code-viewer.js         Source extraction, loading, and copying
+templates/homework/           Unpublished reusable assignment template
+  index.html                  Academic structure and example form
+  style.css                   Assignment presentation
+  js/statistics.js            Empty module for future pure algorithms
+  js/app.js                   Template input validation and UI
+tests/                        Native Node.js automated tests
+tools/
+  dev-server.js               Loopback static server and template preview
+  check.js                    Syntax, links, assets, and structural checks
+.github/workflows/ci.yml       Checks and tests; no deployment
+package.json                  Native tooling commands; no dependencies
+```
+
+## Local development
+
+Use a supported **Node.js 22 or 24 LTS** runtime and its bundled npm. CI exercises both lines. No `npm install` is required. Open a terminal in this repository:
+
+```sh
+npm run dev
+```
+
+Open the printed URL, normally `http://127.0.0.1:4173/`. The server binds only to `127.0.0.1` and serves `docs/`. Stop it with Ctrl+C. It serves appropriate MIME types, handles GET/HEAD and missing files, rejects traversal and escaping symlinks, and avoids browser caching during development. Open pages over HTTP; opening HTML as `file://` does not support this module/fetch workflow reliably.
+
+To exercise the GitHub Pages project subpath:
+
+```sh
+npm run dev -- --base-path /statistics-msc/
+```
+
+To inspect the unpublished template without putting it in `docs/`:
+
+```sh
+npm run dev -- --template --base-path /statistics-msc/
+```
+
+Open the printed template URL, normally `http://127.0.0.1:4173/statistics-msc/homework-template/`. This mode stages a temporary snapshot of the site and template, then removes it when the server stops. **Restart it after editing files.** Normal development serves live files. Use `--port 4174` if the default port is occupied.
+
+## Verification
+
+```sh
+npm run check
+npm test
+```
+
+`check` checks JavaScript syntax, relative local links and fragments, stylesheet/script references, CSS URLs, module imports, source region names, selected semantic/labeling invariants, and absence of package dependencies. It resolves the template as if copied to `docs/homework-NN/`, under a simulated project subpath. It also flags selected prohibited JavaScript patterns. Its small HTML scanner and pattern checks are **not a complete HTML validator, linter, or security audit**; they complement review and browser checks.
+
+`test` uses `node:test` and `node:assert/strict`. It covers source extraction and fetch failures, template input validation, check failures using deliberately damaged temporary fixtures, actual HTTP serving, MIME types, copied-template paths, redirects, malformed URLs, traversal, and escaping symlinks. HTTP tests need permission to open temporary loopback ports. A restricted execution sandbox may require approval; tests must not be skipped to claim a passing result.
+
+The CI workflow runs these same commands on pushes to `main` and pull requests targeting `main`, using official [checkout](https://github.com/actions/checkout) and [setup-node](https://github.com/actions/setup-node) actions with read-only repository permission. It installs nothing, requires no secrets, and does not deploy. If the default branch changes, update both branch filters and the Pages source.
+
+### Foundation verification record
+
+- `npm run check` passed; `npm test` passed all 26 tests on Node.js 22.22.2.
+- Local headless Chrome checked both pages at 320, 390, 768, and 1440 CSS pixels without page overflow. Desktop, mobile, and dark-theme screenshots were inspected.
+- Browser checks exercised source loading and missing-file feedback, valid/invalid input feedback, result clearing/reset, the copy handler with a test clipboard, actual text-selection fallback, dark mode, reduced motion, and keyboard skip-link focus. No uncaught page exceptions or external page requests were observed.
+- Native clipboard permission, screen-reader output, Safari/Firefox, and 200% zoom still need manual verification. Local automated checks used Node.js 22.22.2; the GitHub Actions workflow checks Node.js 22 and 24 after each push. Review its result in the repository’s Actions tab. Pages publication and the public URLs must be verified after manual configuration.
+
+This records the foundation review, not proof of any future assignment’s correctness. Repeat the relevant automated and manual checks when adding academic content.
+
+## Add a homework after its release
+
+1. Read the professor’s actual brief and identify its mathematical requirements. Start a local branch if useful.
+2. Copy the template into the next assignment directory. Confirm that the target does not already exist before copying:
+
+   ```sh
+   cp -R templates/homework docs/homework-01
+   ```
+
+3. Replace the homework number, title, metadata, breadcrumb, summary, all bracketed placeholders, source labels, and footer. Fill in the actual statement, objectives, reasoning, assumptions, formulas, algorithm explanation, verification, interpretation, limitations, and references. Remove the unpublished notice and `noindex` metadata only when the assignment is ready to publish. Remove the template-only input example and replace it with the actual demonstration.
+4. Implement pure mathematical functions in `docs/homework-01/js/statistics.js`. Keep DOM access, input controls, event handlers, rendering, and graphs in `js/app.js`. Import the required functions there using relative ES module paths.
+5. Create `tests/homework-01.test.js`, importing the pure functions directly. Run checks and tests, then inspect the actual assignment in the browser.
+6. Replace the empty state in `docs/index.html` with a real homework card, using the pattern below. Link assignments only when they are ready.
+7. Review, commit, and push when you choose to publish. Do not push an unfinished template into the branch serving Pages: branch publication includes everything in `docs/`, even if it is not linked from the landing page.
+
+Future assignments follow the same pattern with `homework-02`, `homework-03`, and so on. Shared resource links in the template already work at that depth; no username or domain needs editing.
+
+### Mathematical module contracts
+
+For each future export, document accepted input types, required assumptions, output shape, validation behavior, invalid and degenerate cases, and precision considerations. Avoid DOM access, global mutable state, hardcoded exercise data, and hidden rounding. Return consistent results; distinguish presentation formatting from mathematical computation. Add abstractions only when actual assignments justify them.
+
+Use semantic HTML for simple notation and native MathML for structured formulas. Define symbols in nearby prose. Check formula rendering in the browsers used for submission. Use SVG or Canvas for charts, with text descriptions and accessible result/table equivalents; Canvas pixels alone are not accessible.
+
+### Display the actual implementation
+
+Reserve standalone marker lines in the source file:
+
+```js
+// #region descriptive-name
+// Place the actual implementation here, with a clear function contract.
+// #endregion descriptive-name
+```
+
+Region names start with a letter and contain letters, digits, underscores, or hyphens. Every opening marker needs a matching named closing marker. Regions must not nest or repeat. Marker lines are reserved: do not embed them inside multiline strings or comments. Formatting is preserved, with line endings normalized to LF.
+
+Reuse the template’s source block. Set `data-source="./js/statistics.js"` and `data-region="descriptive-name"`, update its visible label and caption, and keep the direct source-file link. Add a nearby explanation connecting the code to the mathematics. Multiple separately labelled source blocks are supported.
+
+The viewer loads relative files from the same HTTP(S) origin, refuses redirects, extracts the named region deterministically, and uses `textContent`. It never evaluates source. Missing, duplicate, or malformed markers and loading failures have explicit feedback. The copy button uses the Clipboard API; when access is unavailable, it selects the code for manual copying. Without JavaScript, the direct source link remains usable. Do not maintain a second handwritten copy of the implementation in HTML.
+
+### Write homework tests
+
+Use `tests/homework-NN.test.js` with imports from `node:test`, `node:assert/strict`, and that assignment’s `statistics.js`. The native runner discovers these files through `npm test`.
+
+Derive expected values independently of the implementation. Cover known mathematical results, invalid inputs, boundary and degenerate cases, numerical precision, relevant invariants, generalization to different inputs, and regressions. Justify tolerances from the algorithm’s numerical behavior; do not compare floating-point results through arbitrary rounding. The webpage’s verification section must report the cases and outcomes actually checked. Prompt 0 intentionally contains no mathematical test results.
+
+### Link the completed homework
+
+Replace the landing page’s `.empty-state` with one card per actual assignment inside `.homework-list`:
+
+```html
+<a class="homework-card" href="./homework-01/">
+  <p class="eyebrow">Homework 01</p>
+  <h3>[Actual assigned title]</h3>
+  <p>[Accurate summary of the completed work]</p>
+</a>
+```
+
+This is a documentation pattern, not an assignment. Replace its bracketed content before use. Do not add fabricated titles, deadlines, grades, or results. Keep paths relative: `./homework-01/` on the landing page and `../` back from an assignment. Domain-root paths such as `/assets/` break project sites.
+
+## Configure GitHub Pages manually
+
+This project has not been deployed. Review and commit the local files, then push to GitHub when you are ready; an empty repository needs its first pushed commit before the branch can be selected. Publication is your manual step.
+
+In the repository on GitHub:
+
+1. **Settings → Pages**.
+2. Under **Build and deployment**, set **Source → Deploy from a branch**.
+3. Set **Branch → main** (or the actual default branch).
+4. Set **Folder → /docs**.
+5. Select **Save**.
+6. Wait for the Pages build/deployment to succeed and use the URL displayed by GitHub. Check the Actions page if publication fails.
+
+These steps follow the official [GitHub Pages publishing-source documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site). Pages availability for private repositories depends on the account plan; consult those settings rather than assuming access. No custom deployment workflow is needed.
+
+The usual project URL is:
+
+```text
+https://USERNAME.github.io/statistics-msc/
+```
+
+The first completed homework URL will usually be:
+
+```text
+https://USERNAME.github.io/statistics-msc/homework-01/
+```
+
+Replace `USERNAME` with the repository owner; use the actual URL shown in Pages settings if a custom domain or another configuration changes it. After Pages is enabled, subsequent pushes to the selected branch publish changes in `docs/`. The check/test workflow does not gate or perform that branch-based deployment, so run both commands before pushing.
+
+### Verify the published submission
+
+Open the individual assignment URL directly in a fresh browser session. Confirm HTTPS, correct title/content, working navigation and assets, readable formulas, source excerpts and copying, invalid-input feedback, valid results, and accessible chart/table alternatives. Check the browser console and network panel for errors or unexpected external requests. Verify on a narrow phone-sized viewport, at 200% zoom, with keyboard navigation, and in light/dark modes. Test with reduced motion and inspect the page without JavaScript: prose and direct source links should remain readable. Only then enter the individual homework URL in the professor’s Excel sheet before the deadline.
+
+## Sources and submission checklist
+
+Cite claims near their explanation. Give author, title, publication date or version, relevant page/section, and a working URL where available in the references. Clearly mark quotations; distinguish your derivation, implementation, and interpretation from external material. Record only sources and assistance actually used, following the professor’s policy.
+
+- [ ] Correct mathematical results and a clear derivation with explicit assumptions.
+- [ ] Original, general JavaScript algorithms with deliberate invalid/degenerate behavior.
+- [ ] Meaningful tests pass; precision and limitations are explained.
+- [ ] Responsive webpage works from its direct URL with accessible controls and results.
+- [ ] Important source excerpts match the implementation and are explained on the page.
+- [ ] Quotations, sources, and permitted assistance are acknowledged.
+- [ ] Pages deployment succeeded and the published homework was verified.
+- [ ] Correct individual URL entered in the professor’s spreadsheet before the deadline.
+- [ ] You can independently explain every submitted method and line of important code.

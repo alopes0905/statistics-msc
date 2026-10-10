@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Unpublished Statistics MSc homework template. Replace all placeholders after receiving the actual assignment.">
+    <meta name="color-scheme" content="light dark">
+    <meta name="robots" content="noindex">
+    <title>Unpublished homework template · Statistics Lab</title>
+    <!-- These paths resolve after copying the folder into docs/homework-NN/. -->
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="./style.css">
+    <script type="module" src="../assets/js/site.js"></script>
+    <script type="module" src="./js/app.js"></script>
+  </head>
+  <body id="top">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header"><div class="container header-inner"><a class="brand" href="../" aria-label="Statistics Lab home"><span class="brand-mark" aria-hidden="true">Σ</span><span>Statistics Lab<span class="brand-context">MSc in Cybersecurity</span></span></a><nav class="main-nav" aria-label="Main navigation"><a href="../#homework">Homework</a><a href="../#methodology">Methodology</a><a href="../#about">About the project</a></nav></div></header>
+
+    <main id="main" class="container">
+      <div class="homework-header">
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Statistics Lab</a><span aria-hidden="true">/</span><span aria-current="page">Unpublished template</span></nav>
+        <p class="template-notice"><strong>Unpublished template — not a completed assignment.</strong> All academic sections below are placeholders. The example form validates input structure only.</p>
+        <p class="eyebrow">Homework [NN] / Title pending</p>
+        <h1>[Replace with the actual homework title]</h1>
+        <p>Replace this summary with the purpose of the assignment. Do not publish until the actual problem, reasoning, implementation, verification, and sources are complete.</p>
+      </div>
+
+      <div class="homework-layout">
+        <nav class="contents-nav" aria-label="On this page"><p class="eyebrow">On this page</p><ol><li><a href="#problem">01 · Problem</a></li><li><a href="#background">02 · Mathematics</a></li><li><a href="#implementation">03 · Implementation</a></li><li><a href="#demonstration">04 · Demonstration</a></li><li><a href="#verification">05 · Verification</a></li><li><a href="#discussion">06 · Discussion &amp; sources</a></li></ol></nav>
+        <article class="homework-article" aria-label="Homework template content">
+          <section id="problem" class="homework-section" aria-labelledby="problem-title"><p class="eyebrow">01 / The brief</p><h2 id="problem-title">Problem &amp; objectives</h2><p class="placeholder">[Insert or accurately summarize the professor’s actual statement. Attribute any quotation and distinguish the assigned task from your own explanation.]</p><h3>Objectives</h3><ul class="placeholder"><li>[State the questions to answer and the expected outputs.]</li><li>[Identify the inputs and constraints specified in the assignment.]</li></ul></section>
+
+          <section id="background" class="homework-section" aria-labelledby="background-title"><p class="eyebrow">02 / Foundations</p><h2 id="background-title">Mathematical reasoning</h2><p class="placeholder">[Explain the relevant mathematical and statistical background in your own words. State assumptions and cite sources near the claims they support.]</p><h3>Definitions &amp; formulas</h3><div class="placeholder-box formula-placeholder">[Insert accessible definitions and formulas; define every symbol.]</div><p class="placeholder">[Use semantic HTML for simple notation or native MathML for structured formulas, with a readable text explanation. Derive the method rather than citing an unexplained formula.]</p></section>
+
+          <section id="implementation" class="homework-section" aria-labelledby="implementation-title"><p class="eyebrow">03 / From reasoning to code</p><h2 id="implementation-title">Algorithm &amp; implementation</h2><h3>Algorithmic approach</h3><p class="placeholder">[Describe the steps, input assumptions, return contract, and numerical considerations. Justify any complexity claims after implementing the method.]</p><h3>Implementation explanation</h3><p class="placeholder">[Explain how the important code realizes the mathematics. The excerpt below is loaded from the actual local source file; it currently contains no algorithm.]</p>
+            <figure class="source-figure">
+              <figcaption id="source-caption">JavaScript · Future statistical implementation (placeholder)</figcaption>
+              <div class="source-viewer" data-source="./js/statistics.js" data-region="implementation">
+                <div class="source-toolbar"><strong>statistics.js / implementation</strong><button type="button" class="copy-button" data-copy-source disabled aria-label="Copy the statistical implementation excerpt">Copy code</button></div>
+                <pre tabindex="0" aria-labelledby="source-caption"><code data-source-code>Source preview requires JavaScript. Open the source-file link below to read the implementation.</code></pre>
+                <p class="source-status" role="status" aria-live="polite" data-source-status>The source excerpt will load when JavaScript is available.</p>
+              </div>
+              <a class="source-link" href="./js/statistics.js">Open the complete source file</a>
+            </figure>
+          </section>
+
+          <section id="demonstration" class="homework-section" aria-labelledby="demonstration-title"><p class="eyebrow">04 / Explore</p><h2 id="demonstration-title">Interactive demonstration</h2><p class="placeholder">[Replace this input-validation example with the actual exercise UI. Import pure functions from statistics.js into app.js, then render their outputs safely.]</p><h3>Template example: input validation</h3><div class="demo-panel">
+              <form data-example-form novalidate>
+                <label for="dataset">Example values</label><textarea id="dataset" name="dataset" rows="4" aria-describedby="dataset-help" placeholder="Enter example numbers" spellcheck="false"></textarea><p id="dataset-help" class="field-help">Separate decimal numbers with commas, spaces, or newlines. Scientific notation is accepted. Template limit: 1,000 values.</p>
+                <label for="parameter">Example numeric parameter</label><input id="parameter" name="parameter" type="number" step="any" aria-describedby="parameter-help"><p id="parameter-help" class="field-help">Any finite decimal number. This parameter has no statistical meaning in the template.</p>
+                <div class="demo-actions"><button type="submit" class="button button-primary" disabled>Validate example inputs</button><button type="reset" class="button button-secondary">Clear inputs</button></div>
+              </form>
+              <p class="demo-status" role="status" aria-live="polite" aria-atomic="true" data-demo-status>JavaScript is required to run this input-validation example.</p>
+              <div class="demo-result" data-demo-result hidden><h3>Input structure only</h3><dl><dt>Number of example values</dt><dd data-value-count></dd><dt>Example parameter</dt><dd data-parameter-result></dd></dl><p>No statistical calculation has been performed.</p></div>
+            </div>
+            <h3>Results &amp; visualizations</h3><div class="placeholder-box visualization-placeholder">[No statistical results yet. Add accessible results, tables, or native SVG/Canvas graphics only after implementing the assignment. Include text descriptions and table equivalents for meaningful charts.]</div>
+          </section>
+
+          <section id="verification" class="homework-section" aria-labelledby="verification-title"><p class="eyebrow">05 / Evidence</p><h2 id="verification-title">Verification &amp; tests</h2><p class="placeholder">[Describe independent expected results, invariants, edge cases, invalid inputs, degenerate cases, and any justified floating-point tolerance. Record only tests actually executed.]</p><div class="table-wrapper"><table><caption>Verification record — no assignment tests exist yet</caption><thead><tr><th scope="col">Case &amp; rationale</th><th scope="col">Expected</th><th scope="col">Observed</th><th scope="col">Outcome</th></tr></thead><tbody><tr><td colspan="4">[Replace this placeholder with actual verification evidence.]</td></tr></tbody></table></div></section>
+
+          <section id="discussion" class="homework-section" aria-labelledby="discussion-title"><p class="eyebrow">06 / Reflect</p><h2 id="discussion-title">Discussion &amp; sources</h2><h3>Interpretation</h3><p class="placeholder">[Answer the original questions. Explain what the verified results mean and how they depend on the stated assumptions.]</p><h3>Limitations &amp; edge cases</h3><p class="placeholder">[Discuss invalid and degenerate inputs, numerical stability, scope, and any unresolved limitations without inventing performance claims.]</p><h3>References &amp; acknowledgments</h3><p class="placeholder">[List only sources actually used: author, title, date/version, page or section, and URL where available. Mark quotations explicitly and cite mathematical claims near the relevant explanation.]</p><p class="placeholder">[Acknowledge permitted assistance in accordance with the professor’s academic-integrity policy. You must understand and independently explain every submitted method and implementation.]</p></section>
+          <a class="button button-secondary" href="../#homework"><span aria-hidden="true">←</span> Back to the homework notebook</a>
+        </article>
+      </div>
+    </main>
+    <footer class="site-footer"><div class="container footer-inner"><div><strong>Statistics Lab</strong><p>Statistics MSc · MSc in Cybersecurity</p></div><p>Unpublished homework template</p><nav aria-label="Footer navigation"><a href="../">Home</a><a href="#top">Back to top <span aria-hidden="true">↑</span></a></nav></div></footer>
+  </body>
+</html>
