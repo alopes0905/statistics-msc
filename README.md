@@ -1,8 +1,12 @@
 # Statistics Lab · Statistics MSc
 
-An independent coursework website for the Statistics course in an MSc in Cybersecurity. Each future homework will have a standalone page that brings together the problem, mathematical reasoning, original JavaScript implementation, interactive demonstration, verification, and sources.
+An independent coursework website for the Statistics course in an MSc in Cybersecurity. Each homework has a standalone page combining the problem, mathematical reasoning, original JavaScript implementation, interactive demonstration, verification, and sources.
 
-**Current state: foundation only.** The first homework has not been released. There are no published assignments or statistical algorithms. The reusable template is deliberately outside the publishing directory. No remote configuration or deployment has been performed.
+**Current state: Homework 01 complete.** The site is [Statistics Lab](https://alopes0905.github.io/statistics-msc/), with [Homework 01](https://alopes0905.github.io/statistics-msc/homework-01/) at its own URL. The reusable template remains outside the publishing directory.
+
+Homework 01 implements the professor’s [elliptic-curve assignment](https://github.com/alopes0905/statistics-msc/issues/1): repeated point addition on y² = x³ + 7 (mod 17), valid base/scalar selection, intermediate multiples, and a manual discrete SVG visualization. Its exhaustive subgroup experiment covers coordinate and bit frequencies, Pearson correlations, and adjacent-scalar Hamming distances, with explicit limitations. For G = (1, 5), k = 6, the calculated **toy public key is (5, 8)**; G has order 9, while the full curve has 18 elements.
+
+Local page: `/homework-01/` (or `/statistics-msc/homework-01/` with the project-subpath preview). Published page: [Homework 01](https://alopes0905.github.io/statistics-msc/homework-01/). This is an educational small-field implementation, not Ethereum-compatible cryptography.
 
 ## Academic constraints
 
@@ -29,12 +33,17 @@ docs/                         GitHub Pages publishing directory
     css/main.css              Shared design system, themes, code blocks
     js/site.js                Shared progressive enhancement
     js/code-viewer.js         Source extraction, loading, and copying
+  homework-01/
+    index.html                Elliptic-curve report and interactive demonstration
+    style.css                 Assignment layout, tables, and discrete SVG styling
+    js/statistics.js           Pure field, point, and statistical algorithms
+    js/app.js                  Input validation, DOM rendering, and step controls
 templates/homework/           Unpublished reusable assignment template
   index.html                  Academic structure and example form
   style.css                   Assignment presentation
   js/statistics.js            Empty module for future pure algorithms
   js/app.js                   Template input validation and UI
-tests/                        Native Node.js automated tests
+tests/                        Native Node.js tests, including homework-01.test.js
 tools/
   dev-server.js               Loopback static server and template preview
   check.js                    Syntax, links, assets, and structural checks
@@ -75,7 +84,7 @@ npm test
 
 `check` checks JavaScript syntax, relative local links and fragments, stylesheet/script references, CSS URLs, module imports, source region names, selected semantic/labeling invariants, and absence of package dependencies. It resolves the template as if copied to `docs/homework-NN/`, under a simulated project subpath. It also flags selected prohibited JavaScript patterns. Its small HTML scanner and pattern checks are **not a complete HTML validator, linter, or security audit**; they complement review and browser checks.
 
-`test` uses `node:test` and `node:assert/strict`. It covers source extraction and fetch failures, template input validation, check failures using deliberately damaged temporary fixtures, actual HTTP serving, MIME types, copied-template paths, redirects, malformed URLs, traversal, and escaping symlinks. HTTP tests need permission to open temporary loopback ports. A restricted execution sandbox may require approval; tests must not be skipped to claim a passing result.
+`test` uses `node:test` and `node:assert/strict`. It covers source extraction and fetch failures, template input validation, damaged project fixtures, actual HTTP serving, MIME types, copied-template paths, redirects, traversal, and escaping symlinks. Homework 01 adds independent mathematical and statistical acceptance tests, all toy-group associativity cases, generalization to a second curve, and strict private-scalar input tests. HTTP tests need permission to open temporary loopback ports. A restricted execution sandbox may require approval; tests must not be skipped to claim a passing result.
 
 The CI workflow runs these same commands on pushes to `main` and pull requests targeting `main`, using official [checkout](https://github.com/actions/checkout) and [setup-node](https://github.com/actions/setup-node) actions with read-only repository permission. It installs nothing, requires no secrets, and does not deploy. If the default branch changes, update both branch filters and the Pages source.
 
@@ -86,7 +95,16 @@ The CI workflow runs these same commands on pushes to `main` and pull requests t
 - Browser checks exercised source loading and missing-file feedback, valid/invalid input feedback, result clearing/reset, the copy handler with a test clipboard, actual text-selection fallback, dark mode, reduced motion, and keyboard skip-link focus. No uncaught page exceptions or external page requests were observed.
 - Native clipboard permission, screen-reader output, Safari/Firefox, and 200% zoom still need manual verification. Local automated checks used Node.js 22.22.2; the GitHub Actions workflow checks Node.js 22 and 24 after each push. Review its result in the repository’s Actions tab. Pages publication and the public URLs must be verified after manual configuration.
 
-This records the foundation review, not proof of any future assignment’s correctness. Repeat the relevant automated and manual checks when adding academic content.
+This records the earlier foundation review. Assignment-specific verification is recorded separately below.
+
+### Homework 01 verification record
+
+- `npm run check` passed: 3 pages including the virtual template, 14 resources, and 13 JavaScript syntax checks. `npm test` passed all 46 tests on Node.js 22.22.2: 26 existing tests and 20 Homework 01 tests.
+- Mathematical tests check the supplied sequence through 10G, all 18 group elements, closure/commutativity/associativity, exceptional additions, orders 2/3/6/9/18, a second curve over F₅, and arithmetic at the supported p = 997 boundary. Statistical and input tests cover exact domains, frequencies, bits, distances, correlation, and degenerate cases.
+- Local headless Chrome checked landing/homework layouts at 320, 390, 768, and 1440 CSS pixels with no page overflow. It exercised all 17 bases and all 165 valid base/scalar combinations, explicit scalar resets, invalid-input feedback, full-cycle stepping through O, four source excerpts, keyboard controls, dark mode, reduced motion, print controls, and the no-JavaScript fallback. No uncaught page exceptions or external page requests were observed. Desktop/mobile/light/dark screenshots were inspected.
+- Copying was checked with a test clipboard and actual text-selection fallback. Native clipboard permission, screen-reader output, Safari/Firefox, and actual 200% browser zoom remain manual checks; automated narrow-viewport reflow is only an approximation of zoom. Verify the deployed homework URL after authorized publication, and review the professor’s AI-assistance/submission rules before submitting.
+
+The pure core supports nonsingular small prime fields with 5 ≤ p ≤ 997 and nonnegative scalars up to 10,000. It is educational Number arithmetic with repeated addition, not production cryptography. Statistical conclusions describe the enumerated subgroup and encoding; they do not establish randomness or security.
 
 ## Add a homework after its release
 
@@ -94,16 +112,16 @@ This records the foundation review, not proof of any future assignment’s corre
 2. Copy the template into the next assignment directory. Confirm that the target does not already exist before copying:
 
    ```sh
-   cp -R templates/homework docs/homework-01
+   cp -R templates/homework docs/homework-NN
    ```
 
 3. Replace the homework number, title, metadata, breadcrumb, summary, all bracketed placeholders, source labels, and footer. Fill in the actual statement, objectives, reasoning, assumptions, formulas, algorithm explanation, verification, interpretation, limitations, and references. Remove the unpublished notice and `noindex` metadata only when the assignment is ready to publish. Remove the template-only input example and replace it with the actual demonstration.
-4. Implement pure mathematical functions in `docs/homework-01/js/statistics.js`. Keep DOM access, input controls, event handlers, rendering, and graphs in `js/app.js`. Import the required functions there using relative ES module paths.
-5. Create `tests/homework-01.test.js`, importing the pure functions directly. Run checks and tests, then inspect the actual assignment in the browser.
-6. Replace the empty state in `docs/index.html` with a real homework card, using the pattern below. Link assignments only when they are ready.
+4. Implement pure mathematical functions in `docs/homework-NN/js/statistics.js`. Keep DOM access, input controls, event handlers, rendering, and graphs in `js/app.js`. Import the required functions there using relative ES module paths.
+5. Create `tests/homework-NN.test.js`, importing the pure functions directly. Run checks and tests, then inspect the actual assignment in the browser.
+6. Append a real homework card in `docs/index.html`, using the pattern below. Link assignments only when they are ready.
 7. Review, commit, and push when you choose to publish. Do not push an unfinished template into the branch serving Pages: branch publication includes everything in `docs/`, even if it is not linked from the landing page.
 
-Future assignments follow the same pattern with `homework-02`, `homework-03`, and so on. Shared resource links in the template already work at that depth; no username or domain needs editing.
+Replace `NN` with the next two-digit assignment number; `homework-01` already exists. Shared resource links in the template already work at that depth; no username or domain needs editing.
 
 ### Mathematical module contracts
 
@@ -135,7 +153,7 @@ Derive expected values independently of the implementation. Cover known mathemat
 
 ### Link the completed homework
 
-Replace the landing page’s `.empty-state` with one card per actual assignment inside `.homework-list`:
+Add one card per completed assignment inside the landing page’s `.homework-list`:
 
 ```html
 <a class="homework-card" href="./homework-01/">
@@ -149,7 +167,7 @@ This is a documentation pattern, not an assignment. Replace its bracketed conten
 
 ## Configure GitHub Pages manually
 
-This project has not been deployed. Review and commit the local files, then push to GitHub when you are ready; an empty repository needs its first pushed commit before the branch can be selected. Publication is your manual step.
+The site is configured through GitHub Pages to publish `docs/` from `main`. Pushing changes to that branch triggers publication. The following settings describe the existing branch-based setup or future reconfiguration.
 
 In the repository on GitHub:
 
@@ -162,19 +180,19 @@ In the repository on GitHub:
 
 These steps follow the official [GitHub Pages publishing-source documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site). Pages availability for private repositories depends on the account plan; consult those settings rather than assuming access. No custom deployment workflow is needed.
 
-The usual project URL is:
+The project site address is:
 
 ```text
-https://USERNAME.github.io/statistics-msc/
+https://alopes0905.github.io/statistics-msc/
 ```
 
-The first completed homework URL will usually be:
+Homework 01’s URL is:
 
 ```text
-https://USERNAME.github.io/statistics-msc/homework-01/
+https://alopes0905.github.io/statistics-msc/homework-01/
 ```
 
-Replace `USERNAME` with the repository owner; use the actual URL shown in Pages settings if a custom domain or another configuration changes it. After Pages is enabled, subsequent pushes to the selected branch publish changes in `docs/`. The check/test workflow does not gate or perform that branch-based deployment, so run both commands before pushing.
+Use the actual URL shown in Pages settings if a custom domain or another configuration changes it. Subsequent pushes to the selected Pages branch publish changes in `docs/`. The check/test workflow does not gate or perform that branch-based deployment, so run both commands before pushing.
 
 ### Verify the published submission
 
