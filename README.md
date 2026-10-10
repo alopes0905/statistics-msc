@@ -6,6 +6,8 @@ An independent coursework website for the Statistics course in an MSc in Cyberse
 
 Homework 01 implements the professor’s [elliptic-curve assignment](https://github.com/alopes0905/statistics-msc/issues/1): repeated point addition on y² = x³ + 7 (mod 17), valid base/scalar selection, intermediate multiples, and a manual discrete SVG visualization. Its exhaustive subgroup experiment covers coordinate and bit frequencies, Pearson correlations, and adjacent-scalar Hamming distances, with explicit limitations. For G = (1, 5), k = 6, the calculated **toy public key is (5, 8)**; G has order 9, while the full curve has 18 elements.
 
+The page has four sections: interactive demonstration, mathematical explanation, statistical exploration, and implementation/conclusions. Core source excerpts and statistical summaries are visible; supporting code and detailed datasets are expandable.
+
 Local page: `/homework-01/` (or `/statistics-msc/homework-01/` with the project-subpath preview). Published page: [Homework 01](https://alopes0905.github.io/statistics-msc/homework-01/). This is an educational small-field implementation, not Ethereum-compatible cryptography.
 
 ## Academic constraints
@@ -14,7 +16,7 @@ Local page: `/homework-01/` (or `/statistics-msc/homework-01/` with the project-
 - Implement statistical algorithms from scratch, with general inputs and independent mathematical reasoning. Do not use third-party statistical, numerical, or visualization libraries.
 - Do not use Python, R, MATLAB, SAS, or other external languages to implement or generate statistical solutions.
 - Show and explain important implementation code directly on each homework page.
-- Quote accurately and attribute sources. Any AI assistance must comply with the professor’s academic-integrity policy. The student must understand and independently explain all submitted work.
+- Quote accurately and attribute sources. Follow the professor’s academic-integrity requirements and independently explain all submitted work.
 
 Assessment consists of weekly homework and a final written project/thesis. An oral exam is generally required for requested grades above 27/30 and may also be required at the professor’s discretion. Late homework incurs a one-point penalty. Homework URLs are submitted in the Excel spreadsheet provided by the professor. Confirm assignment-specific directions against the actual brief.
 
@@ -101,8 +103,8 @@ This records the earlier foundation review. Assignment-specific verification is 
 
 - `npm run check` passed: 3 pages including the virtual template, 14 resources, and 13 JavaScript syntax checks. `npm test` passed all 46 tests on Node.js 22.22.2: 26 existing tests and 20 Homework 01 tests.
 - Mathematical tests check the supplied sequence through 10G, all 18 group elements, closure/commutativity/associativity, exceptional additions, orders 2/3/6/9/18, a second curve over F₅, and arithmetic at the supported p = 997 boundary. Statistical and input tests cover exact domains, frequencies, bits, distances, correlation, and degenerate cases.
-- Local headless Chrome checked landing/homework layouts at 320, 390, 768, and 1440 CSS pixels with no page overflow. It exercised all 17 bases and all 165 valid base/scalar combinations, explicit scalar resets, invalid-input feedback, full-cycle stepping through O, four source excerpts, keyboard controls, dark mode, reduced motion, print controls, and the no-JavaScript fallback. No uncaught page exceptions or external page requests were observed. Desktop/mobile/light/dark screenshots were inspected.
-- Copying was checked with a test clipboard and actual text-selection fallback. Native clipboard permission, screen-reader output, Safari/Firefox, and actual 200% browser zoom remain manual checks; automated narrow-viewport reflow is only an approximation of zoom. Verify the deployed homework URL after authorized publication, and review the professor’s AI-assistance/submission rules before submitting.
+- Local headless Chrome checked landing/homework layouts at 320, 390, 768, and 1440 CSS pixels with no page overflow. It exercised all 17 bases and all 165 valid base/scalar combinations, explicit scalar resets, invalid-input feedback, full-cycle stepping through O, four source excerpts, expandable tables/code, anchor navigation, keyboard controls, dark mode, reduced motion, print controls, and the no-JavaScript fallback. No uncaught exceptions, console errors, failed resources, or external page requests were observed. Desktop/mobile/light/dark screenshots were inspected.
+- Copying was checked with a test clipboard and actual text-selection fallback. Native clipboard permission, screen-reader output, Safari/Firefox, and actual 200% browser zoom remain manual checks; automated narrow-viewport reflow is only an approximation of zoom. Verify the deployed homework URL after publication and follow the professor’s submission rules.
 
 The pure core supports nonsingular small prime fields with 5 ≤ p ≤ 997 and nonnegative scalars up to 10,000. It is educational Number arithmetic with repeated addition, not production cryptography. Statistical conclusions describe the enumerated subgroup and encoding; they do not establish randomness or security.
 
@@ -200,14 +202,14 @@ Open the individual assignment URL directly in a fresh browser session. Confirm 
 
 ## Sources and submission checklist
 
-Cite claims near their explanation. Give author, title, publication date or version, relevant page/section, and a working URL where available in the references. Clearly mark quotations; distinguish your derivation, implementation, and interpretation from external material. Record only sources and assistance actually used, following the professor’s policy.
+Cite claims near their explanation. Give author, title, publication date or version, relevant page/section, and a working URL where available in the references. Clearly mark quotations; distinguish the assignment’s derivation, implementation, and interpretation from external material. Record only sources actually used.
 
 - [ ] Correct mathematical results and a clear derivation with explicit assumptions.
 - [ ] Original, general JavaScript algorithms with deliberate invalid/degenerate behavior.
 - [ ] Meaningful tests pass; precision and limitations are explained.
 - [ ] Responsive webpage works from its direct URL with accessible controls and results.
 - [ ] Important source excerpts match the implementation and are explained on the page.
-- [ ] Quotations, sources, and permitted assistance are acknowledged.
+- [ ] Quotations and sources are accurately attributed.
 - [ ] Pages deployment succeeded and the published homework was verified.
 - [ ] Correct individual URL entered in the professor’s spreadsheet before the deadline.
 - [ ] You can independently explain every submitted method and line of important code.
