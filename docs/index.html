@@ -3,89 +3,39 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="An independent Statistics MSc coursework notebook: mathematical reasoning, original JavaScript implementations, and transparent verification.">
+    <meta name="description" content="Statistics coursework for the MSc in Cybersecurity at Sapienza University of Rome.">
     <meta name="color-scheme" content="light dark">
     <title>Statistics Lab · MSc in Cybersecurity</title>
     <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="./assets/css/main.css">
-    <script type="module" src="./assets/js/site.js"></script>
+    <link rel="stylesheet" href="./assets/css/home.css">
   </head>
-  <body id="top">
+  <body class="home-page" id="top">
     <a class="skip-link" href="#main">Skip to content</a>
-    <header class="site-header">
-      <div class="container header-inner">
-        <a class="brand" href="./" aria-label="Statistics Lab home">
-          <span class="brand-mark" aria-hidden="true">Σ</span>
-          <span>Statistics Lab<span class="brand-context">MSc in Cybersecurity</span></span>
-        </a>
-        <nav class="main-nav" aria-label="Main navigation">
-          <a href="#homework">Homework</a>
-          <a href="#methodology">Methodology</a>
-          <a href="#about">About the project</a>
-        </nav>
-      </div>
+    <!-- Retain the unpublished template's legacy context link. -->
+    <header class="home-header" id="about">
+      <h1><span class="brand-mark" aria-hidden="true">Σ</span> Statistics Lab</h1>
+      <p>Statistics · MSc in Cybersecurity · Sapienza University of Rome</p>
     </header>
 
-    <main id="main" class="container">
-      <section class="hero" aria-labelledby="intro-title">
-        <div class="hero-copy">
-          <p class="eyebrow"><span class="small-line" aria-hidden="true"></span> An independent course notebook</p>
-          <h1 id="intro-title">Statistics, understood<br>from <em>first principles.</em></h1>
-          <p class="hero-description">From mathematical reasoning to working code. A growing record of statistics coursework, built in JavaScript with every important step open to inspection.</p>
-          <a class="button button-primary" href="#homework">Explore the coursework <span aria-hidden="true">↗</span></a>
-          <p class="hero-note">Original implementations. Clear explanations. Careful verification.</p>
-        </div>
-        <aside class="notebook-note" aria-labelledby="notebook-title">
-          <div class="note-top"><span class="eyebrow">The notebook</span><span class="status-tag">Homework 01</span></div>
-          <h2 id="notebook-title">A place to make<br>the reasoning visible.</h2>
-          <p>Each assignment brings together the problem, its mathematical foundations, the implementation, and the evidence behind the results.</p>
-          <ol class="note-process">
-            <li><span aria-hidden="true">01</span><strong>Reason</strong><small>Define the problem and assumptions</small></li>
-            <li><span aria-hidden="true">02</span><strong>Implement</strong><small>Translate the method into JavaScript</small></li>
-            <li><span aria-hidden="true">03</span><strong>Verify</strong><small>Test, interpret, and explain</small></li>
-          </ol>
-          <div class="note-bottom"><span>Statistics MSc</span><span>Coursework journal</span></div>
-        </aside>
-      </section>
-
-      <section id="homework" class="section" aria-labelledby="homework-title">
-        <div class="section-heading">
-          <div><p class="eyebrow">01 / Coursework</p><h2 id="homework-title">The homework notebook</h2></div>
-          <p>One assignment, one independent page.<br>All reasoning and code in one place.</p>
-        </div>
-        <!-- Add completed homework cards here; see the README for the card pattern. -->
-        <div class="homework-list">
+    <main id="main">
+      <section id="homework" aria-labelledby="homework-title">
+        <h2 id="homework-title">Homework</h2>
+        <!-- Add completed assignments using the same number-and-topic card pattern. -->
+        <!-- Legacy methodology links lead to the assignments themselves. -->
+        <div class="homework-list" id="methodology">
           <a class="homework-card" href="./homework-01/">
-            <p class="eyebrow">Homework 01 · Public-key cryptography</p>
-            <h3>Elliptic-curve scalar multiplication</h3>
-            <p>Derive a toy public point through repeated addition over F₁₇, inspect the discrete group, and explore coordinate frequencies, bits, and input–output relationships.</p>
+            <h3>Homework 01</h3>
+            <p>Elliptic-Curve Scalar Multiplication</p>
+            <span class="homework-arrow" aria-hidden="true">→</span>
           </a>
         </div>
       </section>
-
-      <section id="methodology" class="section" aria-labelledby="methodology-title">
-        <div class="section-heading">
-          <div><p class="eyebrow">02 / Methodology</p><h2 id="methodology-title">Understanding comes first.</h2></div>
-          <p>A consistent standard for the work,<br>from the first definition to the final result.</p>
-        </div>
-        <ol class="principles">
-          <li><span class="principle-number" aria-hidden="true">01</span><div><h3>Start with the mathematics</h3><p>State definitions, derive the method, and make assumptions explicit before writing code.</p></div></li>
-          <li><span class="principle-number" aria-hidden="true">02</span><div><h3>Build from scratch</h3><p>Implement statistical methods in standard JavaScript, without external statistical, numerical, or visualization libraries.</p></div></li>
-          <li><span class="principle-number" aria-hidden="true">03</span><div><h3>Think beyond one dataset</h3><p>Design general algorithms with clear inputs, consistent outputs, and deliberate treatment of edge cases.</p></div></li>
-          <li><span class="principle-number" aria-hidden="true">04</span><div><h3>Keep the work transparent</h3><p>Show important source code beside its explanation, so each implementation can be read and understood on the page.</p></div></li>
-          <li><span class="principle-number" aria-hidden="true">05</span><div><h3>Make ideas explorable</h3><p>Use interactive demonstrations and native browser graphics to connect mathematical reasoning with observed behavior.</p></div></li>
-          <li><span class="principle-number" aria-hidden="true">06</span><div><h3>Verify and acknowledge</h3><p>Test known results and invariants, discuss limitations, and attribute the sources that inform the work.</p></div></li>
-        </ol>
-      </section>
-
-      <section id="about" class="about-section" aria-labelledby="about-title">
-        <div><p class="eyebrow">03 / Context</p><h2 id="about-title">A working record<br>of understanding.</h2></div>
-        <div class="about-copy"><p>This independent student project supports the Statistics course within an MSc in Cybersecurity. It is a place to develop, test, and explain the reasoning behind each homework assignment.</p><p>The website uses HTML, CSS, and vanilla JavaScript. Every assignment has its own accessible URL, with its mathematical explanation and important implementation visible together.</p><p class="muted">Homework 01 explores elliptic-curve arithmetic and the statistical structure of a small finite group.</p></div>
-      </section>
     </main>
 
-    <footer class="site-footer">
-      <div class="container footer-inner"><div><strong>Statistics Lab</strong><p>Statistics MSc · MSc in Cybersecurity</p></div><p class="footer-note">An independent student coursework project.</p><nav aria-label="Footer navigation"><a href="#homework">Homework</a><a href="#top">Back to top <span aria-hidden="true">↑</span></a></nav></div>
+    <footer class="home-footer">
+      <p>Statistics coursework</p>
+      <a href="https://github.com/alopes0905/statistics-msc">GitHub repository</a>
     </footer>
   </body>
 </html>

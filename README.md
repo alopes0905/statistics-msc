@@ -159,9 +159,9 @@ Add one card per completed assignment inside the landing page’s `.homework-lis
 
 ```html
 <a class="homework-card" href="./homework-01/">
-  <p class="eyebrow">Homework 01</p>
-  <h3>[Actual assigned title]</h3>
-  <p>[Accurate summary of the completed work]</p>
+  <h3>Homework 01</h3>
+  <p>[Actual assigned title]</p>
+  <span class="homework-arrow" aria-hidden="true">→</span>
 </a>
 ```
 

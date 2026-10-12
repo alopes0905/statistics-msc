@@ -51,7 +51,7 @@ test('development server serves actual site and copied template safely at a proj
   await t.test('landing page, styles, scripts, and icon are served with correct MIME types', async () => {
     const page = await request(port, '/statistics-msc/');
     assert.equal(page.status, 200);
-    assert.match(page.body, /Statistics, understood/);
+    assert.match(page.body, /<h1\b[^>]*>[\s\S]*?Statistics Lab<\/h1>/);
     assert.match(page.headers['content-type'], /^text\/html/);
     assert.equal(page.headers['x-content-type-options'], 'nosniff');
     for (const [path, type] of [['assets/css/main.css', 'text/css'], ['assets/js/site.js', 'text/javascript'], ['assets/favicon.svg', 'image/svg+xml']]) {
