@@ -21,12 +21,12 @@
       </div>
     </header>
 
-    <main id="main" class="container">
+    <main id="main" class="container homework-page">
       <header class="homework-header">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Course notebook</a><span aria-hidden="true">/</span><span aria-current="page">Homework 01</span></nav>
         <p class="eyebrow">01 / Public-key cryptography</p>
-        <h1>Elliptic-curve<br>scalar multiplication</h1>
-        <p>The <a href="https://github.com/alopes0905/statistics-msc/issues/1">assignment</a> demonstrates public-key derivation and explores coordinate patterns on a small elliptic curve.</p>
+        <h1>Elliptic-curve scalar multiplication</h1>
+        <p>A private scalar k and a curve point G give the public key Q = kG by repeated point addition. The default example uses <strong>G = (1, 5), k = 6</strong>.</p>
       </header>
 
       <div class="homework-layout">
@@ -36,9 +36,8 @@
         </nav>
         <article class="homework-article" aria-label="Homework 01 report">
           <section id="demonstration" class="homework-section" aria-labelledby="demonstration-title">
-            <p class="eyebrow">01 / Interactive demonstration</p>
-            <h2 id="demonstration-title">Elliptic-curve demonstration</h2>
-            <p>The private key is a scalar k; the public key is the point Q = kG. Here G is a base point, and kG means repeated point addition, not multiplication of its coordinates. Ordinary Ethereum accounts use secp256k1; this exercise uses y² = x³ + 7 (mod 17), an educational curve with no practical security.</p>
+            <h2 id="demonstration-title"><span class="eyebrow section-number" aria-hidden="true">01</span> Elliptic-curve demonstration</h2>
+            <p>The <a href="https://github.com/alopes0905/statistics-msc/issues/1">assignment</a> uses y² = x³ + 7 (mod 17), an educational curve with no practical security. Ethereum uses secp256k1. Here kG adds points; it does not multiply their coordinates.</p>
             <div class="demo-panel">
               <p id="loading-note" class="demo-status" role="status">Loading the interactive experiment…</p>
               <noscript><p>JavaScript is required for the controls and calculated tables. The worked example, conclusions, and direct source links remain readable.</p></noscript>
@@ -63,14 +62,14 @@
               </div>
             </div>
             <h3>Step through the cycle</h3>
-            <p>The plot explores 0G through (n + 1)G, including O and the return to G. Its current step is separate from the calculated public key above.</p>
+            <p>Explore 0G through (n + 1)G, including O and the return to G, independently of the public key above.</p>
             <figure class="curve-figure">
               <svg class="curve-plot" viewBox="0 0 420 395" role="img" aria-labelledby="curve-title curve-description">
                 <title id="curve-title">Affine points of the toy elliptic curve</title>
                 <desc id="curve-description">Discrete points over F17; coordinates and the current multiple have text and table equivalents.</desc>
                 <g id="plot-grid" class="plot-grid" aria-hidden="true"></g><g id="plot-points" class="plot-points" aria-hidden="true"></g><g id="plot-highlights" aria-hidden="true"></g>
               </svg>
-              <figcaption>All 17 affine points, with residues 0–16 on each axis. The diamond marks G; the amber ring marks the current multiple. O has no affine coordinates. This discrete grid is not a smooth real-valued curve.</figcaption>
+              <figcaption>All 17 affine points. Diamond: G. Ring: current multiple. O has no affine coordinates. The axes show residues 0–16, not a continuous curve.</figcaption>
             </figure>
             <div class="step-readout" role="status" aria-live="polite" aria-atomic="true"><p id="step-equation" class="step-equation"></p><p id="step-note" class="step-note"></p><p id="step-position" class="step-position"></p></div>
             <div id="step-controls" class="demo-actions" hidden><button id="previous-step" class="button button-secondary" type="button">Previous step</button><button id="next-step" class="button button-secondary" type="button">Next step</button><button id="reset-step" class="button button-secondary" type="button">Reset to 0G</button></div>
@@ -78,79 +77,76 @@
           </section>
 
           <section id="foundations" class="homework-section" aria-labelledby="foundations-title">
-            <p class="eyebrow">02 / Mathematical explanation</p>
-            <h2 id="foundations-title">How it works</h2>
-            <p>The curve is y² = x³ + ax + b over the finite field F<sub>p</sub>, with a = 0, b = 7, p = 17. Coordinates are integers 0–16 and all arithmetic is modulo 17. For example, G = (1, 5) lies on the curve because 5² ≡ 1³ + 7 ≡ 8.</p>
+            <h2 id="foundations-title"><span class="eyebrow section-number" aria-hidden="true">02</span> How it works</h2>
+            <p>For y² = x³ + ax + b, take a = 0, b = 7, p = 17. Coordinates are residues 0–16 in F<sub>17</sub>; arithmetic is modulo 17. G = (1, 5) lies on the curve: 5² ≡ 1³ + 7 ≡ 8.</p>
             <p>For P = (x₁, y₁) and R = (x₂, y₂), addition gives P + R = (x₃, y₃):</p>
             <div class="formula" aria-label="Affine point addition formulas, all modulo p">
-              <p>Distinct x-values: λ = (y₂ − y₁)(x₂ − x₁)<sup>−1</sup></p>
-              <p>Doubling, y₁ ≠ 0: λ = (3x₁² + a)(2y₁)<sup>−1</sup></p>
+              <p><span class="formula-label">Distinct x-values:</span> λ = (y₂ − y₁)(x₂ − x₁)<sup>−1</sup></p>
+              <p><span class="formula-label">Doubling, y₁ ≠ 0:</span> λ = (3x₁² + a)(2y₁)<sup>−1</sup></p>
               <p>x₃ = λ² − x₁ − x₂<br>y₃ = λ(x₁ − x₃) − y₁</p>
               <p>Every operation is modulo p.</p>
             </div>
-            <p>Division uses a <strong>modular inverse</strong>: d<sup>−1</sup> satisfies dd<sup>−1</sup> ≡ 1 (mod p). Extended Euclid finds u, v with ud + vp = 1, making u mod p the inverse. Ordinary division would give incorrect field arithmetic.</p>
-            <p>O is the identity: P + O = P. Negation gives −P = (x, −y mod p), so P + (−P) = O. Doubling a point with y = 0 also gives O. These cases avoid division by zero. The group law follows <a href="https://www.rfc-editor.org/rfc/rfc6090.html#section-3">RFC 6090, §§2–3</a>.</p>
+            <p>Field division multiplies by a <strong>modular inverse</strong>: dd<sup>−1</sup> ≡ 1 (mod p). Extended Euclid finds ud + vp = 1, so d<sup>−1</sup> = u mod p. Ordinary division is not valid here.</p>
+            <p>O is the identity: P + O = P. Negation gives −P = (x, −y mod p), and P + (−P) = O. Doubling with y = 0 also gives O, avoiding division by zero (<a href="https://www.rfc-editor.org/rfc/rfc6090.html#section-3">RFC 6090, §§2–3</a>).</p>
             <h3>Worked example: G + G</h3>
-            <p>With G = (1, 5), the doubling denominator is 2 × 5 = 10. Since 10 × 12 ≡ 1 (mod 17), its inverse is 12. Hence λ ≡ 3 × 12 ≡ 2, x₃ ≡ 2² − 2 ≡ 2, and y₃ ≡ 2(1 − 2) − 5 ≡ 10. Therefore <strong>2G = (2, 10)</strong>.</p>
-            <p>Repeated addition starts at O and adds G once per step: after j additions, the result is jG. The first positive n with nG = O is the order of G. Private scalars use 1 ≤ k &lt; n; mathematically, 0G and multiples of n give O.</p>
+            <p>For G = (1, 5), the denominator is 2 × 5 = 10. Its inverse is 12 because 10 × 12 ≡ 1 (mod 17). Thus λ ≡ 3 × 12 ≡ 2, x₃ ≡ 2² − 2 ≡ 2, and y₃ ≡ 2(1 − 2) − 5 ≡ 10. Hence <strong>2G = (2, 10)</strong>.</p>
+            <p>Starting at O, j additions of G give jG. The order n is the smallest positive integer with nG = O. Private scalars use 1 ≤ k &lt; n; zero and multiples of n give O.</p>
           </section>
 
           <section id="statistics" class="homework-section" aria-labelledby="statistics-title">
-            <p class="eyebrow">03 / Statistical exploration</p>
-            <h2 id="statistics-title">Statistical exploration</h2>
-            <p>For each G of order n, the experiment tests every k from 1 to n − 1. Each nonidentity subgroup point appears once. Equal weight on the scalars is uniform over these points, but their coordinates need not be uniform over F<sub>17</sub>.</p>
+            <h2 id="statistics-title"><span class="eyebrow section-number" aria-hidden="true">03</span> Statistical exploration</h2>
+            <p>Every valid k, from 1 to n − 1, produces a different nonidentity subgroup point. Equal weight on these scalars gives uniform points, but not necessarily uniform coordinates in F<sub>17</sub>.</p>
             <p id="subgroup-observation" class="annotation">The default subgroup contains 9 of the full curve’s 18 elements, including O.</p>
             <div id="live-experiment" hidden>
               <p id="experiment-summary"></p>
               <h3>Coordinate frequencies</h3>
               <p id="coordinate-summary"></p>
-              <p>Inverse points (x, y) and (x, −y mod 17) share x, but different valid scalars still produce different points. For <strong>G = (1, 5)</strong>, x = 1, 2, 5, 12 each occurs twice; y = 1, 5, 7, 8, 9, 10, 12, 16 each occurs once.</p>
+              <p>Inverse points (x, y) and (x, −y mod 17) share x. For default <strong>G = (1, 5)</strong>, x = 1, 2, 5, 12 each occurs twice; eight distinct y-values occur once.</p>
               <details id="frequency-details"><summary>Full coordinate-frequency table</summary><div class="table-wrapper"><table class="compact-table"><caption>Frequency at every field residue, including zero counts</caption><thead><tr><th scope="col">Coordinate value</th><th scope="col">x count</th><th scope="col">y count</th></tr></thead><tbody id="frequency-body"></tbody><tfoot><tr><th scope="row">Total</th><td id="frequency-total-x"></td><td id="frequency-total-y"></td></tr></tfoot></table></div></details>
               <h3>Five-bit coordinates</h3>
-              <p>The encoding <strong>x || y</strong> joins two unsigned five-bit coordinates, most significant bit first. For example, (1, 5) becomes <code>00001 00101</code>: ten bits, with a space for readability.</p>
+              <p>The encoding <strong>x || y</strong> joins two unsigned five-bit coordinates, most significant bit first: (1, 5) becomes <code>00001 00101</code>. The space is for readability.</p>
               <div class="table-wrapper"><table class="compact-table"><caption>Bit frequencies; zero + one at each position equals the sample size</caption><thead><tr><th scope="col">Position (weight)</th><th scope="col">x zeros</th><th scope="col">x ones</th><th scope="col">y zeros</th><th scope="col">y ones</th></tr></thead><tbody id="bits-body"></tbody></table></div>
-              <p>The top bit is one only for coordinate 16, creating an encoding bias. For <strong>G = (1, 5)</strong>, x one-counts are 0, 2, 4, 2, 4; y one-counts are 1, 4, 3, 2, 4. Bit balance depends on the encoding and subgroup.</p>
+              <p>The top bit is one only for coordinate 16. This bias shows why bit balance depends on the encoding as well as the subgroup.</p>
               <details id="dataset-details"><summary>Full scalar, point, and binary dataset</summary><div class="table-wrapper"><table class="compact-table encoding-table"><caption>Complete experiment for the selected base, in scalar order</caption><thead><tr><th scope="col">k</th><th scope="col">kG</th><th scope="col">x || y</th></tr></thead><tbody id="observations-body"></tbody></table></div></details>
               <h3>Input–output relationships</h3>
-              <p>The result is deterministic, but the coordinates are not monotonic in k. Pearson’s r measures their linear association with k in the chosen numeric representation:</p>
+              <p>Pearson’s r measures linear association between k and each coordinate:</p>
               <dl class="metric-list"><dt>r(k, x)</dt><dd id="correlation-x"></dd><dt>r(k, y)</dt><dd id="correlation-y"></dd></dl>
-              <p>For <strong>G = (1, 5)</strong>, r(k, x) = 0 and r(k, y) ≈ 0.298. Low correlation implies neither independence nor security: k determines Q. A different encoding or generator can change r. It is undefined with insufficient observations or zero coordinate variance.</p>
+              <p>Low correlation implies neither independence nor security: k determines Q. The value depends on the generator and numeric encoding; it is undefined with too few observations or zero variance.</p>
               <h3>Neighboring scalars and changed bits</h3>
-              <p>Hamming distance counts differing bits in x || y for kG and (k + 1)G. Both scalars stay within 1,…,n − 1; there is no comparison through O or wraparound.</p>
+              <p>Hamming distance counts differing bits in x || y between kG and (k + 1)G. Both scalars remain valid, excluding O and wraparound.</p>
               <div id="hamming-table" class="table-wrapper"><table class="compact-table"><caption>Adjacent-scalar Hamming distances</caption><thead><tr><th scope="col">Scalar change</th><th scope="col">Differing output bits</th></tr></thead><tbody id="hamming-body"></tbody></table></div>
               <p id="hamming-empty" hidden>No neighboring pair exists in this one-scalar domain.</p>
-              <p>For <strong>G = (1, 5)</strong>, the distances are 6, 5, 3, 2, 4, 7, 5. Adding one to k can flip several input bits, so this comparison does not test the classical single-input-bit avalanche criterion.</p>
+              <p>Adding one can flip several input bits. These changes illustrate avalanche-like behavior, rather than testing the classical single-input-bit avalanche criterion used to study hashes.</p>
             </div>
             <h3>Changing the base point</h3>
-            <p>The base (2, 10) = 2(1, 5) generates the same order-9 subgroup, since 2 and 9 are coprime. It permutes points, preserving coordinate and bit frequencies while changing scalar relationships and neighboring comparisons. Bases (5, 9), (3, 0), and (6, 6) have orders 3, 2, and 18 respectively, giving different datasets.</p>
-            <p>Since every valid scalar is tested, the results are exact for the selected subgroup. They describe its algebraic structure, not cryptographic randomness or the security of large curves.</p>
+            <p>The base (2, 10) = 2(1, 5) generates the same order-9 subgroup because 2 and 9 are coprime. It reorders points, preserving coordinate and bit frequencies but changing scalar relationships. Bases (5, 9), (3, 0), and (6, 6) have orders 3, 2, and 18, giving different datasets.</p>
+            <p>These exhaustive results describe the selected subgroup and encoding; they do not establish cryptographic randomness or security.</p>
           </section>
 
           <section id="implementation" class="homework-section" aria-labelledby="implementation-title">
-            <p class="eyebrow">04 / Implementation &amp; conclusions</p>
-            <h2 id="implementation-title">Implementation &amp; conclusions</h2>
-            <p>The calculations use standard JavaScript without libraries. The excerpts below load directly from the mathematical source file.</p>
+            <h2 id="implementation-title"><span class="eyebrow section-number" aria-hidden="true">04</span> Implementation &amp; conclusions</h2>
+            <p>These excerpts load directly from the original JavaScript source.</p>
             <h3>Point addition and doubling</h3>
-            <p>Point addition handles O and inverse points first, then uses the appropriate slope for ordinary addition or doubling. Both cases share the coordinate formulas.</p>
+            <p>Addition handles O and inverse points first, then applies the addition or doubling slope and shared coordinate formulas.</p>
             <figure class="source-figure"><figcaption id="addition-caption">Affine group law · actual source</figcaption><div class="source-viewer" data-source="./js/statistics.js" data-region="point-addition"><div class="source-toolbar"><strong>addPoints</strong><button class="copy-button" type="button" data-copy-source disabled aria-label="Copy point addition code">Copy code</button></div><pre tabindex="0" aria-labelledby="addition-caption"><code data-source-code>Loading the implementation…</code></pre><p class="source-status" role="status" aria-live="polite" data-source-status>Loading source…</p></div></figure>
             <h3>Repeated addition</h3>
-            <p>Each iteration adds G and stores the next multiple. The final point is kG; zero iterations give O. The displayed sequence comes from these same calculations.</p>
+            <p>Each iteration adds G and stores the next multiple. The final point is kG; zero iterations give O.</p>
             <figure class="source-figure"><figcaption id="multiplication-caption">Scalar multiplication and intermediate steps · actual source</figcaption><div class="source-viewer" data-source="./js/statistics.js" data-region="scalar-multiplication"><div class="source-toolbar"><strong>scalarMultiples / scalarMultiply</strong><button class="copy-button" type="button" data-copy-source disabled aria-label="Copy scalar multiplication code">Copy code</button></div><pre tabindex="0" aria-labelledby="multiplication-caption"><code data-source-code>Loading the implementation…</code></pre><p class="source-status" role="status" aria-live="polite" data-source-status>Loading source…</p></div></figure>
             <details id="inverse-details"><summary>Supporting code: modular inverse</summary>
-              <p>Extended Euclid computes the inverse needed for field division. A gcd other than one means the inverse does not exist.</p>
+              <p>Extended Euclid computes the inverse for field division, which exists only when the gcd is one.</p>
               <figure class="source-figure"><figcaption id="inverse-caption">Extended Euclidean algorithm · actual source</figcaption><div class="source-viewer" data-source="./js/statistics.js" data-region="modular-inverse"><div class="source-toolbar"><strong>modularInverse</strong><button class="copy-button" type="button" data-copy-source disabled aria-label="Copy modular inverse code">Copy code</button></div><pre tabindex="0" aria-labelledby="inverse-caption"><code data-source-code>Loading the implementation…</code></pre><p class="source-status" role="status" aria-live="polite" data-source-status>Loading source…</p></div></figure>
             </details>
             <details id="correlation-details"><summary>Supporting code: Pearson correlation</summary>
-              <p>Pearson’s r divides the sum of centered products by the square root of the two centered sums of squares. Insufficient data or zero variance returns <code>null</code>, displayed as an explanation.</p>
+              <p>Pearson’s r divides the sum of centered products by the square root of the product of centered sums of squares. Undefined results return <code>null</code>.</p>
               <figure class="source-figure"><figcaption id="correlation-caption">Pearson correlation · actual source</figcaption><div class="source-viewer" data-source="./js/statistics.js" data-region="correlation"><div class="source-toolbar"><strong>pearsonCorrelation</strong><button class="copy-button" type="button" data-copy-source disabled aria-label="Copy correlation code">Copy code</button></div><pre tabindex="0" aria-labelledby="correlation-caption"><code data-source-code>Loading the implementation…</code></pre><p class="source-status" role="status" aria-live="polite" data-source-status>Loading source…</p></div></figure>
             </details>
             <a class="source-link" href="./js/statistics.js">Open the complete mathematical and statistical source</a>
-            <p>The automated tests check the acceptance sequence, all 18 group elements, exceptional additions, group identities, a second curve, and statistical results including small-subgroup cases. Integer expectations are exact; correlation uses an independently derived value with a machine-precision tolerance.</p>
+            <p>Automated tests verify the multiples below, all 18 group elements, group laws and exceptional cases, a second curve, and statistical results including degenerate subgroups.</p>
             <details id="verification-details"><summary>Verification: expected multiples of G = (1, 5)</summary>
             <div class="table-wrapper"><table class="compact-table"><caption>Acceptance sequence from the implementation brief, checked against calculated output</caption><thead><tr><th scope="col">Multiple</th><th scope="col">Expected point</th></tr></thead><tbody><tr><th scope="row">1G</th><td>(1, 5)</td></tr><tr><th scope="row">2G</th><td>(2, 10)</td></tr><tr><th scope="row">3G</th><td>(5, 9)</td></tr><tr><th scope="row">4G</th><td>(12, 1)</td></tr><tr><th scope="row">5G</th><td>(12, 16)</td></tr><tr><th scope="row">6G</th><td>(5, 8)</td></tr><tr><th scope="row">7G</th><td>(2, 7)</td></tr><tr><th scope="row">8G</th><td>(1, 12)</td></tr><tr><th scope="row">9G</th><td>O</td></tr><tr><th scope="row">10G</th><td>(1, 5)</td></tr></tbody></table></div>
             </details>
             <h3>Conclusions</h3>
-            <p>The default calculation gives <strong>6(1, 5) = (5, 8)</strong>. This base has order 9, so 9G = O, 10G = G, and (k + 9)G = kG. Its coordinate patterns reflect subgroup structure. Recovering a scalar on this toy curve needs at most 17 trials; real ECC relies on difficult discrete logarithms in suitable large groups (<a href="https://www.rfc-editor.org/rfc/rfc6090.html#section-10.1">RFC 6090, §10.1</a>).</p>
+            <p>The default result is <strong>6(1, 5) = (5, 8)</strong>. This base has order 9: 9G = O and (k + 9)G = kG. The patterns reflect its subgroup. Recovering a scalar here takes at most 17 trials; real ECC relies on hard discrete logarithms in suitable large groups (<a href="https://www.rfc-editor.org/rfc/rfc6090.html#section-10.1">RFC 6090, §10.1</a>).</p>
             <p>Scalar multiplication and hashing are both deterministic, but they have different algebra and security goals:</p>
             <div class="table-wrapper"><table><caption>Scalar multiplication compared with cryptographic hashing</caption><thead><tr><th scope="col">Aspect</th><th scope="col">Scalar multiplication</th><th scope="col">Cryptographic hash</th></tr></thead><tbody><tr><th scope="row">Input → output</th><td>Scalar modulo n → group point</td><td>Message → fixed-length digest</td></tr><tr><th scope="row">Structure</th><td>(k + ℓ)G = kG + ℓG; periodic modulo n</td><td>No corresponding group law</td></tr><tr><th scope="row">Security goal</th><td>Hard discrete logarithms; used in public-key schemes and signatures</td><td>Preimage, second-preimage, and collision resistance</td></tr></tbody></table></div>
             <p>Repeating a point for k and k + n is expected periodicity, not a hash collision claim.</p>

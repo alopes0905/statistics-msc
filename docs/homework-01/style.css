@@ -1,81 +1,94 @@
-[hidden] { display: none !important; }
-.homework-header { padding-block: var(--space-7); border-bottom: var(--border); }
-.breadcrumb { display: flex; flex-wrap: wrap; gap: var(--space-3); color: var(--color-muted); font-size: var(--text-small); margin-bottom: var(--space-5); }
-.homework-header h1 { font-size: clamp(2rem, 4vw, 3.5rem); margin-top: var(--space-3); max-width: 52rem; }
-.homework-header > p { margin-top: var(--space-4); color: var(--color-muted); max-width: var(--reading-width); }
-.homework-layout { display: grid; grid-template-columns: 12rem minmax(0, 1fr); gap: var(--space-7); padding-block: var(--space-7); }
-.contents-nav { align-self: start; position: sticky; top: var(--space-6); }
-.contents-nav ol { margin: var(--space-4) 0 0; padding: 0; list-style: none; }
-.contents-nav a { display: block; padding: var(--space-3) 0; font-size: var(--text-small); text-decoration: none; border-bottom: var(--border); }
-.contents-nav a:hover { text-decoration: underline; }
-.homework-article { min-width: 0; max-width: var(--reading-width); }
-.homework-section { margin-bottom: var(--space-7); padding-bottom: var(--space-7); border-bottom: var(--border); scroll-margin-top: var(--space-6); }
-.homework-section h2 { font-size: 2rem; margin: var(--space-2) 0 var(--space-5); }
-.homework-section h3 { margin-block: var(--space-6) var(--space-3); }
-.homework-section li + li { margin-top: var(--space-2); }
-.formula { padding: var(--space-4) var(--space-5); margin-block: var(--space-5); background: var(--color-surface); border-radius: var(--radius-small); font-family: var(--font-code); font-size: 0.95rem; overflow-wrap: anywhere; }
-.formula p + p { margin-top: var(--space-3); }
-.annotation { padding: var(--space-4) var(--space-5); margin-block: var(--space-5); border-left: 3px solid var(--color-accent); background: var(--color-accent-soft); font-size: var(--text-small); }
-.demo-panel { margin-top: var(--space-5); padding: var(--space-5); border: var(--border); background: var(--color-raised); border-radius: var(--radius-large); }
-fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
-legend { font-weight: 600; padding: 0; margin-bottom: var(--space-4); }
-.input-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: var(--space-4); }
-.demo-panel label { display: block; font-size: var(--text-small); font-weight: 600; margin-bottom: var(--space-2); }
-.demo-panel input, .demo-panel select { width: 100%; min-height: 2.75rem; padding: var(--space-3); border: 1px solid var(--color-muted); border-radius: var(--radius-small); color: var(--color-text); background: var(--color-background); font: inherit; }
-.field-help { margin-block: var(--space-3) var(--space-4); color: var(--color-muted); font-size: 0.8rem; }
-.demo-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
-.demo-status { margin-top: var(--space-4); font-size: var(--text-small); }
-.demo-status[data-state="error"] { color: var(--color-error); }
-.key-result { margin-top: var(--space-5); border-top: var(--border); padding-top: var(--space-5); }
-.key-summary { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-6); margin: 0 0 var(--space-4); font-size: var(--text-small); }
-.key-summary div { display: flex; gap: var(--space-2); }
-.key-summary dt { color: var(--color-muted); }
-.key-summary dd { margin: 0; font-family: var(--font-code); }
-.public-key { font: 600 clamp(1.05rem, 3vw, 1.5rem) var(--font-code); color: var(--color-accent); margin-top: var(--space-2); }
-.curve-figure { margin: var(--space-5) 0 0; }
-.curve-plot { display: block; width: 100%; max-width: 30rem; height: auto; margin: 0 auto; }
-.plot-grid line { stroke: var(--color-border); stroke-width: 1; }
-.plot-grid text { fill: var(--color-muted); font: 12px var(--font-code); }
-.plot-points { fill: var(--color-muted); }
-.plot-base { fill: var(--color-accent); stroke: var(--color-raised); stroke-width: 1; }
-.plot-current { fill: none; stroke: #8d510f; stroke-width: 3; }
-figcaption { color: var(--color-muted); font-size: var(--text-small); margin-block: var(--space-3); }
-.step-readout { min-height: 6rem; margin-top: var(--space-5); }
-.step-equation { font-family: var(--font-code); font-size: var(--text-small); overflow-wrap: anywhere; }
-.step-note, .step-position { color: var(--color-muted); font-size: 0.8rem; margin-top: var(--space-2); }
-.table-wrapper { max-width: 100%; overflow-x: auto; }
-table { border-collapse: collapse; width: 100%; margin-block: var(--space-4); font-size: var(--text-small); }
-caption { text-align: left; color: var(--color-muted); padding-bottom: var(--space-3); }
-th, td { padding: var(--space-3); text-align: left; border-bottom: var(--border); }
-th { font-weight: 600; }
-thead { background: var(--color-surface); }
-tfoot { font-weight: 600; }
-.compact-table th, .compact-table td { padding: var(--space-2) var(--space-3); }
-.encoding-table td:last-child { font-family: var(--font-code); white-space: nowrap; }
-.metric-list { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3) var(--space-4); font-size: var(--text-small); margin-block: var(--space-4); }
-.metric-list dd { margin: 0; }
-details { margin-top: var(--space-4); border: var(--border); border-radius: var(--radius-small); padding: var(--space-4); }
-summary { color: var(--color-accent); cursor: pointer; font-size: var(--text-small); }
-details > p, .source-link + p { margin-top: var(--space-4); }
-.source-figure { margin: var(--space-5) 0 0; }
-.references { padding-left: var(--space-5); font-size: var(--text-small); }
-.references a { overflow-wrap: anywhere; }
-@media (prefers-color-scheme: dark) { .plot-current { stroke: #e5bb78; } }
+/* Homework-only typography; shared pages, header and footer retain their styles. */
+.homework-page { --text-small: 0.9375rem; font-size: 1.0625rem; line-height: 1.6; }
+.homework-page :is(h1, h2) { font-family: var(--font-body); font-weight: 650; line-height: 1.25; letter-spacing: -0.02em; }
+.homework-page .eyebrow { font-size: 0.78125rem; letter-spacing: 0.08em; }
+.homework-page p + p { margin-top: var(--space-3); }
+.homework-page .homework-header { padding-block: var(--space-5); border-bottom: var(--border); }
+.homework-page .breadcrumb { display: flex; flex-wrap: wrap; gap: var(--space-3); color: var(--color-muted); font-size: var(--text-small); margin-bottom: var(--space-4); }
+.homework-page h1 { font-size: clamp(1.875rem, 3vw, 2.25rem); margin-top: var(--space-2); max-width: 52rem; }
+.homework-page .homework-header > p { margin-top: var(--space-3); max-width: var(--reading-width); }
+.homework-page .homework-layout { display: grid; grid-template-columns: 12rem minmax(0, 1fr); gap: var(--space-6); padding-block: var(--space-6); }
+.homework-page .contents-nav { align-self: start; position: sticky; top: var(--space-6); }
+.homework-page .contents-nav ol { margin: var(--space-3) 0 0; padding: 0; list-style: none; }
+.homework-page .contents-nav a { display: block; padding: var(--space-3) 0; font-size: var(--text-small); text-decoration: none; border-bottom: var(--border); }
+.homework-page .contents-nav a:hover { text-decoration: underline; }
+.homework-page .homework-article { min-width: 0; max-width: var(--reading-width); }
+.homework-page .homework-section { margin-bottom: var(--space-6); padding-bottom: var(--space-6); border-bottom: var(--border); scroll-margin-top: var(--space-5); }
+.homework-page h2 { display: flex; align-items: baseline; gap: var(--space-3); font-size: 1.625rem; margin-bottom: var(--space-4); }
+.homework-page .section-number { flex: 0 0 auto; }
+.homework-page h3 { margin-block: var(--space-5) var(--space-2); }
+.homework-page .homework-section li + li { margin-top: var(--space-2); }
+.homework-page .formula { padding: var(--space-4); margin-block: var(--space-4); background: var(--color-surface); border-radius: var(--radius-small); font-family: var(--font-code); font-size: 0.9375rem; overflow-wrap: anywhere; }
+.homework-page .formula p + p { margin-top: var(--space-3); }
+.homework-page .annotation { padding: var(--space-3) var(--space-4); margin-block: var(--space-4); border-left: 3px solid var(--color-accent); background: var(--color-accent-soft); font-size: var(--text-small); }
+.homework-page .demo-panel { margin-top: var(--space-4); padding: 1.25rem; border: var(--border); background: var(--color-raised); border-radius: var(--radius-large); }
+.homework-page fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.homework-page legend { font-weight: 600; padding: 0; margin-bottom: var(--space-4); }
+.homework-page .input-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: var(--space-4); }
+.homework-page .demo-panel label { display: block; font-size: var(--text-small); font-weight: 600; margin-bottom: var(--space-2); }
+.homework-page :is(input, select) { width: 100%; min-height: 2.75rem; padding: var(--space-3); border: 1px solid var(--color-muted); border-radius: var(--radius-small); color: var(--color-text); background: var(--color-background); font: inherit; }
+.homework-page .field-help { margin-block: var(--space-3); font-size: 0.875rem; line-height: 1.5; }
+.homework-page .demo-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.homework-page .demo-status { margin-top: var(--space-3); font-size: var(--text-small); }
+.homework-page .demo-status[data-state="error"] { color: var(--color-error); }
+.homework-page .key-result { margin-top: var(--space-4); border-top: var(--border); padding-top: var(--space-4); }
+.homework-page .key-summary { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-6); margin: 0 0 var(--space-3); font-size: var(--text-small); }
+.homework-page .key-summary div { display: flex; gap: var(--space-2); }
+.homework-page .key-summary dt { color: var(--color-muted); }
+.homework-page .key-summary dd { margin: 0; font-family: var(--font-code); }
+.homework-page .public-key { font: 600 clamp(1.375rem, 2.5vw, 1.625rem) var(--font-code); color: var(--color-accent); margin-top: var(--space-2); }
+.homework-page .curve-figure { margin: var(--space-4) 0 0; }
+.homework-page .curve-plot { display: block; width: 100%; max-width: 26rem; height: auto; margin: 0 auto; }
+.homework-page .plot-grid line { stroke: var(--color-border); stroke-width: 1; }
+.homework-page .plot-grid text { fill: var(--color-text); font: 17px var(--font-body); }
+.homework-page .plot-points { fill: var(--color-muted); }
+.homework-page .plot-base { fill: var(--color-accent); stroke: var(--color-raised); stroke-width: 1; }
+.homework-page .plot-current { fill: none; stroke: #8d510f; stroke-width: 3; }
+.homework-page figcaption { font-size: 0.90625rem; margin-block: var(--space-3); }
+.homework-page .step-readout { min-height: 6rem; margin-top: var(--space-4); }
+.homework-page .step-equation { font-family: var(--font-code); font-size: var(--text-small); overflow-wrap: anywhere; }
+.homework-page :is(.step-note, .step-position) { font-size: 0.875rem; margin-top: var(--space-2); }
+.homework-page .step-position { color: var(--color-muted); }
+.homework-page .table-wrapper { max-width: 100%; overflow-x: auto; }
+.homework-page table { border-collapse: collapse; width: 100%; margin-block: var(--space-3); font-size: 0.96875rem; line-height: 1.5; }
+.homework-page caption { text-align: left; font-size: 0.90625rem; padding-bottom: var(--space-2); }
+.homework-page :is(th, td) { padding: var(--space-3); text-align: left; border-bottom: var(--border); }
+.homework-page th { font-weight: 600; }
+.homework-page thead { background: var(--color-surface); }
+.homework-page tfoot { font-weight: 600; }
+.homework-page .compact-table :is(th, td) { padding: var(--space-2) 0.625rem; }
+.homework-page .encoding-table td:last-child { font-family: var(--font-code); white-space: nowrap; }
+.homework-page .metric-list { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-2) var(--space-4); margin-block: var(--space-3); }
+.homework-page .metric-list dd { margin: 0; }
+.homework-page details { margin-top: var(--space-3); border: var(--border); border-radius: var(--radius-small); padding: var(--space-3) var(--space-4); }
+.homework-page summary { color: var(--color-accent); cursor: pointer; font-size: var(--text-small); }
+.homework-page :is(details > p, .source-link + p) { margin-top: var(--space-3); }
+.homework-page .source-figure { margin: var(--space-4) 0 0; }
+.homework-page .source-figure figcaption { color: var(--color-muted); }
+.homework-page pre { font-size: 0.90625rem; line-height: 1.55; padding: var(--space-4); }
+.homework-page pre code { font-size: inherit; line-height: inherit; }
+.homework-page .source-toolbar { padding: var(--space-3) var(--space-4); }
+.homework-page .copy-button { font-size: 0.875rem; }
+.homework-page .source-status { padding: var(--space-2) var(--space-4); font-size: 0.875rem; line-height: 1.5; }
+.homework-page .references { padding-left: var(--space-5); font-size: var(--text-small); }
+.homework-page .references a { overflow-wrap: anywhere; }
+@media (prefers-color-scheme: dark) { .homework-page .plot-current { stroke: #e5bb78; } }
 @media (max-width: 56rem) {
-  .homework-layout { grid-template-columns: 1fr; gap: var(--space-6); }
-  .contents-nav { position: static; }
-  .contents-nav ol { display: flex; flex-wrap: wrap; gap: 0 var(--space-5); }
+  .homework-page .homework-layout { grid-template-columns: 1fr; gap: var(--space-5); }
+  .homework-page .contents-nav { position: static; }
+  .homework-page .contents-nav ol { display: flex; flex-wrap: wrap; gap: 0 var(--space-4); }
 }
 @media (max-width: 40rem) {
-  .input-grid { grid-template-columns: 1fr; }
-  .demo-panel { padding: var(--space-4); }
-  .homework-section h2 { font-size: 1.75rem; }
-  .formula { padding: var(--space-4); font-size: 0.85rem; }
-  th, td { padding: var(--space-2); }
+  .homework-page .input-grid { grid-template-columns: 1fr; }
+  .homework-page .demo-panel { padding: var(--space-4); }
+  .homework-page h2 { font-size: 1.5rem; }
+  .homework-page .formula-label { display: block; }
+  .homework-page .plot-grid text[text-anchor="middle"] { transform-box: fill-box; transform-origin: center; transform: rotate(-45deg); }
+  .homework-page :is(th, td) { padding: var(--space-2); }
 }
 @media print {
-  .homework-layout { display: block; }
-  .contents-nav, #key-form, #step-controls { display: none; }
-  .homework-section { break-inside: auto; }
-  .plot-current { stroke: #333; }
+  .homework-page .homework-layout { display: block; }
+  .homework-page :is(.contents-nav, #key-form, #step-controls) { display: none; }
+  .homework-page .homework-section { break-inside: auto; }
+  .homework-page .plot-current { stroke: #333; }
 }
