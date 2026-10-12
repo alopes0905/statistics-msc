@@ -1,0 +1,72 @@
+/* All assignment styles are scoped; shared pages and Homework 01 are unchanged. */
+.hw02-page { --text-small: 0.9375rem; }
+.hw02-page .hw02-report { width: min(54rem, calc(100% - 5rem)); margin-inline: auto; font-size: 1.0625rem; line-height: 1.6; }
+.hw02-page :is(h1, h2) { font-family: var(--font-body); font-weight: 650; line-height: 1.25; letter-spacing: -0.02em; }
+.hw02-page h1 { font-size: clamp(1.875rem, 3vw, 2.25rem); }
+.hw02-page h2 { display: flex; align-items: baseline; gap: var(--space-3); font-size: 1.625rem; margin-bottom: var(--space-4); }
+.hw02-page h3 { margin-block: var(--space-5) var(--space-2); font-size: 1.125rem; }
+.hw02-page p + p { margin-top: var(--space-3); }
+.hw02-page .homework-header { padding-block: var(--space-5); }
+.hw02-page .homework-header > p { margin-top: var(--space-3); }
+.hw02-page .breadcrumb { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-4); font-size: var(--text-small); color: var(--color-muted); }
+.hw02-page .contents-nav { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); margin-top: var(--space-5); font-size: var(--text-small); }
+.hw02-page .section-number { flex-shrink: 0; color: var(--color-accent); font-size: 0.90625rem; }
+.hw02-page .hw02-report > section { border-top: var(--border); padding-block: var(--space-6); scroll-margin-top: var(--space-5); }
+.hw02-page .pipeline { list-style: none; padding: 0; margin: var(--space-5) 0; counter-reset: stage; }
+.hw02-page .pipeline li { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: var(--space-5); padding: var(--space-4); border-left: 3px solid var(--color-accent); border-bottom: var(--border); background: var(--color-surface); counter-increment: stage; }
+.hw02-page .pipeline li + li { margin-top: var(--space-2); }
+.hw02-page .stage-name::before { content: counter(stage, decimal-leading-zero); color: var(--color-accent); font-size: 0.875rem; }
+.hw02-page .stage-name h3 { margin: var(--space-1) 0; }
+.hw02-page .stage-name span { display: block; color: var(--color-muted); font-size: 0.90625rem; }
+.hw02-page .pipeline p { margin: 0; }
+.hw02-page code { overflow-wrap: anywhere; }
+.hw02-page .table-wrapper { max-width: 100%; overflow-x: auto; margin-top: var(--space-3); }
+.hw02-page table { width: 100%; border-collapse: collapse; font-size: 0.96875rem; line-height: 1.5; }
+.hw02-page .primitives-table { min-width: 34rem; }
+.hw02-page caption { text-align: left; padding-bottom: var(--space-2); font-size: 0.90625rem; }
+.hw02-page :is(th, td) { padding: var(--space-3); border-bottom: var(--border); text-align: left; vertical-align: top; }
+.hw02-page th { font-weight: 600; }
+.hw02-page thead { background: var(--color-surface); }
+.hw02-page .table-wrapper + p { margin-top: var(--space-4); }
+.hw02-page .experiment { padding: var(--space-5); border: var(--border); border-radius: var(--radius-large); background: var(--color-raised); margin-block: var(--space-4); }
+.hw02-page .experiment h3 { margin-top: 0; }
+.hw02-page label { display: block; margin-block: var(--space-4) var(--space-2); font-size: var(--text-small); font-weight: 600; }
+.hw02-page select { width: 100%; max-width: 25rem; min-height: 2.75rem; padding: var(--space-3); border: 1px solid var(--color-muted); border-radius: var(--radius-small); color: var(--color-text); background: var(--color-background); font: inherit; }
+.hw02-page .field-help { margin-top: var(--space-2); color: var(--color-muted); font-size: 0.875rem; }
+.hw02-page .results { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); margin-block: var(--space-5); }
+.hw02-page .results dt { color: var(--color-muted); font-size: var(--text-small); }
+.hw02-page .results dd { margin: var(--space-1) 0 0; font-weight: 600; }
+.hw02-page .experiment-status { font-size: var(--text-small); padding-block: var(--space-3); border-top: var(--border); }
+.hw02-page .addresses { margin-block: var(--space-4); }
+.hw02-page .addresses dt { color: var(--color-muted); font-size: var(--text-small); }
+.hw02-page .addresses dd { margin: var(--space-1) 0 var(--space-3); overflow-wrap: anywhere; }
+.hw02-page details { margin-top: var(--space-5); padding: var(--space-3) var(--space-4); border: var(--border); border-radius: var(--radius-small); }
+.hw02-page summary { cursor: pointer; color: var(--color-accent); font-size: var(--text-small); }
+.hw02-page details > p { margin-top: var(--space-3); }
+.hw02-page .source-figure { margin: var(--space-4) 0 0; }
+.hw02-page figcaption { margin-bottom: var(--space-2); font-size: 0.90625rem; }
+.hw02-page pre { font-size: 0.90625rem; padding: var(--space-4); line-height: 1.55; }
+.hw02-page pre code { font-size: inherit; overflow-wrap: normal; }
+.hw02-page .source-toolbar { padding: var(--space-3) var(--space-4); }
+.hw02-page :is(.source-status, .copy-button) { font-size: 0.875rem; }
+.hw02-page .source-link { font-size: var(--text-small); }
+.hw02-page .verification-note { margin-top: var(--space-3); font-size: var(--text-small); }
+.hw02-page .references { padding-left: var(--space-5); font-size: var(--text-small); }
+.hw02-page .references li + li { margin-top: var(--space-2); }
+.hw02-page .references a { overflow-wrap: anywhere; }
+@media (max-width: 40rem) {
+  .hw02-page .hw02-report { width: calc(100% - 2.5rem); }
+  .hw02-page h2 { font-size: 1.5rem; }
+  .hw02-page .pipeline li { grid-template-columns: 1fr; gap: var(--space-2); }
+  .hw02-page .stage-name { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2); }
+  .hw02-page .stage-name h3 { margin: 0; }
+  .hw02-page .stage-name span { flex-basis: 100%; }
+  .hw02-page .experiment { padding: var(--space-4); }
+  .hw02-page .results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hw02-page :is(th, td) { padding: var(--space-2); }
+}
+@media print {
+  .hw02-page .hw02-report { width: 100%; }
+  .hw02-page .contents-nav { display: none; }
+  .hw02-page .pipeline li { break-inside: avoid; }
+}
