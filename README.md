@@ -2,7 +2,7 @@
 
 An independent coursework website for the Statistics course in an MSc in Cybersecurity. Each homework has a standalone page combining the problem, mathematical reasoning, original JavaScript implementation, interactive demonstration, verification, and sources.
 
-**Current state: Homework 01 published; Homework 02 complete locally.** The site is [Statistics Lab](https://alopes0905.github.io/statistics-msc/), with [Homework 01](https://alopes0905.github.io/statistics-msc/homework-01/) at its own URL. The reusable template remains outside the publishing directory.
+**Current state: Homework 01 and Homework 02 published.** The site is [Statistics Lab](https://alopes0905.github.io/statistics-msc/), with [Homework 01](https://alopes0905.github.io/statistics-msc/homework-01/) and [Homework 02](https://alopes0905.github.io/statistics-msc/homework-02/) at their own URLs. The reusable template remains outside the publishing directory.
 
 Homework 01 implements the professor’s [elliptic-curve assignment](https://github.com/alopes0905/statistics-msc/issues/1): repeated point addition on y² = x³ + 7 (mod 17), valid base/scalar selection, intermediate multiples, and a manual discrete SVG visualization. Its exhaustive subgroup experiment covers coordinate and bit frequencies, Pearson correlations, and adjacent-scalar Hamming distances, with explicit limitations. For G = (1, 5), k = 6, the calculated **toy public key is (5, 8)**; G has order 9, while the full curve has 18 elements.
 
@@ -12,7 +12,7 @@ Local page: `/homework-01/` (or `/statistics-msc/homework-01/` with the project-
 
 Homework 02, **From Mnemonic to Ethereum Address**, implements the professor's [wallet derivation assignment](https://github.com/alopes0905/statistics-msc/issues/2). Its four sections explain BIP-39, BIP-32/BIP-44, secp256k1, Keccak-256, EIP-55, their distinct roles, and historical context. Two original JavaScript demonstrations calculate mnemonic entropy/checksum layouts and count character categories in official EIP-55 examples. The page does not generate wallets or verify arbitrary address checksums.
 
-Local page: `/homework-02/` (or `/statistics-msc/homework-02/` with the project-subpath preview). Publication URL: [Homework 02](https://alopes0905.github.io/statistics-msc/homework-02/), available after pushing and successful GitHub Pages deployment; publication has not yet been verified. The existing `npm run check` and `npm test` commands include Homework 02.
+Local page: `/homework-02/` (or `/statistics-msc/homework-02/` with the project-subpath preview). Published page: [Homework 02](https://alopes0905.github.io/statistics-msc/homework-02/). GitHub Pages deployment has completed; browser verification is recorded separately from publication. The existing `npm run check` and `npm test` commands include Homework 02.
 
 ## Academic constraints
 

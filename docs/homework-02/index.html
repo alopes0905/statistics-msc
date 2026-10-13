@@ -16,17 +16,22 @@
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header"><div class="container header-inner">
       <a class="brand" href="../" aria-label="Statistics Lab home"><span class="brand-mark" aria-hidden="true">Σ</span><span>Statistics Lab<span class="brand-context">MSc in Cybersecurity</span></span></a>
-      <nav class="main-nav" aria-label="Main navigation"><a href="../#homework">Homework</a><a href="#exploration">Experiments</a><a href="#references">References</a></nav>
     </div></header>
 
-    <main id="main" class="hw02-report">
+    <main id="main" class="container hw02-report">
       <header class="homework-header">
-        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../">Statistics Lab</a><span aria-hidden="true">/</span><span aria-current="page">Homework 02</span></nav>
+        <a class="back-link" href="../#homework"><span aria-hidden="true">←</span> All homeworks</a>
+        <p class="eyebrow">Homework 02</p>
         <h1>From Mnemonic to Ethereum Address</h1>
         <p>Wallet key derivation, public-key cryptography, hashing, and checksum encoding, examined through their statistical properties.</p>
-        <nav class="contents-nav" aria-label="Page contents"><a href="#pipeline">01 · Pipeline</a><a href="#primitives">02 · Primitives</a><a href="#exploration">03 · Statistics</a><a href="#context">04 · Context &amp; conclusions</a></nav>
       </header>
 
+      <div class="homework-layout">
+        <nav class="contents-nav" aria-label="Page contents">
+          <p class="eyebrow">On this page</p>
+          <ol><li><a href="#pipeline">01 · Wallet pipeline</a></li><li><a href="#primitives">02 · Cryptographic primitives</a></li><li><a href="#exploration">03 · Statistical exploration</a></li><li><a href="#context">04 · History &amp; conclusions</a></li><li><a class="references-link" href="#references">References</a></li></ol>
+        </nav>
+        <article class="homework-article" aria-label="Homework 02 report">
       <section id="pipeline" aria-labelledby="pipeline-title">
         <h2 id="pipeline-title"><span class="section-number" aria-hidden="true">01</span> From mnemonic to Ethereum address</h2>
         <p>A conventional externally owned account (EOA) starts with unpredictable entropy. The following ordered pipeline connects the six technologies in the <a href="https://github.com/alopes0905/statistics-msc/issues/2">assignment</a>; the page explains these operations rather than executing wallet derivation.</p>
@@ -143,6 +148,8 @@
           <li><a href="https://dspace.mit.edu/entities/publication/a2e09fea-6f05-48a5-9ce9-5073dfcde567">RSA's 1977 MIT report</a> · <a href="https://people.csail.mit.edu/rivest/pubs/RSA78.pdf">1978 journal article</a></li>
         </ul>
       </section>
+        </article>
+      </div>
     </main>
     <footer class="site-footer"><div class="container footer-inner"><div><strong>Statistics Lab</strong><p>Homework 02 · MSc in Cybersecurity</p></div><nav aria-label="Footer navigation"><a href="../#homework">All homework</a><a href="#top">Back to top <span aria-hidden="true">↑</span></a></nav></div></footer>
   </body>

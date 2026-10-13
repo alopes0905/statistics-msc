@@ -1,18 +1,22 @@
-/* Homework-only typography; shared pages, header and footer retain their styles. */
+/* Homework-scoped typography and layout; shared assets remain unchanged. */
+.hw01-page .header-inner { min-height: 5rem; padding-block: var(--space-4); flex-direction: row; align-items: center; }
 .homework-page { --text-small: 0.9375rem; font-size: 1.0625rem; line-height: 1.6; }
 .homework-page :is(h1, h2) { font-family: var(--font-body); font-weight: 650; line-height: 1.25; letter-spacing: -0.02em; }
 .homework-page .eyebrow { font-size: 0.78125rem; letter-spacing: 0.08em; }
 .homework-page p + p { margin-top: var(--space-3); }
-.homework-page .homework-header { padding-block: var(--space-5); border-bottom: var(--border); }
-.homework-page .breadcrumb { display: flex; flex-wrap: wrap; gap: var(--space-3); color: var(--color-muted); font-size: var(--text-small); margin-bottom: var(--space-4); }
+.homework-page .homework-header { max-width: 70rem; margin-inline: auto; padding-block: var(--space-5); border-bottom: var(--border); }
+.homework-page .back-link { display: inline-flex; align-items: center; gap: var(--space-2); min-height: 2.75rem; padding: var(--space-2) var(--space-3); margin-bottom: var(--space-4); border: var(--border); border-radius: var(--radius-small); font-size: 0.9375rem; line-height: 1.4; text-decoration: none; }
+.homework-page .back-link:hover { border-color: var(--color-accent); background: var(--color-accent-soft); }
 .homework-page h1 { font-size: clamp(1.875rem, 3vw, 2.25rem); margin-top: var(--space-2); max-width: 52rem; }
 .homework-page .homework-header > p { margin-top: var(--space-3); max-width: var(--reading-width); }
-.homework-page .homework-layout { display: grid; grid-template-columns: 12rem minmax(0, 1fr); gap: var(--space-6); padding-block: var(--space-6); }
-.homework-page .contents-nav { align-self: start; position: sticky; top: var(--space-6); }
+.homework-page .homework-layout { display: grid; grid-template-columns: 12rem minmax(0, 1fr); gap: var(--space-6); max-width: 70rem; margin-inline: auto; padding-block: var(--space-6); }
+.homework-page .contents-nav { align-self: start; position: sticky; top: var(--space-6); max-height: calc(100svh - 4rem); overflow-y: auto; padding: var(--space-2); border-right: var(--border); }
 .homework-page .contents-nav ol { margin: var(--space-3) 0 0; padding: 0; list-style: none; }
-.homework-page .contents-nav a { display: block; padding: var(--space-3) 0; font-size: var(--text-small); text-decoration: none; border-bottom: var(--border); }
+.homework-page .contents-nav a { display: block; padding: var(--space-3) 0; font-size: var(--text-small); line-height: 1.5; text-decoration: none; border-bottom: var(--border); }
 .homework-page .contents-nav a:hover { text-decoration: underline; }
-.homework-page .homework-article { min-width: 0; max-width: var(--reading-width); }
+.homework-page .contents-nav .references-link { font-size: 0.875rem; color: var(--color-muted); }
+.homework-page .homework-article { min-width: 0; max-width: 56rem; }
+.homework-page .homework-article :is(section, details) > p { max-width: var(--reading-width); }
 .homework-page .homework-section { margin-bottom: var(--space-6); padding-bottom: var(--space-6); border-bottom: var(--border); scroll-margin-top: var(--space-5); }
 .homework-page h2 { display: flex; align-items: baseline; gap: var(--space-3); font-size: 1.625rem; margin-bottom: var(--space-4); }
 .homework-page .section-number { flex: 0 0 auto; }
@@ -75,7 +79,7 @@
 @media (prefers-color-scheme: dark) { .homework-page .plot-current { stroke: #e5bb78; } }
 @media (max-width: 56rem) {
   .homework-page .homework-layout { grid-template-columns: 1fr; gap: var(--space-5); }
-  .homework-page .contents-nav { position: static; }
+  .homework-page .contents-nav { position: static; max-height: none; overflow: visible; padding: 0; border-right: 0; }
   .homework-page .contents-nav ol { display: flex; flex-wrap: wrap; gap: 0 var(--space-4); }
 }
 @media (max-width: 40rem) {
