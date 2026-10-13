@@ -52,6 +52,15 @@
           <tbody><tr><th scope="row"><code>m</code></th><td>Master root</td></tr><tr><th scope="row"><code>44'</code></th><td>BIP-44 purpose</td></tr><tr><th scope="row"><code>60'</code></th><td>Ethereum coin type (<a href="https://github.com/satoshilabs/slips/blob/master/slip-0044.md">SLIP-0044</a>)</td></tr><tr><th scope="row"><code>0'</code></th><td>First account</td></tr><tr><th scope="row"><code>0</code></th><td>External chain</td></tr><tr><th scope="row"><code>0</code></th><td>First address index</td></tr></tbody>
         </table></div>
         <p>The apostrophes mark hardened derivation; the last two components are non-hardened. Ethereum wallets can use other paths and account conventions, so the path matters when reproducing an account.</p>
+        <h3 id="wallet-example-title">Worked example: one mnemonic, one address</h3>
+        <dl class="addresses" aria-labelledby="wallet-example-title">
+          <dt>Public test mnemonic · English, 12 words</dt><dd><code>abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about</code></dd>
+          <dt>BIP-39 passphrase</dt><dd>Empty string (<code>""</code>)</dd>
+          <dt>Derivation path</dt><dd><code>m/44'/60'/0'/0/0</code> · first account, external chain, address index 0</dd>
+          <dt>Derived Ethereum address · EIP-55</dt><dd><code>0x9858EfFD232B4033E47d90003D41EC34EcaEda94</code></dd>
+        </dl>
+        <p>This mnemonic deterministically produces the displayed EOA address with this passphrase and path. The address is a <a href="https://github.com/hdwallet-io/hdwallet.js#clients">published wallet-derivation example</a>, not an official EIP-55 test vector or a value calculated by this webpage.</p>
+        <p class="field-help">This publicly known test mnemonic must never be used to secure real cryptocurrency.</p>
       </section>
 
       <section id="primitives" aria-labelledby="primitives-title">
@@ -102,7 +111,12 @@
           <dl class="addresses"><dt>Official checksummed address</dt><dd><code id="checksummed-address">—</code></dd><dt>Same address, lowercase</dt><dd><code id="lowercase-address">—</code></dd></dl>
           <dl class="results"><div><dt>Hexadecimal characters</dt><dd id="hex-count">—</dd></div><div><dt>Digits</dt><dd id="digit-count">—</dd></div><div><dt>Alphabetic characters</dt><dd id="alphabetic-count">—</dd></div><div><dt>Uppercase letters</dt><dd id="uppercase-count">—</dd></div><div><dt>Lowercase letters</dt><dd id="lowercase-count">—</dd></div></dl>
           <p class="experiment-status" id="address-status" role="status" aria-live="polite" aria-atomic="true">JavaScript is required for this calculation.</p>
-          <p>Digits have no case: digits + uppercase + lowercase = 40, while uppercase + lowercase = alphabetic characters. Only the letter positions can carry case information. With uniform hexadecimal characters, their expected number is <code>40 × 6/16 = 15</code>. EIP-55 reports about <strong>15 check bits on average</strong> and <strong>0.0247% accidental acceptance</strong> under its mistyping model. Selected fixtures are descriptive examples, not a representative statistical sample.</p>
+          <p>Digits have no case: digits + uppercase + lowercase = 40, while uppercase + lowercase = alphabetic characters. Only the letter positions can carry case information.</p>
+          <p>For independent, uniformly distributed hexadecimal characters, let L count the letters (six of sixteen symbols):</p>
+          <p><code>L ∼ Binomial(40, 6/16)</code><br><code>E[L] = 15</code></p>
+          <p>In an idealized random-case acceptance model, the hash-dependent capitalization bits are independent fair bits, so acceptance conditional on L has probability <code>2<sup>−L</sup></code>. Averaging over L gives:</p>
+          <p><code>P(accepted) = E[2<sup>−L</sup>] = (13/16)<sup>40</sup> ≈ 0.0247%</code></p>
+          <p>The <strong>15 average check positions</strong> vary between addresses, so averaging acceptance differs from substituting the mean: <code>2<sup>−15</sup> ≈ 0.00305%</code> underestimates it. The formula is exact under this model and agrees with <a href="https://eips.ethereum.org/EIPS/eip-55#rationale">EIP-55's reported approximate rate</a>; it is not a guarantee for every transcription error. Selected fixtures are descriptive examples, not a representative statistical sample.</p>
         </div>
 
         <h3>What the results establish</h3>
@@ -144,6 +158,7 @@
           <li><a href="https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki">BIP-39</a> · <a href="https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki">BIP-32</a> · <a href="https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki">BIP-44</a> · <a href="https://github.com/satoshilabs/slips/blob/master/slip-0044.md">SLIP-0044</a></li>
           <li><a href="https://www.secg.org/sec2-v2.pdf">SEC 2, §2.4.1</a> · <a href="https://ethereum.github.io/yellowpaper/paper.pdf#page=26">Ethereum Yellow Paper, Appendix F</a> · <a href="https://ethereum.org/en/developers/docs/accounts/">Ethereum accounts</a></li>
           <li><a href="https://eips.ethereum.org/EIPS/eip-55">EIP-55 specification and test vectors</a></li>
+          <li><a href="https://github.com/hdwallet-io/hdwallet.js#clients">hdwallet.js</a> · <a href="https://github.com/hdwallet-io/python-hdwallet#clients">python-hdwallet</a> · published mnemonic/path/address examples</li>
           <li><a href="https://csrc.nist.gov/pubs/fips/180-2/final">NIST FIPS 180-2</a> · <a href="https://csrc.nist.gov/pubs/fips/202/final">NIST FIPS 202</a> · <a href="https://keccak.team/keccak_specs_summary.html">Keccak team specification summary</a></li>
           <li><a href="https://dspace.mit.edu/entities/publication/a2e09fea-6f05-48a5-9ce9-5073dfcde567">RSA's 1977 MIT report</a> · <a href="https://people.csail.mit.edu/rivest/pubs/RSA78.pdf">1978 journal article</a></li>
         </ul>
