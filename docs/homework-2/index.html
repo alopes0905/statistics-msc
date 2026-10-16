@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Homework 2: secp256k1 hybrid encryption, Caesar encryption, corpus-based statistical cryptanalysis, and recovery of a deliberately restricted ECC private key.">
+    <meta name="color-scheme" content="light dark">
+    <title>Homework 2 · ECC Encryption, Caesar Cipher &amp; Cryptanalysis · Statistics Lab</title>
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="./style.css">
+    <script type="module" src="../assets/js/site.js"></script>
+    <script type="module" src="./js/app.js"></script>
+  </head>
+  <body id="top" class="hw2-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header"><div class="container header-inner">
+      <a class="brand" href="../" aria-label="Statistics Lab home"><span class="brand-mark" aria-hidden="true">Σ</span><span>Statistics Lab<span class="brand-context">MSc in Cybersecurity</span></span></a>
+    </div></header>
+    <main id="main" class="container hw2-report">
+      <header class="homework-header">
+        <a class="back-link" href="../#homework"><span aria-hidden="true">←</span> All homeworks</a>
+        <p class="eyebrow">Homework 2</p>
+        <h1>ECC Encryption, Caesar Cipher &amp; Cryptanalysis</h1>
+        <p>One message, two encryption schemes, and two attacks: English letter frequencies reveal a Caesar shift; a restricted scalar range exposes an ECC private key.</p>
+      </header>
+      <div class="homework-layout">
+        <nav class="contents-nav" aria-label="Page contents">
+          <p class="eyebrow">On this page</p>
+          <ol><li><a href="#encryption">01 · Encryption &amp; decryption</a></li><li><a href="#comparison">02 · Comparing the schemes</a></li><li><a href="#cryptanalysis">03 · Caesar cryptanalysis</a></li><li><a href="#restricted-attack">04 · Restricted-key ECC attack</a></li><li><a class="references-link" href="#references">References</a></li></ol>
+        </nav>
+        <article class="homework-article" aria-label="Homework 2 report">
+          <section id="encryption" aria-labelledby="encryption-title">
+            <h2 id="encryption-title"><span class="section-number" aria-hidden="true">01</span> Encryption and decryption</h2>
+            <p><a href="../homework-01/#foundations">Homework 1.1</a> used y² = x³ + 7 over F<sub>17</sub>. Here the arithmetic uses <strong>authentic secp256k1</strong>: the same curve equation over the much larger prime field with <code>p = 2<sup>256</sup> − 2<sup>32</sup> − 977</code>, the generator G and prime order n from <a href="https://www.secg.org/sec2-v2.pdf#page=13">SEC 2, §2.4.1</a>, and cofactor 1. Coordinates and scalars use exact JavaScript BigInt arithmetic.</p>
+            <p>Point multiplication establishes a shared secret. It does not directly encrypt text. This <strong>educational ECIES-like hybrid</strong> combines ECDH, HKDF-SHA-256, and AES-256-GCM. The receiver deliberately uses <code>1 ≤ d ≤ K</code>, with defaults <code>d = 37</code> and <code>K = 256</code>. This tiny private-key range makes the complete demonstration insecure.</p>
+            <ol class="plain-steps">
+              <li><strong>Receiver:</strong> keep private scalar d and publish <code>Q = dG</code>. Here d is exposed for teaching.</li>
+              <li><strong>Sender:</strong> encode the message as UTF-8; securely sample a fresh ephemeral <code>r ∈ {1, …, n − 1}</code>; compute <code>R = rG</code> and <code>S = rQ</code>.</li>
+              <li><strong>Encrypt:</strong> HKDF derives a 256-bit AES key from S, a fresh 32-byte salt, and a versioned context binding R and Q. AES-GCM uses a fresh 12-byte IV and a 16-byte authentication tag.</li>
+              <li><strong>Transmit:</strong> version, R, salt, IV, and authenticated ciphertext. Each point is <code>04 || x[32 bytes] || y[32 bytes]</code>; the ephemeral secret r is never included.</li>
+              <li><strong>Decrypt:</strong> validate the payload and R, compute <code>S′ = dR</code>, derive the same AES key, verify the tag, and decode UTF-8. A wrong key or altered authenticated data is rejected.</li>
+            </ol>
+            <p><code>rQ = r(dG) = d(rG) = dR</code> explains the shared secret. The protocol label, both public keys, salt, and IV are bound through key derivation and authenticated data. AES-GCM detects tampering under the derived key; it does not establish the sender’s identity, since anyone with Q can encrypt.</p>
+            <label for="message">Original message · shared by both demonstrations</label>
+            <textarea id="message" rows="2" maxlength="4096" aria-describedby="message-help" data-demo-control>MEET ME AT NOON</textarea>
+            <p class="field-help" id="message-help">At most 4,096 UTF-8 bytes. Empty text, spaces, punctuation, and well-formed Unicode are supported by the hybrid scheme. Changing this message clears both demonstrations.</p>
+            <noscript><p>JavaScript is required for the demonstrations. The explanations, measured experiment table, and complete source links remain readable.</p></noscript>
+
+            <div class="experiment">
+              <h3>ECC-based hybrid demonstration</h3>
+              <div class="input-grid">
+                <div><label for="receiver-key">Private scalar d · deliberately exposed</label><input id="receiver-key" type="text" inputmode="numeric" value="37" aria-describedby="key-help" data-demo-control></div>
+                <div><label for="key-space">Restricted key-space size K</label><input id="key-space" type="text" inputmode="numeric" value="256" aria-describedby="key-help" data-demo-control></div>
+              </div>
+              <p class="field-help" id="key-help">Integers only: 1 ≤ d ≤ K ≤ 4,096. The sender’s ephemeral scalar still uses the full cryptographic domain. Changing d or K clears the ciphertext.</p>
+              <p id="public-key-summary">The receiver’s public key will appear here.</p>
+              <details><summary>Complete receiver public key Q</summary><pre class="payload-output"><code id="receiver-public">JavaScript is required to calculate Q.</code></pre></details>
+              <div class="demo-actions"><button id="ecc-encrypt" class="button button-primary" type="button" disabled data-demo-control>Encrypt with ECC hybrid</button><button id="ecc-decrypt" class="button button-secondary" type="button" disabled data-demo-control>Decrypt and authenticate</button></div>
+              <p id="ecc-status" role="status" aria-live="polite" aria-atomic="true">Loading the encryption demonstration…</p>
+              <div id="ecc-result" hidden>
+                <p id="ecc-summary"></p>
+                <details><summary>Inspect the self-contained ciphertext payload</summary><pre class="payload-output"><code id="ecc-payload"></code></pre></details>
+                <dl class="addresses"><dt>Recovered UTF-8 plaintext</dt><dd id="ecc-plaintext" class="text-output">—</dd></dl>
+              </div>
+            </div>
+            <p>The source uses extended Euclid for inverses, affine addition with identity/inverse handling, and double-and-add multiplication. Secure randomness comes from <code>crypto.getRandomValues</code>; HKDF and AES-GCM use native <a href="https://www.w3.org/TR/webcrypto/">Web Crypto</a>. HTTPS or localhost is required. This is neither a production library nor a claim of standard ECIES conformance; its BigInt arithmetic is not constant-time.</p>
+            <details><summary>View hybrid encryption and decryption code</summary>
+              <figure class="source-figure"><figcaption id="hybrid-caption">Actual ECDH / HKDF / AES-GCM orchestration</figcaption><div class="source-viewer" data-source="./js/hybrid.js" data-region="hybrid-encryption"><div class="source-toolbar"><strong>encryptMessage / decryptMessage</strong><button class="copy-button" type="button" data-copy-source disabled aria-label="Copy hybrid encryption code">Copy code</button></div><pre tabindex="0" aria-labelledby="hybrid-caption"><code data-source-code>Source preview requires JavaScript.</code></pre><p class="source-status" role="status" aria-live="polite" data-source-status>The excerpt will load from the original file.</p></div></figure>
+              <a class="source-link" href="./js/hybrid.js">Complete hybrid implementation</a> · <a class="source-link" href="./js/ecc.js">Complete secp256k1 arithmetic and parameters</a>
+            </details>
+
+            <div class="experiment">
+              <h3>Caesar demonstration</h3>
+              <p>The alphabet is ASCII A–Z, indexed 0–25; lowercase letters use the same shift while preserving case. All other characters pass through unchanged. For shift k, <code>C = (P + k) mod 26</code> and <code>P = (C − k) mod 26</code>. P and C here denote letter indices.</p>
+              <label for="caesar-shift">Caesar shift k · 0–25</label><input id="caesar-shift" type="text" inputmode="numeric" value="3" data-demo-control>
+              <div class="demo-actions"><button id="caesar-encrypt" class="button button-primary" type="button" disabled data-demo-control>Encrypt with Caesar</button><button id="caesar-decrypt" class="button button-secondary" type="button" disabled data-demo-control>Decrypt Caesar</button></div>
+              <p id="caesar-status" role="status" aria-live="polite" aria-atomic="true">The default shift 3 maps MEET ME AT NOON to PHHW PH DW QRRQ.</p>
+              <div id="caesar-result" hidden><dl class="addresses"><dt>Caesar ciphertext</dt><dd id="caesar-ciphertext" class="text-output">—</dd><dt>Recovered plaintext</dt><dd id="caesar-plaintext" class="text-output">—</dd></dl></div>
+            </div>
+            <details><summary>View Caesar encryption and decryption code</summary>
+              <figure class="source-figure"><figcaption id="caesar-caption">ASCII alphabet rotation with case preservation</figcaption><div class="source-viewer" data-source="./js/caesar.js" data-region="caesar"><div class="source-toolbar"><strong>caesarEncrypt / caesarDecrypt</strong><button class="copy-button" type="button" data-copy-source disabled aria-label="Copy Caesar code">Copy code</button></div><pre tabindex="0" aria-labelledby="caesar-caption"><code data-source-code>Source preview requires JavaScript.</code></pre><p class="source-status" role="status" aria-live="polite" data-source-status>The excerpt will load from the original file.</p></div></figure>
+              <a class="source-link" href="./js/caesar.js">Complete Caesar implementation</a>
+            </details>
+          </section>
+
+          <section id="comparison" aria-labelledby="comparison-title">
+            <h2 id="comparison-title"><span class="section-number" aria-hidden="true">02</span> Comparing the schemes</h2>
+            <p>Caesar is a symmetric substitution cipher. The hybrid uses a public/private key pair to establish the symmetric key that actually encrypts the message. The following properties describe these particular implementations.</p>
+            <p class="field-help" id="comparison-help">On narrow screens, the comparison table scrolls within its container.</p>
+            <div class="table-wrapper" tabindex="0" aria-labelledby="comparison-caption" aria-describedby="comparison-help"><table class="comparison-table">
+              <caption id="comparison-caption">Procedures, key spaces, and statistical behavior</caption>
+              <thead><tr><th scope="col">Property</th><th scope="col">Caesar</th><th scope="col">Educational ECC hybrid</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Encryption</th><td>Add k to each letter index modulo 26.</td><td>ECDH → HKDF → AES-GCM on UTF-8 bytes.</td></tr>
+                <tr><th scope="row">Decryption</th><td>Subtract the same shared shift.</td><td>Use dR to derive the AES key; authenticate and decrypt.</td></tr>
+                <tr><th scope="row">Keys</th><td>One shared secret k.</td><td>Public Q, private d; fresh secret r at the sender.</td></tr>
+                <tr><th scope="row">Key space</th><td>26 shifts, including zero.</td><td>Receiver: K choices (256 by default); full secp256k1: n − 1. Ephemeral r always has n − 1 choices.</td></tr>
+                <tr><th scope="row">Repeat encryption</th><td>Deterministic for fixed k.</td><td>Fresh r, salt, and IV generally give a different payload.</td></tr>
+                <tr><th scope="row">Repeated letters</th><td>Equal letters retain equality.</td><td>No fixed letter substitution in the encrypted bytes.</td></tr>
+                <tr><th scope="row">Statistical leakage</th><td>Permutes frequencies; exposes word spacing and repeated patterns.</td><td>Secure use aims to conceal content patterns; ciphertext length remains visible.</td></tr>
+                <tr><th scope="row">Ciphertext-only recovery</th><td>Language frequencies can rank the 26 keys.</td><td>No analogous English-frequency shortcut; this toy receiver key is enumerable from public Q.</td></tr>
+                <tr><th scope="row">Computation</th><td>O(m) for m characters; 26 candidate decryptions cost O(26m).</td><td>O(log n) group operations for full-domain scalar multiplication, plus symmetric work linear in message bytes.</td></tr>
+                <tr><th scope="row">Principal weakness here</th><td>Tiny key space and preserved language structure; no authentication.</td><td>Intentionally restricted d, despite strong component primitives.</td></tr>
+              </tbody>
+            </table></div>
+            <p>For Caesar, a frequency histogram is shifted rather than flattened. The hybrid’s ciphertext should not be judged secure merely because it looks irregular: key-space analysis already breaks this configuration. AES-GCM’s tag protects integrity under its key, while ECDH and HKDF establish that key.</p>
+          </section>
+
+          <section id="cryptanalysis" aria-labelledby="cryptanalysis-title">
+            <h2 id="cryptanalysis-title"><span class="section-number" aria-hidden="true">03</span> Statistical Caesar cryptanalysis</h2>
+            <p>The English model is learned from Lewis Carroll’s <a href="https://www.gutenberg.org/ebooks/11">Alice’s Adventures in Wonderland</a>; evaluation uses the distinct book <a href="https://www.gutenberg.org/ebooks/12">Through the Looking-Glass</a>. Both are public-domain texts in the USA, obtained from documented GITenberg archives and bundled locally with their notices. The publisher’s header and license footer are excluded from counting. <a href="./data/README.md">Corpus provenance and checksums</a> · <a href="./data/alice.txt">training text and license</a> · <a href="./data/looking-glass.txt">evaluation text and license</a>.</p>
+            <p id="corpus-summary">Training: 107,785 ASCII letters. Held-out evaluation: 119,699 letters. No evaluation passage contributes to the training counts.</p>
+            <p>For each letter i, count its training occurrences and divide by the training total: <code>p<sub>i</sub> = count<sub>i</sub> / N<sub>train</sub></code>. Case is folded only for ASCII letters. This model uses single-letter frequencies and ignores word order and punctuation.</p>
+            <details><summary>Learned reference letter frequencies</summary><div class="table-wrapper" tabindex="0" aria-labelledby="frequencies-caption"><table><caption id="frequencies-caption">Counts and relative frequencies computed from the training book</caption><thead><tr><th scope="col">Letter</th><th scope="col">Count</th><th scope="col">Frequency</th></tr></thead><tbody id="frequency-rows"><tr><td colspan="3">Loading the local training corpus…</td></tr></tbody></table></div></details>
+            <h3>Rank the candidate plaintexts</h3>
+            <p>Decrypt the ciphertext under each k from 0 to 25, count the candidate’s N letters, and compare observed counts O<sub>i</sub> with <code>E<sub>i</sub> = Np<sub>i</sub></code>. The key with the smallest Pearson score is the closest fit:</p>
+            <p><code>χ²(k) = Σ<sub>i=A</sub><sup>Z</sup> (O<sub>i</sub>(k) − E<sub>i</sub>)² / E<sub>i</sub></code></p>
+            <p>This is a ranking score, not a confidence percentage or a formal goodness-of-fit test. In short samples, several expected counts are small; meaningful ranking can still fail. Scores equal within floating-point tolerance are flagged as ties and ordered by key; no-letter inputs provide no evidence.</p>
+            <div class="experiment">
+              <h3>Recover a Caesar shift</h3>
+              <label for="attack-text">Caesar ciphertext · at most 20,000 characters</label><textarea id="attack-text" rows="4" maxlength="20000" spellcheck="false" aria-describedby="sample-description"></textarea>
+              <p class="field-help" id="sample-description">A held-out English example will load with the reference corpus. Custom ciphertext needs no known plaintext.</p>
+              <div class="demo-actions"><button id="held-out-example" class="button button-secondary" type="button" disabled>Load held-out sample</button><button id="use-caesar" class="button button-secondary" type="button" disabled>Use my Caesar ciphertext</button><button id="statistical-attack" class="button button-primary" type="button" disabled>Recover the shift</button></div>
+              <p id="statistical-status" role="status" aria-live="polite" aria-atomic="true">Loading the local English corpus…</p>
+              <div id="statistical-result" hidden>
+                <dl class="addresses"><dt>Predicted shift</dt><dd id="predicted-shift">—</dd><dt>Best-scoring plaintext</dt><dd id="statistical-plaintext" class="text-output">—</dd></dl>
+                <div class="table-wrapper"><table><caption>Three smallest scores; lower is better</caption><thead><tr><th scope="col">Candidate shift</th><th scope="col">χ² score</th></tr></thead><tbody id="candidate-rows"></tbody></table></div>
+              </div>
+            </div>
+            <details><summary>View chi-square key recovery code</summary>
+              <figure class="source-figure"><figcaption id="chi-caption">Frequency scoring and all 26 candidate decryptions</figcaption><div class="source-viewer" data-source="./js/cryptanalysis.js" data-region="chi-square"><div class="source-toolbar"><strong>chiSquare / recoverCaesar</strong><button class="copy-button" type="button" data-copy-source disabled aria-label="Copy statistical cryptanalysis code">Copy code</button></div><pre tabindex="0" aria-labelledby="chi-caption"><code data-source-code>Source preview requires JavaScript.</code></pre><p class="source-status" role="status" aria-live="polite" data-source-status>The excerpt will load from the original file.</p></div></figure>
+              <a class="source-link" href="./js/cryptanalysis.js">Complete frequency analysis and experiment source</a>
+            </details>
+            <h3>Measured effect of ciphertext length</h3>
+            <p>For each length, take 20 evenly spaced, nonoverlapping windows from the held-out book’s ASCII letter stream. Encrypt each under all 26 shifts, recover a key, and compare with the true key <em>outside</em> the recovery function. Tied predictions count as unsuccessful. Sampling is deterministic.</p>
+            <div class="table-wrapper" tabindex="0" aria-labelledby="length-caption"><table><caption id="length-caption">Recorded local experiment · 20 passages × 26 shifts per length; recomputable below</caption><thead><tr><th scope="col">Letters</th><th scope="col">Trials</th><th scope="col">Correct keys</th><th scope="col">Accuracy</th></tr></thead><tbody id="length-results">
+              <tr data-length="20"><th scope="row">20</th><td>520</td><td>494</td><td>95.0%</td></tr>
+              <tr data-length="50"><th scope="row">50</th><td>520</td><td>520</td><td>100.0%</td></tr>
+              <tr data-length="100"><th scope="row">100</th><td>520</td><td>520</td><td>100.0%</td></tr>
+              <tr data-length="300"><th scope="row">300</th><td>520</td><td>520</td><td>100.0%</td></tr>
+              <tr data-length="1000"><th scope="row">1,000</th><td>520</td><td>520</td><td>100.0%</td></tr>
+              <tr data-length="3000"><th scope="row">3,000</th><td>520</td><td>520</td><td>100.0%</td></tr>
+            </tbody></table></div>
+            <div class="demo-actions"><button id="run-experiment" class="button button-primary" type="button" disabled>Run the length experiment</button></div>
+            <p id="experiment-status" role="status" aria-live="polite" aria-atomic="true">Recorded result: 3,094 correct keys out of 3,120 trials; no ties. The button recomputes every trial locally.</p>
+            <p id="observed-failure">Observed 20-letter failure: <code>ATUREDANXIETYFORTHEQ</code> with true shift 0 was ranked as shift 12, giving <code>OHIFSROBLWSHMTCFHVSE</code>.</p>
+            <p>The 20-letter result represents 19 successful passages out of 20. Changing the key rotates the same histogram, so the 520 trials are <strong>not 520 independent language samples</strong>. Different lengths reuse the same held-out book. The two books share an author and vocabulary; this is a reproducible within-author experiment, not an estimate for all English.</p>
+            <p>Short windows fluctuate and may cut across words. Longer windows usually approximate the reference distribution more closely, but accuracy need not increase monotonically or reach 100% on another dataset. Language mismatch, unusual vocabulary, and repetitive text can mislead even long samples. Nonletters contribute no evidence to this model. A large chi-square gap alone is not a calibrated guarantee.</p>
+            <h3>Exhaustive search versus statistical scoring</h3>
+            <p>Exhaustive search lists all 26 possible decryptions but needs a selection criterion. Frequency analysis supplies an automatic language-based ranking; it does not reduce the already tiny key space. N-gram scoring could also use letter pairs or triples to distinguish some short candidates, but is not implemented here. See <a href="https://cacr.uwaterloo.ca/hac/about/chap7.pdf#page=18">Handbook of Applied Cryptography, §7.3</a> for classical substitution ciphers and cryptanalysis.</p>
+          </section>
+
+          <section id="restricted-attack" aria-labelledby="restricted-title">
+            <h2 id="restricted-title"><span class="section-number" aria-hidden="true">04</span> Restricted-key ECC attack</h2>
+            <p>The attacker knows G, public Q, the bound K, and the intercepted payload. Enumerating <code>G, 2G, …, KG</code> by repeated addition finds the candidate d′ for which <code>d′G = Q</code>. This exact public-point equality recovers d without language statistics or known plaintext. The recovered key then computes dR and authenticates/decrypts the actual ciphertext from Section 01.</p>
+            <div class="experiment">
+              <h3>Attack the current encrypted message</h3>
+              <p id="intercept-summary">No intercepted ciphertext yet.</p>
+              <div class="demo-actions"><button id="ecc-attack" class="button button-primary" type="button" disabled data-demo-control>Recover the key and decrypt</button></div>
+              <p id="ecc-attack-status" role="status" aria-live="polite" aria-atomic="true">Encrypt a message in Section 01 to provide the attacker with a public key and ciphertext.</p>
+              <div id="attack-result" hidden><dl class="addresses"><dt>Candidates tested / search space</dt><dd id="attack-tested">—</dd><dt>Recovered private scalar</dt><dd id="attack-key">—</dd><dt>Public-key equality confirmed</dt><dd id="attack-match">—</dd><dt>Authenticated recovered plaintext</dt><dd id="attack-plaintext" class="text-output">—</dd></dl></div>
+            </div>
+            <p>The default key d = 37 is found after exactly 37 comparisons in the range 1–256. The search receives only public information; its function has no parameter for the original private key. Its worst-case cost is K group additions/comparisons and constant search-state memory; it yields periodically to keep the interface responsive.</p>
+            <details><summary>View restricted-key recovery code</summary>
+              <figure class="source-figure"><figcaption id="search-caption">Actual enumeration of public points</figcaption><div class="source-viewer" data-source="./js/ecc.js" data-region="restricted-search"><div class="source-toolbar"><strong>recoverPrivateKey</strong><button class="copy-button" type="button" data-copy-source disabled aria-label="Copy restricted-key attack code">Copy code</button></div><pre tabindex="0" aria-labelledby="search-caption"><code data-source-code>Source preview requires JavaScript.</code></pre><p class="source-status" role="status" aria-live="polite" data-source-status>The excerpt will load from the original file.</p></div></figure>
+              <a class="source-link" href="./js/ecc.js">Complete curve and attack source</a> · <a class="source-link" href="./js/hybrid.js">Recovered-key decryption orchestration</a>
+            </details>
+            <h3>Why properly configured ECC is different</h3>
+            <p>For a uniformly generated secp256k1 private key, <code>1 ≤ d &lt; n</code>, where <code>n = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141</code>. This gives approximately 2<sup>256</sup> possible scalars. Exhaustive search is of that order, but it is not the best generic discrete-logarithm attack: Pollard’s rho takes expected work proportional to √n, approximately <strong>2<sup>128</sup> group operations</strong>, under its random-walk model (<a href="https://cacr.uwaterloo.ca/hac/about/chap3.pdf#page=22">HAC, §3.6.3</a>). Both scales are infeasible with conventional resources. A 256-bit scalar domain therefore corresponds to about 128-bit generic classical group security, not 256-bit security for every attack.</p>
+            <p>Caesar recovery exploits language redundancy and scores candidate plaintexts. This ECC attack exploits the small receiver-key interval and compares public points, so it works equally for English, Unicode, or empty messages. The field remains 256-bit secp256k1 throughout; the range of d is the weakness.</p>
+            <p>Other constructions can fail through predictable or reused ephemeral randomness, weak random generators, invalid public points, missing authentication, or implementation mistakes. These are distinct from the demonstrated small-key attack. This demo validates points and uses secure ephemeral randomness and authenticated encryption, but its exposed keys, restricted range, and variable-time educational arithmetic remain unsuitable for real secrets. Full-system security also depends on the protocol and its implementation.</p>
+            <h3>Conclusions and verification</h3>
+            <p>Correct round trips alone do not establish security. Caesar preserves exploitable language patterns; a sound-looking hybrid still fails when its private-key domain is tiny. The tests compare curve arithmetic and shared secrets with Node/OpenSSL, check authenticated encryption against independent Node primitives, verify all Caesar shifts, and recompute the corpus results. No blockchain connection, wallet, external runtime library, or remote analysis service is used.</p>
+            <h3 id="references">References</h3>
+            <ul class="references">
+              <li>SECG. <a href="https://www.secg.org/sec2-v2.pdf#page=13">SEC 2 v2.0 (2010), §2.4.1</a> — secp256k1 parameters. <a href="https://www.rfc-editor.org/rfc/rfc6090.html#section-3">RFC 6090, §§2–3</a> — elliptic-curve arithmetic.</li>
+              <li>Krawczyk and Eronen. <a href="https://www.rfc-editor.org/rfc/rfc5869">RFC 5869 (2010)</a> — HKDF. NIST. <a href="https://csrc.nist.gov/pubs/sp/800/38/d/final">SP 800-38D (2007)</a> — AES-GCM. W3C. <a href="https://www.w3.org/TR/webcrypto/">Web Cryptography API</a> — native HKDF and AES-GCM interfaces.</li>
+              <li>Menezes, van Oorschot, Vanstone. <em>Handbook of Applied Cryptography</em> (1996/1997), <a href="https://cacr.uwaterloo.ca/hac/about/chap7.pdf">§7.3: classical ciphers</a> and <a href="https://cacr.uwaterloo.ca/hac/about/chap3.pdf#page=21">§3.6.3: Pollard’s rho for discrete logarithms</a>.</li>
+              <li>Lewis Carroll. <a href="https://www.gutenberg.org/ebooks/11">Alice’s Adventures in Wonderland (1865)</a> and <a href="https://www.gutenberg.org/ebooks/12">Through the Looking-Glass (1871)</a>. Project Gutenberg editions, via <a href="https://github.com/GITenberg/Alice-s-Adventures-in-Wonderland_11">GITenberg #11</a> and <a href="https://github.com/GITenberg/Through-the-Looking-Glass_12">#12</a>; full local notices and acquisition details accompany the data.</li>
+            </ul>
+          </section>
+        </article>
+      </div>
+    </main>
+    <footer class="site-footer"><div class="container footer-inner"><div><strong>Statistics Lab</strong><p>Homework 2 · MSc in Cybersecurity</p></div><nav aria-label="Footer navigation"><a href="../#homework">All homework</a><a href="#top">Back to top <span aria-hidden="true">↑</span></a></nav></div></footer>
+  </body>
+</html>

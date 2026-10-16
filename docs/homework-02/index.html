@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Homework 02: the Ethereum mnemonic-to-address pipeline, with BIP-39 entropy calculations and descriptive analysis of official EIP-55 checksum examples.">
+    <meta name="description" content="Homework 1.2: the Ethereum mnemonic-to-address pipeline, with BIP-39 entropy calculations and descriptive analysis of official EIP-55 checksum examples.">
     <meta name="color-scheme" content="light dark">
-    <title>Homework 02 · From Mnemonic to Ethereum Address · Statistics Lab</title>
+    <title>Homework 1.2 · From Mnemonic to Ethereum Address · Statistics Lab</title>
     <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="./style.css">
@@ -21,7 +21,7 @@
     <main id="main" class="container hw02-report">
       <header class="homework-header">
         <a class="back-link" href="../#homework"><span aria-hidden="true">←</span> All homeworks</a>
-        <p class="eyebrow">Homework 02</p>
+        <p class="eyebrow">Homework 1.2</p>
         <h1>From Mnemonic to Ethereum Address</h1>
         <p>Wallet key derivation, public-key cryptography, hashing, and checksum encoding, examined through their statistical properties.</p>
       </header>
@@ -31,7 +31,7 @@
           <p class="eyebrow">On this page</p>
           <ol><li><a href="#pipeline">01 · Wallet pipeline</a></li><li><a href="#primitives">02 · Cryptographic primitives</a></li><li><a href="#exploration">03 · Statistical exploration</a></li><li><a href="#context">04 · History &amp; conclusions</a></li><li><a class="references-link" href="#references">References</a></li></ol>
         </nav>
-        <article class="homework-article" aria-label="Homework 02 report">
+        <article class="homework-article" aria-label="Homework 1.2 report">
       <section id="pipeline" aria-labelledby="pipeline-title">
         <h2 id="pipeline-title"><span class="section-number" aria-hidden="true">01</span> From mnemonic to Ethereum address</h2>
         <p>A conventional externally owned account (EOA) starts with unpredictable entropy. The following ordered pipeline connects the six technologies in the <a href="https://github.com/alopes0905/statistics-msc/issues/2">assignment</a>; the page explains these operations rather than executing wallet derivation.</p>
@@ -40,7 +40,7 @@
           <li><div class="stage-name"><h3>Mnemonic</h3><span>BIP-39</span></div><p>The first ENT/32 bits of SHA-256(entropy) form a checksum. Appending it and splitting into 11-bit indices selects words from a 2048-word list. Thus <strong>128 entropy bits + 4 checksum bits → 12 words</strong>. The extra bits provide redundancy, not randomness. <a href="https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki">BIP-39</a></p></li>
           <li><div class="stage-name"><h3>Seed</h3><span>BIP-39 · PBKDF2</span></div><p>PBKDF2-HMAC-SHA512 uses 2048 iterations: the mnemonic is the password, and <code>"mnemonic" + passphrase</code> is the salt. Both are UTF-8 NFKD-normalized; an absent passphrase is empty. The output is 512 bits (64 bytes), whose unpredictability remains constrained by the original entropy and passphrase.</p></li>
           <li><div class="stage-name"><h3>Derived private key</h3><span>BIP-32 · BIP-44</span></div><p><a href="https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki">BIP-32</a> starts with <code>HMAC-SHA512(key = "Bitcoin seed", data = seed)</code>. Its left 32 bytes give master scalar material and its right 32 bytes a chain code. A master scalar must satisfy <code>1 ≤ k &lt; n</code>, where n is the secp256k1 generator order. Child derivation combines a parent key, chain code, and index using HMAC-SHA512 and scalar arithmetic; it also checks for invalid results.</p></li>
-          <li><div class="stage-name"><h3>Public key</h3><span>secp256k1</span></div><p>Elliptic-curve scalar multiplication gives <code>Q = kG</code>: k is the derived private scalar, G the fixed generator, and Q the public point. This relationship supports ECDSA signing for conventional Ethereum EOAs. It is not hashing. <a href="../homework-01/#foundations">Homework 01 explains scalar multiplication on a toy curve</a>; real parameters are specified in <a href="https://www.secg.org/sec2-v2.pdf">SEC 2, §2.4.1</a>.</p></li>
+          <li><div class="stage-name"><h3>Public key</h3><span>secp256k1</span></div><p>Elliptic-curve scalar multiplication gives <code>Q = kG</code>: k is the derived private scalar, G the fixed generator, and Q the public point. This relationship supports ECDSA signing for conventional Ethereum EOAs. It is not hashing. <a href="../homework-01/#foundations">Homework 1.1 explains scalar multiplication on a toy curve</a>; real parameters are specified in <a href="https://www.secg.org/sec2-v2.pdf">SEC 2, §2.4.1</a>.</p></li>
           <li><div class="stage-name"><h3>Ethereum address</h3><span>Keccak-256</span></div><p>Serialize the uncompressed point's x and y coordinates as 32 big-endian bytes each, retaining leading zeros. Hash the 64-byte <code>x || y</code>, excluding the <code>0x04</code> point prefix, with Ethereum Keccak-256. The final 20 digest bytes become the address: 160 bits, 40 hexadecimal characters, or 42 with <code>0x</code>. The input is binary coordinates, not their hexadecimal text. <a href="https://ethereum.github.io/yellowpaper/paper.pdf#page=26">Yellow Paper, Appendix F</a></p></li>
           <li><div class="stage-name"><h3>Checksummed address</h3><span>EIP-55</span></div><p>Hash the lowercase 40-character address's <strong>ASCII text</strong>, without <code>0x</code>, using Keccak-256. Uppercase each a–f letter whose corresponding digest nibble is at least 8; otherwise retain lowercase. Digits stay unchanged. This differs from hashing public-key bytes: the purpose is transcription-error detection, and the underlying 20 bytes do not change. <a href="https://eips.ethereum.org/EIPS/eip-55">EIP-55</a></p></li>
         </ol>
@@ -166,6 +166,6 @@
         </article>
       </div>
     </main>
-    <footer class="site-footer"><div class="container footer-inner"><div><strong>Statistics Lab</strong><p>Homework 02 · MSc in Cybersecurity</p></div><nav aria-label="Footer navigation"><a href="../#homework">All homework</a><a href="#top">Back to top <span aria-hidden="true">↑</span></a></nav></div></footer>
+    <footer class="site-footer"><div class="container footer-inner"><div><strong>Statistics Lab</strong><p>Homework 1.2 · MSc in Cybersecurity</p></div><nav aria-label="Footer navigation"><a href="../#homework">All homework</a><a href="#top">Back to top <span aria-hidden="true">↑</span></a></nav></div></footer>
   </body>
 </html>

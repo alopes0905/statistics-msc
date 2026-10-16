@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Homework 01: elliptic-curve scalar multiplication from scratch, with a discrete point visualization and exhaustive statistical exploration of a toy curve over F17.">
+    <meta name="description" content="Homework 1.1: elliptic-curve scalar multiplication from scratch, with a discrete point visualization and exhaustive statistical exploration of a toy curve over F17.">
     <meta name="color-scheme" content="light dark">
-    <title>Homework 01 · Elliptic-Curve Scalar Multiplication · Statistics Lab</title>
+    <title>Homework 1.1 · Elliptic-Curve Scalar Multiplication · Statistics Lab</title>
     <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="./style.css">
@@ -23,7 +23,7 @@
     <main id="main" class="container homework-page">
       <header class="homework-header">
         <a class="back-link" href="../#homework"><span aria-hidden="true">←</span> All homeworks</a>
-        <p class="eyebrow">01 / Public-key cryptography</p>
+        <p class="eyebrow">Homework 1.1 / Public-key cryptography</p>
         <h1>Elliptic-curve scalar multiplication</h1>
         <p>A private scalar k and a curve point G give the public key Q = kG by repeated point addition. The default example uses <strong>G = (1, 5), k = 6</strong>.</p>
       </header>
@@ -33,7 +33,7 @@
           <p class="eyebrow">On this page</p>
           <ol><li><a href="#demonstration">01 · Demonstration</a></li><li><a href="#foundations">02 · How it works</a></li><li><a href="#statistics">03 · Statistical exploration</a></li><li><a href="#implementation">04 · Implementation &amp; conclusions</a></li><li><a class="references-link" href="#references">References</a></li></ol>
         </nav>
-        <article class="homework-article" aria-label="Homework 01 report">
+        <article class="homework-article" aria-label="Homework 1.1 report">
           <section id="demonstration" class="homework-section" aria-labelledby="demonstration-title">
             <h2 id="demonstration-title"><span class="eyebrow section-number" aria-hidden="true">01</span> Elliptic-curve demonstration</h2>
             <p>The <a href="https://github.com/alopes0905/statistics-msc/issues/1">assignment</a> uses y² = x³ + 7 (mod 17), an educational curve with no practical security. Ethereum uses secp256k1. Here kG adds points; it does not multiply their coordinates.</p>
@@ -151,7 +151,7 @@
             <p>Repeating a point for k and k + n is expected periodicity, not a hash collision claim.</p>
             <h3 id="references">References</h3>
             <ol class="references">
-              <li><a href="https://github.com/alopes0905/statistics-msc/issues/1">Professor’s Homework 01 assignment</a>, Issue #1 (9 October 2026).</li>
+              <li><a href="https://github.com/alopes0905/statistics-msc/issues/1">Professor’s Homework 1.1 assignment</a>, Issue #1 (9 October 2026).</li>
               <li>D. McGrew, K. Igoe, M. Salter. <a href="https://www.rfc-editor.org/rfc/rfc6090.html">RFC 6090: Fundamental Elliptic Curve Cryptography Algorithms</a> (2011), §§2–3, 5.2, 10.1.</li>
               <li>Ethereum documentation. <a href="https://ethereum.org/en/developers/docs/accounts/">Ethereum Accounts</a> (accessed 10 October 2026).</li>
             </ol>
@@ -160,6 +160,6 @@
       </div>
     </main>
 
-    <footer class="site-footer"><div class="container footer-inner"><div><strong>Statistics Lab</strong><p>Homework 01 · MSc in Cybersecurity</p></div><p class="footer-note">Original algorithms. An educational toy curve.</p><nav aria-label="Footer navigation"><a href="../#homework">All homework</a><a href="#top">Back to top <span aria-hidden="true">↑</span></a></nav></div></footer>
+    <footer class="site-footer"><div class="container footer-inner"><div><strong>Statistics Lab</strong><p>Homework 1.1 · MSc in Cybersecurity</p></div><p class="footer-note">Original algorithms. An educational toy curve.</p><nav aria-label="Footer navigation"><a href="../#homework">All homework</a><a href="#top">Back to top <span aria-hidden="true">↑</span></a></nav></div></footer>
   </body>
 </html>

@@ -2,17 +2,39 @@
 
 An independent coursework website for the Statistics course in an MSc in Cybersecurity. Each homework has a standalone page combining the problem, mathematical reasoning, original JavaScript implementation, interactive demonstration, verification, and sources.
 
-**Current state: Homework 01 and Homework 02 published.** The site is [Statistics Lab](https://alopes0905.github.io/statistics-msc/), with [Homework 01](https://alopes0905.github.io/statistics-msc/homework-01/) and [Homework 02](https://alopes0905.github.io/statistics-msc/homework-02/) at their own URLs. The reusable template remains outside the publishing directory.
+**Current state: Homework 1.1 and Homework 1.2 published; Homework 2 implemented locally and ready for publication.** The site is [Statistics Lab](https://alopes0905.github.io/statistics-msc/), with [Homework 1.1](https://alopes0905.github.io/statistics-msc/homework-01/) and [Homework 1.2](https://alopes0905.github.io/statistics-msc/homework-02/) at their own URLs. The reusable template remains outside the publishing directory.
 
-Homework 01 implements the professor’s [elliptic-curve assignment](https://github.com/alopes0905/statistics-msc/issues/1): repeated point addition on y² = x³ + 7 (mod 17), valid base/scalar selection, intermediate multiples, and a manual discrete SVG visualization. Its exhaustive subgroup experiment covers coordinate and bit frequencies, Pearson correlations, and adjacent-scalar Hamming distances, with explicit limitations. For G = (1, 5), k = 6, the calculated **toy public key is (5, 8)**; G has order 9, while the full curve has 18 elements.
+Homework 1.1 implements the professor’s [elliptic-curve assignment](https://github.com/alopes0905/statistics-msc/issues/1): repeated point addition on y² = x³ + 7 (mod 17), valid base/scalar selection, intermediate multiples, and a manual discrete SVG visualization. Its exhaustive subgroup experiment covers coordinate and bit frequencies, Pearson correlations, and adjacent-scalar Hamming distances, with explicit limitations. For G = (1, 5), k = 6, the calculated **toy public key is (5, 8)**; G has order 9, while the full curve has 18 elements.
 
 The page has four sections: interactive demonstration, mathematical explanation, statistical exploration, and implementation/conclusions. Core source excerpts and statistical summaries are visible; supporting code and detailed datasets are expandable.
 
-Local page: `/homework-01/` (or `/statistics-msc/homework-01/` with the project-subpath preview). Published page: [Homework 01](https://alopes0905.github.io/statistics-msc/homework-01/). This is an educational small-field implementation, not Ethereum-compatible cryptography.
+Local page: `/homework-01/` (or `/statistics-msc/homework-01/` with the project-subpath preview). Published page: [Homework 1.1](https://alopes0905.github.io/statistics-msc/homework-01/). This is an educational small-field implementation, not Ethereum-compatible cryptography.
 
-Homework 02, **From Mnemonic to Ethereum Address**, implements the professor's [wallet derivation assignment](https://github.com/alopes0905/statistics-msc/issues/2). Its four sections explain BIP-39, BIP-32/BIP-44, secp256k1, Keccak-256, EIP-55, their distinct roles, and historical context. Two original JavaScript demonstrations calculate mnemonic entropy/checksum layouts and count character categories in official EIP-55 examples. The page does not generate wallets or verify arbitrary address checksums.
+Homework 1.2, **From Mnemonic to Ethereum Address**, implements the professor's [wallet derivation assignment](https://github.com/alopes0905/statistics-msc/issues/2). Its four sections explain BIP-39, BIP-32/BIP-44, secp256k1, Keccak-256, EIP-55, their distinct roles, and historical context. Two original JavaScript demonstrations calculate mnemonic entropy/checksum layouts and count character categories in official EIP-55 examples. The page does not generate wallets or verify arbitrary address checksums.
 
-Local page: `/homework-02/` (or `/statistics-msc/homework-02/` with the project-subpath preview). Published page: [Homework 02](https://alopes0905.github.io/statistics-msc/homework-02/). GitHub Pages deployment has completed; browser verification is recorded separately from publication. The existing `npm run check` and `npm test` commands include Homework 02.
+Local page: `/homework-02/` (or `/statistics-msc/homework-02/` with the project-subpath preview). Published page: [Homework 1.2](https://alopes0905.github.io/statistics-msc/homework-02/). GitHub Pages deployment has completed; browser verification is recorded separately from publication. The existing `npm run check` and `npm test` commands include Homework 1.2.
+
+## Coursework numbering and Homework 2
+
+The first two assignments are **Homework 1.1** and **Homework 1.2**. Their legacy directories stay unchanged to preserve submitted URLs and hash anchors. The original assignment issue links remain intact; their historical titles are not rewritten.
+
+| Course label | Subject | Page path |
+|---|---|---|
+| Homework 1.1 | Elliptic-Curve Scalar Multiplication | `/homework-01/` |
+| Homework 1.2 | From Mnemonic to Ethereum Address | `/homework-02/` |
+| Homework 2 | ECC Encryption, Caesar Cipher & Cryptanalysis | `/homework-2/` |
+
+Homework 2 implements authentic secp256k1 with BigInt, distinct from Homework 1.1’s modulo-17 curve. The educational hybrid uses ECDH, native HKDF-SHA-256, and AES-256-GCM, with secure full-domain ephemeral scalars and a deliberately restricted receiver key (default d = 37, K = 256; K ≤ 4,096). Payloads contain the public ephemeral point, salt, IV, and authenticated ciphertext. Both encryption schemes use the same message; the default Caesar example is `MEET ME AT NOON → PHHW PH DW QRRQ` at shift 3.
+
+The statistical attack learns English frequencies from the bundled *Alice’s Adventures in Wonderland* (107,785 ASCII letters) and evaluates against the separate *Through the Looking-Glass* (119,699 letters). Each of six lengths uses 20 deterministic, nonoverlapping windows and all 26 shifts. Actual recovery is 494/520 (95%) at 20 letters and 520/520 (100%) at 50, 100, 300, 1,000, and 3,000 letters: 3,094/3,120 overall. Changing shifts repeats the same histogram problem, so the 520 trials per length are dependent, with only 20 distinct passages. An observed short-text failure and within-author/language-model limitations are explained on the page. A background worker recomputes every trial without blocking the controls. Corpus sources, full notices, byte checksums, and sampling details are in [the data record](docs/homework-2/data/README.md).
+
+The ECC attack takes only public Q, K, and the intercepted payload, enumerates candidate public points, recovers the private scalar, and uses it to authenticate and decrypt the current ciphertext. Default d = 37 takes exactly 37 comparisons. The page contrasts that restricted search with full-domain exhaustive search and generic discrete-logarithm complexity. This is an educational construction with exposed small keys and variable-time arithmetic, unsuitable for real secrets.
+
+Local preview: `/statistics-msc/homework-2/`. Expected publication URL after a successful deployment:
+
+`https://alopes0905.github.io/statistics-msc/homework-2/`
+
+Homework 2 is ready for publication; its public destination must be verified after a successful GitHub Pages deployment. It requires a modern browser with BigInt and Web Crypto, served over HTTPS or localhost. All runtime resources, including both texts, are local; there are no dependencies to install.
 
 ## Academic constraints
 
@@ -37,19 +59,37 @@ docs/                         GitHub Pages publishing directory
   assets/
     favicon.svg               Local site icon
     css/main.css              Shared design system, themes, code blocks
+    css/home.css              Minimal homepage layout
     js/site.js                Shared progressive enhancement
     js/code-viewer.js         Source extraction, loading, and copying
-  homework-01/
+  homework-01/                Homework 1.1; legacy published path
     index.html                Elliptic-curve report and interactive demonstration
     style.css                 Assignment layout, tables, and discrete SVG styling
     js/statistics.js           Pure field, point, and statistical algorithms
     js/app.js                  Input validation, DOM rendering, and step controls
+  homework-02/                Homework 1.2; legacy published path
+    index.html                Mnemonic-to-address report and two statistical demos
+    style.css                 Assignment presentation
+    js/statistics.js           BIP-39 layouts and EIP-55 character counts
+    js/app.js                  Selector handling and results
+  homework-2/                 Actual Homework 2
+    index.html                Four-section report and interactive demonstrations
+    style.css                 Scoped layout, inputs, tables, and outputs
+    js/ecc.js                  BigInt secp256k1 and restricted-key enumeration
+    js/hybrid.js               ECDH/HKDF/AES-GCM and recovered-key decryption
+    js/caesar.js               Validated ASCII Caesar encryption/decryption
+    js/cryptanalysis.js        Corpus counts, chi-square ranking, length experiments
+    js/experiment-worker.js    Background execution of the six experiment lengths
+    js/app.js                  DOM controls and results; no private-key attack shortcut
+    data/alice.txt             Training text with original publisher notices
+    data/looking-glass.txt     Separate evaluation text with original notices
+    data/README.md             Provenance, rights, checksums, and sampling method
 templates/homework/           Unpublished reusable assignment template
   index.html                  Academic structure and example form
   style.css                   Assignment presentation
   js/statistics.js            Empty module for future pure algorithms
   js/app.js                   Template input validation and UI
-tests/                        Native Node.js tests, including homework-01.test.js
+tests/                        Native tests, including homework-01, homework-02, homework-2
 tools/
   dev-server.js               Loopback static server and template preview
   check.js                    Syntax, links, assets, and structural checks
@@ -90,7 +130,7 @@ npm test
 
 `check` checks JavaScript syntax, relative local links and fragments, stylesheet/script references, CSS URLs, module imports, source region names, selected semantic/labeling invariants, and absence of package dependencies. It resolves the template as if copied to `docs/homework-NN/`, under a simulated project subpath. It also flags selected prohibited JavaScript patterns. Its small HTML scanner and pattern checks are **not a complete HTML validator, linter, or security audit**; they complement review and browser checks.
 
-`test` uses `node:test` and `node:assert/strict`. It covers source extraction and fetch failures, template input validation, damaged project fixtures, actual HTTP serving, MIME types, copied-template paths, redirects, traversal, and escaping symlinks. Homework 01 adds independent mathematical and statistical acceptance tests, all toy-group associativity cases, generalization to a second curve, and strict private-scalar input tests. HTTP tests need permission to open temporary loopback ports. A restricted execution sandbox may require approval; tests must not be skipped to claim a passing result.
+`test` uses `node:test` and `node:assert/strict`. It covers source extraction and fetch failures, template input validation, damaged project fixtures, actual HTTP serving, MIME types, copied-template paths, redirects, traversal, and escaping symlinks. Homework 1.1 adds independent mathematical and statistical acceptance tests, all toy-group associativity cases, generalization to a second curve, and strict private-scalar input tests. HTTP tests need permission to open temporary loopback ports. A restricted execution sandbox may require approval; tests must not be skipped to claim a passing result.
 
 The CI workflow runs these same commands on pushes to `main` and pull requests targeting `main`, using official [checkout](https://github.com/actions/checkout) and [setup-node](https://github.com/actions/setup-node) actions with read-only repository permission. It installs nothing, requires no secrets, and does not deploy. If the default branch changes, update both branch filters and the Pages source.
 
@@ -103,14 +143,24 @@ The CI workflow runs these same commands on pushes to `main` and pull requests t
 
 This records the earlier foundation review. Assignment-specific verification is recorded separately below.
 
-### Homework 01 verification record
+### Homework 1.1 verification record
 
-- `npm run check` passed: 3 pages including the virtual template, 14 resources, and 13 JavaScript syntax checks. `npm test` passed all 46 tests on Node.js 22.22.2: 26 existing tests and 20 Homework 01 tests.
+- `npm run check` passed: 3 pages including the virtual template, 14 resources, and 13 JavaScript syntax checks. `npm test` passed all 46 tests on Node.js 22.22.2: 26 existing tests and 20 Homework 1.1 tests.
 - Mathematical tests check the supplied sequence through 10G, all 18 group elements, closure/commutativity/associativity, exceptional additions, orders 2/3/6/9/18, a second curve over F₅, and arithmetic at the supported p = 997 boundary. Statistical and input tests cover exact domains, frequencies, bits, distances, correlation, and degenerate cases.
 - Local headless Chrome checked landing/homework layouts at 320, 390, 768, and 1440 CSS pixels with no page overflow. It exercised all 17 bases and all 165 valid base/scalar combinations, explicit scalar resets, invalid-input feedback, full-cycle stepping through O, four source excerpts, expandable tables/code, anchor navigation, keyboard controls, dark mode, reduced motion, print controls, and the no-JavaScript fallback. No uncaught exceptions, console errors, failed resources, or external page requests were observed. Desktop/mobile/light/dark screenshots were inspected.
 - Copying was checked with a test clipboard and actual text-selection fallback. Native clipboard permission, screen-reader output, Safari/Firefox, and actual 200% browser zoom remain manual checks; automated narrow-viewport reflow is only an approximation of zoom. Verify the deployed homework URL after publication and follow the professor’s submission rules.
 
 The pure core supports nonsingular small prime fields with 5 ≤ p ≤ 997 and nonnegative scalars up to 10,000. It is educational Number arithmetic with repeated addition, not production cryptography. Statistical conclusions describe the enumerated subgroup and encoding; they do not establish randomness or security.
+
+### Homework 2 verification record
+
+- `npm run check` passed: 5 pages including the virtual template, 30 resources, and 23 JavaScript syntax checks. `npm test` passed all 107 tests (65 existing plus 42 new Homework 2 tests), with no skips.
+- Independent Node/OpenSSL checks cover secp256k1 multiples, ECDH symmetry, and an exact deterministic hybrid payload using native HKDF and AES-GCM. Additional cases cover nG = O, malformed points/scalars/payloads, wrong keys, authentication failure, fresh randomness, empty/Unicode/bounded inputs, and missing Web Crypto.
+- Statistical tests check hand-calculated counts and scores, all Caesar shifts, numerical ties, real held-out recovery, corpus checksums, independent histogram scoring of the measured results, and reproducibility. Search tests cover d = 1, 37, 256, and 4,096, unsuccessful bounded searches, and actual decryption from public information alone.
+- Integration checks retain both legacy page paths, all three homepage links, real source excerpts, local corpus loading, and serving beneath the GitHub Pages project subpath. Existing mathematical modules and tests remain unchanged; the old homepage-link assertion now includes the third assignment.
+- Local Chrome checked Homework 2 at 320, 390, 768, 1,024, 1,440, and 1,920 CSS pixels in light/dark themes, both initially and with results/details expanded. No page-wide overflow occurred. Desktop/mobile and native 200% zoom screenshots were inspected; zoom was confirmed by a 1,440-pixel window, 720 CSS-pixel viewport, and device pixel ratio 2.
+- Browser checks exercised both ciphers, fresh encryption, exact Unicode/empty/leading-U+FEFF recovery, invalid inputs, key changes, both attacks, all 3,120 worker trials, four source excerpts, sidebar links, keyboard skip navigation, and missing-Web-Crypto/no-JavaScript behavior. Both legacy homework controls and homepage navigation still work. Normal loading produced no uncaught exceptions, console errors, failed resources, or external runtime requests.
+- Both existing published homework URLs returned HTTP 200 on 15 October 2026. The new page still needs deployment and verification at its public destination. This review used Chrome, not Safari or Firefox; screen-reader behavior and native clipboard permissions were not tested in this run.
 
 ## Add a homework after its release
 
@@ -127,7 +177,7 @@ The pure core supports nonsingular small prime fields with 5 ≤ p ≤ 997 and n
 6. Append a real homework card in `docs/index.html`, using the pattern below. Link assignments only when they are ready.
 7. Review, commit, and push when you choose to publish. Do not push an unfinished template into the branch serving Pages: branch publication includes everything in `docs/`, even if it is not linked from the landing page.
 
-Replace `NN` with the next two-digit assignment number; `homework-01` already exists. Shared resource links in the template already work at that depth; no username or domain needs editing.
+Replace `NN` with the actual course assignment identifier and choose an unused path. The legacy `homework-01` and `homework-02` directories already serve Homework 1.1 and 1.2; actual Homework 2 uses `homework-2`. Shared resource links in the template already work at that depth; no username or domain needs editing.
 
 ### Mathematical module contracts
 
@@ -163,7 +213,7 @@ Add one card per completed assignment inside the landing page’s `.homework-lis
 
 ```html
 <a class="homework-card" href="./homework-01/">
-  <h3>Homework 01</h3>
+  <h3>Homework 1.1</h3>
   <p>[Actual assigned title]</p>
   <span class="homework-arrow" aria-hidden="true">→</span>
 </a>
@@ -192,7 +242,7 @@ The project site address is:
 https://alopes0905.github.io/statistics-msc/
 ```
 
-Homework 01’s URL is:
+Homework 1.1’s URL is:
 
 ```text
 https://alopes0905.github.io/statistics-msc/homework-01/

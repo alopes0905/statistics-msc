@@ -1,0 +1,83 @@
+/* Homework 2 uses the established report layout; all selectors are scoped. */
+.hw2-page { --text-small: 0.9375rem; }
+.hw2-page .header-inner { min-height: 5rem; padding-block: var(--space-4); flex-direction: row; align-items: center; }
+.hw2-page .hw2-report { font-size: 1.0625rem; line-height: 1.6; }
+.hw2-page :is(h1, h2) { font-family: var(--font-body); font-weight: 650; line-height: 1.25; letter-spacing: -0.02em; }
+.hw2-page h1 { font-size: clamp(1.875rem, 3vw, 2.25rem); margin-top: var(--space-2); }
+.hw2-page h2 { display: flex; align-items: baseline; gap: var(--space-3); font-size: 1.625rem; margin-bottom: var(--space-4); }
+.hw2-page h3 { margin-block: var(--space-5) var(--space-2); font-size: 1.125rem; }
+.hw2-page p + p { margin-top: var(--space-3); }
+.hw2-page .homework-header { max-width: 70rem; margin-inline: auto; padding-block: var(--space-5); border-bottom: var(--border); }
+.hw2-page .homework-header > p { margin-top: var(--space-3); max-width: var(--reading-width); }
+.hw2-page .back-link { display: inline-flex; align-items: center; gap: var(--space-2); min-height: 2.75rem; padding: var(--space-2) var(--space-3); margin-bottom: var(--space-4); border: var(--border); border-radius: var(--radius-small); font-size: 0.9375rem; line-height: 1.4; text-decoration: none; }
+.hw2-page .back-link:hover { border-color: var(--color-accent); background: var(--color-accent-soft); }
+.hw2-page .homework-layout { display: grid; grid-template-columns: 12rem minmax(0, 1fr); gap: var(--space-6); max-width: 70rem; margin-inline: auto; padding-block: var(--space-6); }
+.hw2-page .contents-nav { align-self: start; position: sticky; top: var(--space-6); max-height: calc(100svh - 4rem); overflow-y: auto; padding: var(--space-2); border-right: var(--border); }
+.hw2-page .eyebrow { font-size: 0.78125rem; letter-spacing: 0.08em; }
+.hw2-page .contents-nav ol { margin: var(--space-3) 0 0; padding: 0; list-style: none; }
+.hw2-page .contents-nav a { display: block; padding: var(--space-3) 0; font-size: var(--text-small); line-height: 1.5; text-decoration: none; border-bottom: var(--border); }
+.hw2-page .contents-nav a:hover { text-decoration: underline; }
+.hw2-page .contents-nav .references-link { font-size: 0.875rem; color: var(--color-muted); }
+.hw2-page .homework-article { min-width: 0; max-width: 56rem; }
+.hw2-page .homework-article :is(section, .experiment, details) > p { max-width: var(--reading-width); }
+.hw2-page .section-number { flex-shrink: 0; color: var(--color-accent); font-size: 0.90625rem; }
+.hw2-page .homework-article > section { margin-bottom: var(--space-6); padding-bottom: var(--space-6); border-bottom: var(--border); scroll-margin-top: var(--space-5); }
+.hw2-page code { overflow-wrap: anywhere; }
+.hw2-page .table-wrapper { max-width: 100%; overflow-x: auto; margin-top: var(--space-3); }
+.hw2-page table { width: 100%; border-collapse: collapse; font-size: 0.96875rem; line-height: 1.5; }
+.hw2-page caption { text-align: left; padding-bottom: var(--space-2); font-size: 0.90625rem; }
+.hw2-page :is(th, td) { padding: var(--space-3); border-bottom: var(--border); text-align: left; vertical-align: top; }
+.hw2-page th { font-weight: 600; }
+.hw2-page thead { background: var(--color-surface); }
+.hw2-page .table-wrapper + p { margin-top: var(--space-4); }
+.hw2-page .experiment { padding: var(--space-5); border: var(--border); border-radius: var(--radius-large); background: var(--color-raised); margin-block: var(--space-4); }
+.hw2-page .experiment h3 { margin-top: 0; }
+.hw2-page label { display: block; margin-block: var(--space-4) var(--space-2); font-size: var(--text-small); font-weight: 600; }
+.hw2-page .field-help { margin-top: var(--space-2); color: var(--color-muted); font-size: 0.875rem; }
+.hw2-page .addresses { margin-block: var(--space-4); }
+.hw2-page .addresses dt { color: var(--color-muted); font-size: var(--text-small); }
+.hw2-page .addresses dd { margin: var(--space-1) 0 var(--space-3); overflow-wrap: anywhere; }
+.hw2-page details { margin-top: var(--space-5); padding: var(--space-3) var(--space-4); border: var(--border); border-radius: var(--radius-small); }
+.hw2-page summary { cursor: pointer; color: var(--color-accent); font-size: var(--text-small); }
+.hw2-page details > p { margin-top: var(--space-3); }
+.hw2-page .source-figure { margin: var(--space-4) 0 0; }
+.hw2-page figcaption { margin-bottom: var(--space-2); font-size: 0.90625rem; }
+.hw2-page pre { font-size: 0.90625rem; padding: var(--space-4); line-height: 1.55; }
+.hw2-page pre code { font-size: inherit; overflow-wrap: normal; }
+.hw2-page .source-toolbar { padding: var(--space-3) var(--space-4); }
+.hw2-page :is(.source-status, .copy-button) { font-size: 0.875rem; }
+.hw2-page .source-link { font-size: var(--text-small); }
+.hw2-page .references { padding-left: var(--space-5); font-size: var(--text-small); }
+.hw2-page .references li + li { margin-top: var(--space-2); }
+.hw2-page .references a { overflow-wrap: anywhere; }
+.hw2-page :is(textarea, input) { width: 100%; min-width: 0; padding: var(--space-3); border: 1px solid var(--color-muted); border-radius: var(--radius-small); background: var(--color-background); color: var(--color-text); font: inherit; }
+.hw2-page textarea { resize: vertical; }
+.hw2-page input { max-width: 12rem; }
+.hw2-page .input-grid { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+.hw2-page .input-grid > div { flex: 1 1 12rem; min-width: 0; }
+.hw2-page .demo-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block: var(--space-4); }
+.hw2-page .demo-actions button { max-width: 100%; white-space: normal; }
+.hw2-page .text-output { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--font-code); font-size: 0.9375rem; }
+.hw2-page .payload-output { max-height: 22rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+.hw2-page .payload-output code { overflow-wrap: anywhere; }
+.hw2-page [role="status"] { margin-top: var(--space-3); font-size: var(--text-small); }
+.hw2-page [data-state="error"] { color: var(--color-error, #b33a32); }
+.hw2-page .plain-steps { padding-left: var(--space-5); max-width: var(--reading-width); }
+.hw2-page .plain-steps li + li { margin-top: var(--space-2); }
+.hw2-page .comparison-table { min-width: 36rem; }
+.hw2-page #length-results { font-variant-numeric: tabular-nums; }
+@media (max-width: 56rem) {
+  .hw2-page .homework-layout { grid-template-columns: 1fr; gap: var(--space-5); }
+  .hw2-page .contents-nav { position: static; max-height: none; overflow: visible; padding: 0; border-right: 0; }
+  .hw2-page .contents-nav ol { display: flex; flex-wrap: wrap; gap: 0 var(--space-4); }
+}
+@media (max-width: 40rem) {
+  .hw2-page h2 { font-size: 1.5rem; }
+  .hw2-page .experiment { padding: var(--space-4); }
+  .hw2-page :is(th, td) { padding: var(--space-2); }
+}
+@media print {
+  .hw2-page .hw2-report { width: 100%; }
+  .hw2-page .homework-layout { display: block; }
+  .hw2-page .contents-nav { display: none; }
+}
