@@ -350,8 +350,8 @@ test('HW2 source regions contain executed functions and the UI passes public inf
 
 test('HW2 numbering, legacy paths, controls, four sections, and source blocks integrate correctly', async () => {
   const home = await readFile(new URL('../docs/index.html', import.meta.url), 'utf8');
-  assert.deepEqual([...home.matchAll(/<h3>(Homework [^<]+)<\/h3>/g)].map(match => match[1]), ['Homework 1.1', 'Homework 1.2', 'Homework 2']);
-  assert.deepEqual(scanHTML(home).filter(tag => tag.attributes.get('class') === 'homework-card').map(tag => tag.attributes.get('href')), ['./homework-01/', './homework-02/', './homework-2/']);
+  assert.deepEqual([...home.matchAll(/<h3>(Homework [^<]+)<\/h3>/g)].map(match => match[1]), ['Homework 1.1', 'Homework 1.2', 'Homework 2', 'Homework 3']);
+  assert.deepEqual(scanHTML(home).filter(tag => tag.attributes.get('class') === 'homework-card').map(tag => tag.attributes.get('href')), ['./homework-01/', './homework-02/', './homework-2/', './homework-3/']);
   for (const [path, label] of [['homework-01', 'Homework 1.1'], ['homework-02', 'Homework 1.2'], ['homework-2', 'Homework 2']]) {
     const html = await readFile(new URL(`../docs/${path}/index.html`, import.meta.url), 'utf8');
     assert.ok(html.includes(`<title>${label}`)); assert.ok(html.includes(`${label} · MSc`));

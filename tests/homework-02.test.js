@@ -146,5 +146,5 @@ test('HW02 markup supplies every app target, labeled bounded selectors, fixtures
   assert.ok(tags.some(tag => tag.name === 'a' && tag.attributes.get('href') === '../homework-01/#foundations'));
   const home = await readFile(new URL('../docs/index.html', import.meta.url), 'utf8');
   const cards = scanHTML(home).filter(tag => tag.name === 'a' && tag.attributes.get('class') === 'homework-card');
-  assert.deepEqual(cards.map(tag => tag.attributes.get('href')), ['./homework-01/', './homework-02/', './homework-2/']);
+  assert.deepEqual(cards.map(tag => tag.attributes.get('href')), ['./homework-01/', './homework-02/', './homework-2/', './homework-3/']);
 });

@@ -2,7 +2,7 @@
 
 An independent coursework website for the Statistics course in an MSc in Cybersecurity. Each homework has a standalone page combining the problem, mathematical reasoning, original JavaScript implementation, interactive demonstration, verification, and sources.
 
-**Current state: Homework 1.1 and Homework 1.2 published; Homework 2 implemented locally and ready for publication.** The site is [Statistics Lab](https://alopes0905.github.io/statistics-msc/), with [Homework 1.1](https://alopes0905.github.io/statistics-msc/homework-01/) and [Homework 1.2](https://alopes0905.github.io/statistics-msc/homework-02/) at their own URLs. The reusable template remains outside the publishing directory.
+**Current state: Homeworks 1.1, 1.2, and 2 published; Homework 3 implemented locally and ready for publication.** The site is [Statistics Lab](https://alopes0905.github.io/statistics-msc/), with [Homework 1.1](https://alopes0905.github.io/statistics-msc/homework-01/), [Homework 1.2](https://alopes0905.github.io/statistics-msc/homework-02/), and [Homework 2](https://alopes0905.github.io/statistics-msc/homework-2/) at their own URLs. The reusable template remains outside the publishing directory.
 
 Homework 1.1 implements the professor’s [elliptic-curve assignment](https://github.com/alopes0905/statistics-msc/issues/1): repeated point addition on y² = x³ + 7 (mod 17), valid base/scalar selection, intermediate multiples, and a manual discrete SVG visualization. Its exhaustive subgroup experiment covers coordinate and bit frequencies, Pearson correlations, and adjacent-scalar Hamming distances, with explicit limitations. For G = (1, 5), k = 6, the calculated **toy public key is (5, 8)**; G has order 9, while the full curve has 18 elements.
 
@@ -30,11 +30,27 @@ The statistical attack learns English frequencies from the bundled *Alice’s Ad
 
 The ECC attack takes only public Q, K, and the intercepted payload, enumerates candidate public points, recovers the private scalar, and uses it to authenticate and decrypt the current ciphertext. Default d = 37 takes exactly 37 comparisons. The page contrasts that restricted search with full-domain exhaustive search and generic discrete-logarithm complexity. This is an educational construction with exposed small keys and variable-time arithmetic, unsuitable for real secrets.
 
-Local preview: `/statistics-msc/homework-2/`. Expected publication URL after a successful deployment:
+Local preview: `/statistics-msc/homework-2/`. Published URL (HTTP 200 and report content verified on 23 October 2026):
 
 `https://alopes0905.github.io/statistics-msc/homework-2/`
 
-Homework 2 is ready for publication; its public destination must be verified after a successful GitHub Pages deployment. It requires a modern browser with BigInt and Web Crypto, served over HTTPS or localhost. All runtime resources, including both texts, are local; there are no dependencies to install.
+Homework 2 is published. It requires a modern browser with BigInt and Web Crypto, served over HTTPS or localhost. All runtime resources, including both texts, are local; there are no dependencies to install.
+
+## Homework 3 — Stochastic penetration models
+
+Homework 3 models n systems/steps per attacker and m attacker trajectories with iid Bernoulli(p) or symmetric Rademacher increments. It computes each attacker’s total Sₙ, average Sₙ/n, and normalized total Sₙ/√n from the same path prefixes. Exact theoretical moments are shown beside empirical means and unbiased sample variances (denominator m−1, using Welford’s method).
+
+Controls select the model, Bernoulli p, m = 100/500/1,000, maximum n = 100/500/1,000/2,000, epsilon, and seed. Compared n values follow [10, 50, 100, 500, 1,000, 2,000] up to that maximum. Defaults are Rademacher, m = 1,000, maximum n = 2,000, epsilon = 0.1, seed = 2026; Bernoulli defaults to p = 0.35. The simulation is capped at 2,000,000 increments and runs in a cancellable worker. Editing parameters clears stale results.
+
+The original JavaScript implements the Park–Miller 16807 PRNG, with a fixed disjoint block of 2,000 draws per attacker and exact jump-ahead initialization. This preserves prefixes as m or n changes. It is a deterministic approximation to the iid model, with finite-period limitations; it is not cryptographic randomness. Only the first 20 paths are drawn (visually downsampled); every statistic uses all simulated attackers and increments.
+
+The page includes three lattice-aligned density histograms, variance comparisons across n, empirical LLN deviation probabilities with capped Chebyshev bounds, and three Rademacher histograms overlaid with N(0,1) density. Descriptive empirical-CDF distances use the validated A&S normal-CDF approximation, without p-values. Bernoulli’s uncentered p√n drift is explicitly distinguished and never receives a standard-normal overlay. A separate aggregate T sums all attacker scores. Native SVG charts have numerical table alternatives; four excerpts load the executed source.
+
+The experiment illustrates probability theory under idealized independence, not calibrated intrusion-risk forecasting. Real attacks may be dependent, heterogeneous, or adaptive. Increasing m improves Monte Carlo precision without changing the one-attacker theoretical law; increasing n changes that law.
+
+Implemented and verified, ready for publication. The public page must be checked after a successful GitHub Pages deployment. Intended URL:
+
+`https://alopes0905.github.io/statistics-msc/homework-3/`
 
 ## Academic constraints
 
@@ -84,12 +100,20 @@ docs/                         GitHub Pages publishing directory
     data/alice.txt             Training text with original publisher notices
     data/looking-glass.txt     Separate evaluation text with original notices
     data/README.md             Provenance, rights, checksums, and sampling method
+  homework-3/                 Stochastic penetration models, LLN and CLT
+    index.html                Four-section academic report and controls
+    style.css                 Scoped report layout and accessible SVG styling
+    js/simulation.js          Seeded streams and shared attacker prefixes
+    js/statistics.js          Exact moments, sample statistics, histograms, LLN/CLT
+    js/charts.js              Native SVG plots with density-scaled comparisons
+    js/app.js                 DOM rendering, input validation, and worker lifecycle
+    js/simulation-worker.js   Bounded background simulation
 templates/homework/           Unpublished reusable assignment template
   index.html                  Academic structure and example form
   style.css                   Assignment presentation
   js/statistics.js            Empty module for future pure algorithms
   js/app.js                   Template input validation and UI
-tests/                        Native tests, including homework-01, homework-02, homework-2
+tests/                        Native tests, including homework-01, homework-02, homework-2, homework-3
 tools/
   dev-server.js               Loopback static server and template preview
   check.js                    Syntax, links, assets, and structural checks
@@ -160,7 +184,17 @@ The pure core supports nonsingular small prime fields with 5 ≤ p ≤ 997 and n
 - Integration checks retain both legacy page paths, all three homepage links, real source excerpts, local corpus loading, and serving beneath the GitHub Pages project subpath. Existing mathematical modules and tests remain unchanged; the old homepage-link assertion now includes the third assignment.
 - Local Chrome checked Homework 2 at 320, 390, 768, 1,024, 1,440, and 1,920 CSS pixels in light/dark themes, both initially and with results/details expanded. No page-wide overflow occurred. Desktop/mobile and native 200% zoom screenshots were inspected; zoom was confirmed by a 1,440-pixel window, 720 CSS-pixel viewport, and device pixel ratio 2.
 - Browser checks exercised both ciphers, fresh encryption, exact Unicode/empty/leading-U+FEFF recovery, invalid inputs, key changes, both attacks, all 3,120 worker trials, four source excerpts, sidebar links, keyboard skip navigation, and missing-Web-Crypto/no-JavaScript behavior. Both legacy homework controls and homepage navigation still work. Normal loading produced no uncaught exceptions, console errors, failed resources, or external runtime requests.
-- Both existing published homework URLs returned HTTP 200 on 15 October 2026. The new page still needs deployment and verification at its public destination. This review used Chrome, not Safari or Firefox; screen-reader behavior and native clipboard permissions were not tested in this run.
+- Both existing published homework URLs returned HTTP 200 on 15 October 2026. Homework 2’s own published URL was subsequently verified with HTTP 200 and the expected report content on 23 October 2026. This review used Chrome, not Safari or Firefox; screen-reader behavior and native clipboard permissions were not tested in this run.
+
+### Homework 3 verification record
+
+- `npm run check` passed: 6 pages including the virtual template, 37 resources, and 29 JavaScript syntax checks. `npm test` passed all 133 tests: 107 existing and 26 new Homework 3 tests, without skips.
+- Numerical checks compare Park–Miller output with the published 10,000-step vector and an independent BigInt recurrence, verify stream separation and prefix reuse, and check hand-worked scores, exact moments, two-pass variance calculations, strict LLN boundaries, histogram area, lattice parity, aggregation, and reference normal PDF/CDF values. Both largest supported model runs (2,000,000 increments each) completed successfully.
+- With m = 1,000, seed = 2026, and epsilon = 0.1, Rademacher empirical deviation probabilities were 0.757, 0.489, 0.283, 0.024, 0.001, 0 for n = 10, 50, 100, 500, 1,000, 2,000. Bernoulli(p = 0.35) gave 0.527, 0.154, 0.023, 0, 0, 0. Zero here is an observed fraction, not a claim that the true event is impossible.
+- Rademacher descriptive CDF distances for n = 10, 100, 1,000 were 0.1330, 0.0457, 0.0638. The nonmonotonicity is retained and explained. The normalized sample variances were 0.966445, 0.963914, 1.03378, against theoretical variance 1.
+- Local Chrome checked 320, 390, 768, 1,024, 1,440, and 1,920 CSS pixels in light/dark themes, expanded source/tables, and native 200% browser zoom (1,440-pixel window, 720 CSS-pixel viewport, device pixel ratio 2). Desktop, mobile, and zoom screenshots were inspected; no page-wide overflow was observed.
+- Browser flows exercised both models, p = 0/0.35/1, model switching, m/n/epsilon changes, seed reproduction, all trajectory metrics and distributions, cancellation, stale-job protection, invalid inputs, unavailable-worker feedback, four real excerpts, keyboard skip navigation, sidebar/homepage navigation, no-JavaScript content, and the previous three assignments. Normal loading produced no console errors, uncaught exceptions, failed resources, or external runtime requests. The default Chrome run completed in about 122 ms on the development machine; performance depends on the device.
+- All existing homework files and shared assets remain unchanged. Two old homepage-link assertions were updated only to include the fourth card. Safari/Firefox, screen-reader output, and native clipboard permissions were not tested in this run. Homework 3 still needs publication and verification at its deployed URL.
 
 ## Add a homework after its release
 
