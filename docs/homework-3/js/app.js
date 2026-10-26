@@ -1,6 +1,6 @@
 import { DEFAULTS, validateParameters } from './simulation.js';
 import { METRICS, theoreticalMoments, incrementMoments, scoreValues, scoreHistogram, cltComparison } from './statistics.js';
-import { renderTrajectories, renderHistogram, renderLLN } from './charts.js';
+import { renderTrajectories, renderHistogram, renderLLN, renderVarianceScaling } from './charts.js';
 
 const find = id => document.getElementById(id);
 const show = (id, text) => { find(id).textContent = text; };
@@ -86,6 +86,7 @@ function renderCharts() {
   if (!result) return;
   renderTrajectories(find('trajectory-chart'), result, find('trajectory-metric').value);
   renderDistributions(); renderLLN(find('lln-chart'), result.snapshots); renderCLT();
+  renderVarianceScaling(find('variance-chart'), result.snapshots);
 }
 
 function renderAll() {
@@ -104,6 +105,7 @@ function renderAll() {
 }
 
 function clearResults() {
+  find('variance-chart').replaceChildren();
   result = null; find('simulation-results').hidden = true;
   find('distribution-results').hidden = true; find('convergence-results').hidden = true;
   find('distribution-n').disabled = true; find('trajectory-metric').disabled = true;

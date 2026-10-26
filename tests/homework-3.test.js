@@ -7,6 +7,7 @@ import { scoreValues, sampleMoments, theoreticalMoments, incrementMoments, devia
 import { extractCodeRegion } from '../docs/assets/js/code-viewer.js';
 import { scanHTML } from '../tools/check.js';
 import { createDevServer } from '../tools/dev-server.js';
+import { renderVarianceScaling } from '../docs/homework-3/js/charts.js';
 
 const root = new URL('../', import.meta.url);
 const close = (actual, expected, tolerance = 1e-12) => assert.ok(Math.abs(actual - expected) <= tolerance * Math.max(1, Math.abs(expected)), `${actual} ≈ ${expected}`);
@@ -274,4 +275,155 @@ test('HW3 is served with its worker, modules, and excerpts under the Pages proje
     const response = await fetch(base + path); assert.equal(response.status, 200, path);
     if (path.endsWith('.js')) assert.match(response.headers.get('content-type'), /javascript/);
   }
+});
+
+// Minimal SVG DOM fixture: run the actual renderer and inspect its geometry.
+class VarianceElement {
+  constructor(tag) { this.tag = tag; this.attributes = new Map(); this.children = []; this.textContent = ''; this.id = ''; this.width = 720; }
+  setAttribute(name, value) { this.attributes.set(name, String(value)); }
+  append(...children) { this.children.push(...children); }
+  replaceChildren(...children) { this.children = children; }
+  getBoundingClientRect() { return { width: this.width }; }
+}
+function drawVariance(snapshots, width = 720, existing = null) {
+  const previous = globalThis.document;
+  globalThis.document = { createElementNS: (_, tag) => new VarianceElement(tag), createElement: tag => new VarianceElement(tag) };
+  try {
+    const container = existing ?? new VarianceElement('div'); container.id = 'variance-chart'; container.width = width;
+    renderVarianceScaling(container, snapshots); return container;
+  } finally {
+    if (previous === undefined) delete globalThis.document; else globalThis.document = previous;
+  }
+}
+const varianceNodes = element => [element, ...element.children.flatMap(varianceNodes)];
+const varianceGroup = (container, metric) => varianceNodes(container).find(n => n.attributes.get('data-metric') === metric);
+const curvePoints = group => group.children.filter(n => n.tag === 'polyline').flatMap(n => n.attributes.get('points').split(' ').map(pair => pair.split(',').map(Number)));
+const sampleMarkers = group => group.children.filter(n => n.attributes.has('data-variance'));
+const markerCenter = node => node.tag === 'circle' ? [Number(node.attributes.get('cx')), Number(node.attributes.get('cy'))]
+  : node.tag === 'rect' ? [Number(node.attributes.get('x')) + 3.5, Number(node.attributes.get('y')) + 3.5]
+    : [Number(node.attributes.get('points').split(',')[0]), Number(node.attributes.get('points').split(' ')[0].split(',')[1]) + 4.5];
+const varianceFixture = () => [10, 100, 1000].map((n, i) => ({ n, metrics: Object.fromEntries(['total', 'average', 'normalized'].map((metric, j) => [metric, {
+  theoretical: { variance: [[10, 100, 1000], [0.1, 0.01, 0.001], [1, 1, 1]][j][i] },
+  empirical: { variance: [[8, 120, 950], [0.08, 0.012, 0.00095], [0.8, 1.2, 0.95]][j][i] },
+}])) }));
+
+test('HW3 variance chart uses every supplied theory and sample checkpoint without mutation', () => {
+  const snapshots = varianceFixture(), before = structuredClone(snapshots);
+  const chart = drawVariance(snapshots);
+  assert.equal(chart.attributes.get('data-state'), 'ready');
+  ['total', 'average', 'normalized'].forEach((metric, i) => {
+    const group = varianceGroup(chart, metric), markers = sampleMarkers(group);
+    assert.equal(curvePoints(group).length, snapshots.length); assert.equal(markers.length, snapshots.length);
+    assert.ok(markers.every(marker => marker.tag === ['circle', 'rect', 'polygon'][i]));
+    assert.deepEqual(markers.map(n => Number(n.attributes.get('data-n'))), [10, 100, 1000]);
+    assert.deepEqual(markers.map(n => Number(n.attributes.get('data-variance'))), snapshots.map(s => s.metrics[metric].empirical.variance));
+  });
+  assert.deepEqual(snapshots, before);
+});
+
+test('HW3 variance chart has genuine logarithmic coordinates and the three scaling directions', () => {
+  const snapshots = varianceFixture(), chart = drawVariance(snapshots);
+  // Domain: n from 10 to 1000, variance powers −4..3, plot x 66..704, y 28..262.
+  for (const metric of ['total', 'average', 'normalized']) {
+    const points = curvePoints(varianceGroup(chart, metric));
+    points.forEach(([x, y], i) => {
+      close(x, 66 + (Math.log10(snapshots[i].n) - 1) / 2 * 638);
+      close(y, 262 - (Math.log10(snapshots[i].metrics[metric].theoretical.variance) + 4) / 7 * 234);
+    });
+    const markers = sampleMarkers(varianceGroup(chart, metric));
+    markers.forEach((marker, i) => {
+      const [x, y] = markerCenter(marker);
+      close(x, points[i][0]); close(y, 262 - (Math.log10(snapshots[i].metrics[metric].empirical.variance) + 4) / 7 * 234);
+    });
+  }
+  const total = curvePoints(varianceGroup(chart, 'total')), average = curvePoints(varianceGroup(chart, 'average')), normalized = curvePoints(varianceGroup(chart, 'normalized'));
+  close(total[1][0], (total[0][0] + total[2][0]) / 2);
+  assert.ok(total[0][1] > total[1][1] && total[1][1] > total[2][1]);
+  assert.ok(average[0][1] < average[1][1] && average[1][1] < average[2][1]);
+  assert.ok(normalized.every(point => point[1] === normalized[0][1]));
+});
+
+test('HW3 variance axes label original physical values and declare both log scales', () => {
+  const nodes = varianceNodes(drawVariance(varianceFixture()));
+  assert.ok(nodes.some(n => n.textContent === 'Systems n (log scale)'));
+  assert.ok(nodes.some(n => n.textContent === 'Variance (log scale)'));
+  for (const n of nodes.filter(n => n.attributes.has('data-axis'))) {
+    const displayed = Number(n.textContent.replaceAll(',', '')), value = Number(n.attributes.get('data-value'));
+    // Decimal tick formatting can differ by an ulp from 10 ** power.
+    assert.ok(Math.abs(displayed - value) <= 4 * Number.EPSILON * Math.abs(value));
+  }
+  assert.ok(nodes.some(n => n.attributes.get('data-value') === '1000' && n.textContent === '1,000'));
+  const svg = nodes.find(n => n.tag === 'svg');
+  assert.equal(svg.attributes.get('role'), 'img');
+  assert.ok(nodes.some(n => n.tag === 'desc' && n.textContent.includes('numerical tables')));
+});
+
+test('HW3 variance plot agrees with existing reference cases and actual sampled variances', () => {
+  for (const model of ['rademacher', 'bernoulli']) {
+    const result = simulate({ ...DEFAULTS, model, m: 100, maxN: 1000 });
+    const chart = drawVariance(result.snapshots);
+    for (const metric of ['total', 'average', 'normalized']) assert.deepEqual(sampleMarkers(varianceGroup(chart, metric)).map(n => Number(n.attributes.get('data-variance'))), result.snapshots.map(s => s.metrics[metric].empirical.variance));
+    const n10 = result.snapshots.find(s => s.n === 10), n100 = result.snapshots.find(s => s.n === 100), n1000 = result.snapshots.find(s => s.n === 1000);
+    if (model === 'rademacher') {
+      assert.deepEqual(['total', 'average', 'normalized'].map(k => n10.metrics[k].theoretical.variance), [10, 0.1, 1]);
+      assert.deepEqual(['total', 'average', 'normalized'].map(k => n1000.metrics[k].theoretical.variance), [1000, 0.001, 1]);
+    } else {
+      [22.75, 0.002275, 0.2275].forEach((value, i) => close(n100.metrics[['total', 'average', 'normalized'][i]].theoretical.variance, value));
+    }
+  }
+});
+
+test('HW3 deterministic Bernoulli boundaries display exact zero states without log coordinates', () => {
+  for (const p of [0, 1]) {
+    const chart = drawVariance(simulate({ ...DEFAULTS, model: 'bernoulli', p, m: 100, maxN: 100 }).snapshots);
+    assert.equal(chart.attributes.get('data-state'), 'zero');
+    assert.equal(varianceNodes(chart).some(n => n.tag === 'svg'), false);
+    assert.match(chart.children[0].textContent, /Deterministic process.*all theoretical and sample variances are zero/);
+  }
+});
+
+test('HW3 zero sample variances omit markers while retaining all positive theoretical curves', () => {
+  const snapshots = varianceFixture();
+  for (const metric of ['total', 'average', 'normalized']) snapshots[0].metrics[metric].empirical.variance = 0;
+  const chart = drawVariance(snapshots);
+  for (const metric of ['total', 'average', 'normalized']) {
+    assert.equal(curvePoints(varianceGroup(chart, metric)).length, 3);
+    assert.equal(sampleMarkers(varianceGroup(chart, metric)).length, 2);
+  }
+  assert.ok(chart.children.some(n => n.textContent.includes('3 zero-valued variance points')));
+  varianceNodes(chart).forEach(n => n.attributes.forEach(value => assert.doesNotMatch(value, /NaN|Infinity/)));
+});
+
+test('HW3 malformed and nonfinite variance inputs show an error without invalid SVG', () => {
+  const invalid = [null, [], [{ n: 0 }], [{ n: 0.5 }], [{ n: Infinity }], [{ n: 10 }]];
+  for (const value of [-1, NaN, Infinity, undefined]) {
+    const sample = varianceFixture(); sample[0].metrics.total.empirical.variance = value; invalid.push(sample);
+    const theory = varianceFixture(); theory[0].metrics.average.theoretical.variance = value; invalid.push(theory);
+  }
+  const duplicate = varianceFixture(); duplicate[1].n = 10; invalid.push(duplicate);
+  for (const data of invalid) {
+    const chart = drawVariance(data); assert.equal(chart.attributes.get('data-state'), 'error');
+    assert.equal(varianceNodes(chart).some(n => n.tag === 'svg'), false);
+  }
+});
+
+test('HW3 variance chart redraws on resize, retains checkpoints, and thins mobile tick labels', () => {
+  const snapshots = simulate({ ...DEFAULTS, m: 100 }).snapshots;
+  const container = drawVariance(snapshots, 832);
+  const desktop = markerCenter(sampleMarkers(varianceGroup(container, 'total')).at(-1))[0];
+  drawVariance(snapshots, 280, container);
+  const mobile = markerCenter(sampleMarkers(varianceGroup(container, 'total')).at(-1))[0];
+  assert.ok(desktop > mobile);
+  assert.equal(sampleMarkers(varianceGroup(container, 'total')).length, 6);
+  assert.equal(varianceNodes(container).filter(n => n.attributes.get('data-axis') === 'systems').length, 3);
+  assert.ok(varianceNodes(container).filter(n => n.attributes.get('data-axis') === 'variance').length <= 5);
+  assert.equal(varianceNodes(container).find(n => n.tag === 'svg').attributes.get('viewBox'), '0 0 280 310');
+});
+
+test('HW3 variance renderer remains finite for a single checkpoint and subnormal positive data', () => {
+  const single = [varianceFixture()[0]];
+  single[0].metrics.total.empirical.variance = Number.MIN_VALUE;
+  const chart = drawVariance(single);
+  assert.equal(chart.attributes.get('data-state'), 'ready');
+  varianceNodes(chart).forEach(n => n.attributes.forEach(value => assert.doesNotMatch(value, /NaN|Infinity/)));
 });

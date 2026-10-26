@@ -89,6 +89,15 @@
 .hw3-page .empirical-line { stroke: var(--color-accent); stroke-width: 2; }
 .hw3-page .empirical-point { fill: var(--color-accent); }
 .hw3-page .legend { font-size: 0.875rem; color: var(--color-muted); }
+.hw3-page .variance-legend { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); margin: var(--space-2) 0; padding: 0; list-style: none; font-size: 0.875rem; }
+.hw3-page .variance-total { color: var(--color-accent); }
+.hw3-page .variance-average { color: var(--color-focus); }
+.hw3-page .variance-normalized { color: var(--color-error); }
+.hw3-page .variance-line { fill: none; stroke: currentColor; stroke-width: 1.8; vector-effect: non-scaling-stroke; }
+.hw3-page .variance-average .variance-line { stroke-dasharray: 7 4; }
+.hw3-page .variance-normalized .variance-line { stroke-dasharray: 2 4; }
+.hw3-page .variance-marker { fill: var(--color-background); stroke: currentColor; stroke-width: 1.8; vector-effect: non-scaling-stroke; }
+.hw3-page #variance-chart:is([data-state="zero"], [data-state="error"]) ~ :is(.variance-legend, #variance-description) { display: none; }
 .hw3-page .metric-control { max-width: 20rem; }
 .hw3-page .numeric-table { font-variant-numeric: tabular-nums; }
 .hw3-page .numeric-table td { white-space: nowrap; }

@@ -77,3 +77,90 @@ export function renderLLN(container, snapshots) {
   line(chart, snapshots.map(row => [row.n, row.lln.probability]), 'empirical-line');
   snapshots.forEach(row => chart.svg.append(node('circle', { cx: chart.x(row.n), cy: chart.y(row.lln.probability), r: 3.5, class: 'empirical-point' })));
 }
+
+/** Plot existing snapshot variances; no statistics or trajectories are recomputed. */
+export function renderVarianceScaling(container, snapshots) {
+  const metrics = ['total', 'average', 'normalized'];
+  const labels = ['Total Sₙ', 'Average Sₙ/n', 'Normalized Sₙ/√n'];
+  let series;
+  try {
+    if (!Array.isArray(snapshots) || snapshots.length === 0) throw new Error('No variance checkpoints are available.');
+    snapshots.forEach((snapshot, i) => {
+      if (!Number.isSafeInteger(snapshot.n) || snapshot.n <= 0 || (i > 0 && snapshot.n <= snapshots[i - 1].n)) throw new Error('System counts must be positive, increasing integers.');
+    });
+    series = metrics.map((metric, i) => ({ metric, label: labels[i], points: snapshots.map(snapshot => {
+      const theoretical = snapshot.metrics?.[metric]?.theoretical?.variance;
+      const empirical = snapshot.metrics?.[metric]?.empirical?.variance;
+      if (![theoretical, empirical].every(value => Number.isFinite(value) && value >= 0)) throw new Error('Variances must be finite and nonnegative.');
+      return { n: snapshot.n, theoretical, empirical };
+    }) }));
+  } catch (error) {
+    const message = document.createElement('p');
+    message.textContent = `Variance chart unavailable: ${error.message}`;
+    message.className = 'legend'; message.setAttribute('data-state', 'error');
+    container.replaceChildren(message); container.setAttribute('data-state', 'error'); return;
+  }
+  const positive = series.flatMap(s => s.points.flatMap(point => [point.theoretical, point.empirical])).filter(value => value > 0);
+  if (positive.length === 0) {
+    const message = document.createElement('p');
+    message.textContent = 'Deterministic process: all theoretical and sample variances are zero. Zero has no logarithm, so no logarithmic plot is drawn. The exact zeros remain in the tables below.';
+    message.className = 'legend';
+    container.replaceChildren(message); container.setAttribute('data-state', 'zero'); return;
+  }
+  const width = Math.max(250, Math.round(container.getBoundingClientRect().width || 720));
+  const height = 310, left = 66, right = width - 16, top = 28, bottom = height - 48;
+  let xLow = Math.log10(snapshots[0].n), xHigh = Math.log10(snapshots.at(-1).n);
+  if (xLow === xHigh) { xLow -= 0.5; xHigh += 0.5; }
+  let yLow = Math.floor(Math.log10(Math.min(...positive))), yHigh = Math.ceil(Math.log10(Math.max(...positive)));
+  if (yLow === yHigh) { yLow -= 1; yHigh += 1; }
+  // Work in exponent space, including near the floating-point limits.
+  const x = n => left + (Math.log10(n) - xLow) / (xHigh - xLow) * (right - left);
+  const y = variance => bottom - (Math.log10(variance) - yLow) / (yHigh - yLow) * (bottom - top);
+  const svg = node('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-labelledby': `${container.id}-title ${container.id}-desc` });
+  svg.append(node('title', { id: `${container.id}-title` }, 'Variance scaling as system count increases'),
+    node('desc', { id: `${container.id}-desc` }, 'Both axes use logarithmic coordinates with ticks in original units. Lines show existing theoretical variances; circle, square, and triangle markers show existing sample variances. Total variance grows as n, average variance falls as 1/n, and normalized variance stays constant. The numerical tables below provide all values.'));
+  const tickLimit = width < 420 ? 5 : 9;
+  const stride = Math.max(1, Math.ceil((yHigh - yLow) / (tickLimit - 1)));
+  const powers = [...new Set([...Array.from({ length: Math.floor((yHigh - yLow) / stride) + 1 }, (_, i) => yLow + i * stride), yHigh])];
+  powers.forEach(power => {
+    const value = 10 ** power;
+    if (!Number.isFinite(value) || value <= 0) return;
+    const label = power >= -4 && power <= 5 ? value.toLocaleString('en', { maximumFractionDigits: 4 }) : `1e${power}`;
+    svg.append(node('line', { x1: left, x2: right, y1: y(value), y2: y(value), class: 'grid-line' }),
+      node('text', { x: left - 8, y: y(value) + 4, 'text-anchor': 'end', 'data-axis': 'variance', 'data-value': value }, label));
+  });
+  const indices = width < 420 ? [...new Set([0, Math.floor((snapshots.length - 1) / 2), snapshots.length - 1])] : snapshots.map((_, i) => i);
+  indices.forEach((index, i) => {
+    const n = snapshots[index].n;
+    svg.append(node('text', { x: x(n), y: bottom + 20, 'text-anchor': i === 0 ? 'start' : i === indices.length - 1 ? 'end' : 'middle', 'data-axis': 'systems', 'data-value': n }, n.toLocaleString('en')));
+  });
+  svg.append(node('text', { x: left, y: 15 }, 'Variance (log scale)'),
+    node('text', { x: (left + right) / 2, y: height - 5, 'text-anchor': 'middle' }, 'Systems n (log scale)'));
+  let omitted = 0;
+  series.forEach(({ metric, label, points }, index) => {
+    const group = node('g', { class: `variance-series variance-${metric}`, 'data-metric': metric });
+    // Zero checkpoints break a line; no zero is passed to the log transform.
+    let segment = [];
+    const flush = () => { if (segment.length) line({ svg: group, x, y }, segment, 'variance-line'); segment = []; };
+    points.forEach(point => { if (point.theoretical > 0) segment.push([point.n, point.theoretical]); else { omitted += 1; flush(); } });
+    flush();
+    points.forEach(point => {
+      if (point.empirical === 0) { omitted += 1; return; }
+      const cx = x(point.n), cy = y(point.empirical);
+      const attributes = { class: 'variance-marker', 'data-n': point.n, 'data-variance': point.empirical };
+      const marker = index === 0 ? node('circle', { ...attributes, cx, cy, r: 3.5 })
+        : index === 1 ? node('rect', { ...attributes, x: cx - 3.5, y: cy - 3.5, width: 7, height: 7 })
+          : node('polygon', { ...attributes, points: `${cx},${cy - 4.5} ${cx - 4},${cy + 3.5} ${cx + 4},${cy + 3.5}` });
+      marker.append(node('title', {}, `${label}, n = ${point.n}: sample variance ${point.empirical}`));
+      group.append(marker);
+    });
+    svg.append(group);
+  });
+  container.replaceChildren(svg); container.setAttribute('data-state', 'ready');
+  if (omitted > 0) {
+    const message = document.createElement('p');
+    message.className = 'legend';
+    message.textContent = `${omitted} zero-valued variance points are not plotted because log(0) is undefined; their exact values remain in the tables. Positive theoretical curves remain visible.`;
+    container.append(message);
+  }
+}
