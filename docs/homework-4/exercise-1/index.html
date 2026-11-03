@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Homework 4, Exercise 1: Welford’s Recurrence Formulas. Mathematical reasoning, original JavaScript and reproducible verification.">
+    <meta name="color-scheme" content="light dark">
+    <title>Homework 4 · Exercise 1 · Welford’s Recurrence Formulas · Statistics Lab</title>
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../style.css">
+    <script type="module" src="../../assets/js/site.js"></script>
+    <script type="module" src="./js/app.js"></script>
+  </head>
+  <body id="top" class="hw4-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header"><div class="container header-inner"><a class="brand" href="../../" aria-label="Statistics Lab home"><span class="brand-mark" aria-hidden="true">Σ</span><span>Statistics Lab<span class="brand-context">MSc in Cybersecurity</span></span></a></div></header>
+    <main id="main" class="container hw4-report">
+      <header class="homework-header">
+        <a class="back-link" href="../"><span aria-hidden="true">←</span> Homework 4</a>
+        <p class="eyebrow">Homework 4 · Exercise 1</p>
+        <h1>Welford’s Recurrence Formulas</h1><p>A short derivation of online mean, centered sum of squares and unbiased sample variance, followed by the three-line update used in both exercises.</p>
+        <p class="exercise-link"><a href="../exercise-2/">Exercise 2 · Sampling Mean and Variance →</a></p>
+      </header>
+      <div class="homework-layout">
+        <nav class="contents-nav" aria-label="Page contents"><p class="eyebrow">On this page</p><ol><li><a href="#definitions">01 · Definitions &amp; mean</a></li><li><a href="#derivation">02 · SS &amp; variance derivation</a></li><li><a href="#algorithm">03 · Algorithm &amp; example</a></li><li><a href="#verification">04 · Stability &amp; conclusions</a></li><li><a class="references-link" href="#references">References</a></li></ol></nav>
+        <article class="homework-article" aria-label="Exercise 1 report">
+          <section id="definitions" aria-labelledby="definitions-title">
+            <h2 id="definitions-title"><span class="section-number" aria-hidden="true">01</span> Definitions and Knuth’s mean recurrence</h2>
+
+            <p>For observations x₁,…,xₙ, write <code>μₙ = (1/n) Σᵢ₌₁ⁿ xᵢ</code> and <code>SSₙ = Σᵢ₌₁ⁿ (xᵢ − μₙ)²</code>. Here μₙ is the <em>sample</em> mean; SS is the centered sum of squares, not Σxᵢ².</p>
+            <p>Splitting off the new observation gives <code>nμₙ = (n−1)μₙ₋₁ + xₙ</code>. Subtract nμₙ₋₁ and divide by n to obtain Knuth’s mean recurrence:</p>
+            <p class="equation"><code>μₙ = μₙ₋₁ + (xₙ − μₙ₋₁)/n.</code></p>
+            <p>Only the previous mean, count and new value are needed. The unbiased sample variance is <code>sₙ² = SSₙ/(n−1)</code>, n ≥ 2. The descriptive variance SSₙ/n uses a different denominator.</p>
+          </section>
+          <section id="derivation" aria-labelledby="derivation-title">
+            <h2 id="derivation-title"><span class="section-number" aria-hidden="true">02</span> Deriving the SS and variance recurrences</h2>
+
+            <p>For n ≥ 2, let <code>δₙ = xₙ − μₙ₋₁</code>, so the mean shifts by δₙ/n. Recenter the first n−1 observations, then add the new squared deviation:</p>
+            <div class="equation"><code>SSₙ = Σᵢ₌₁ⁿ⁻¹ [(xᵢ − μₙ₋₁) − δₙ/n]²<br>+ (xₙ − μₙ)².</code></div>
+            <p>The old deviations sum to zero, <code>Σᵢ₌₁ⁿ⁻¹ (xᵢ − μₙ₋₁) = 0</code>, so the cross term vanishes. The shift adds <code>(n−1)δₙ²/n²</code> to their SS; the new deviation is <code>xₙ − μₙ = (n−1)δₙ/n</code>. Hence:</p>
+            <div class="equation"><code>SSₙ = SSₙ₋₁ + [(n−1) + (n−1)²]δₙ²/n²<br>= SSₙ₋₁ + ((n−1)/n)δₙ²<br>= SSₙ₋₁ + δₙ(xₙ − μₙ).</code></div>
+            <p>Dividing by n−1 and substituting <code>SSₙ₋₁ = (n−2)sₙ₋₁²</code> gives the sample-variance recurrence, for n ≥ 3:</p>
+            <p class="equation"><code>sₙ² = ((n−2)/(n−1))sₙ₋₁² + δₙ²/n.</code></p>
+            <p>Initialize <code>μ₁ = x₁</code>, <code>SS₁ = 0</code>; s₁² is undefined. The first valid variance is <code>s₂² = SS₂ = (x₂−x₁)²/2</code>. No recurrence uses an undefined s₁².</p>
+          </section>
+          <section id="algorithm" aria-labelledby="algorithm-title">
+            <h2 id="algorithm-title"><span class="section-number" aria-hidden="true">03</span> Three-line algorithm and worked example</h2>
+
+            <p>Starting with <code>count = 0</code>, <code>mean = 0</code>, <code>M2 = 0</code>, the shared implementation’s essential update is:</p>
+            <p><code>count</code> counts observations, <code>mean</code> stores μₙ, and <code>M2</code> stores SSₙ. Retrieval uses <code>M2/(count−1)</code> only for count ≥ 2. Empty means and undefined sample variances return <code>null</code>. The wrapper validates finite inputs and rejects arithmetic overflow.</p>
+            <figure class="source-figure"><figcaption id="welford-update-caption">shared Welford update · actual executed source</figcaption><div class="source-viewer" data-source="../shared/welford.js" data-region="welford-update"><div class="source-toolbar"><strong>shared Welford update</strong><button class="copy-button" type="button" data-copy-source disabled aria-label="Copy shared Welford update">Copy code</button></div><pre tabindex="0" aria-labelledby="welford-update-caption"><code data-source-code>Source preview requires JavaScript.</code></pre><p class="source-status" role="status" aria-live="polite" data-source-status>The excerpt will load from its source file.</p></div></figure><a class="source-link" href="../shared/welford.js">Complete shared module, validation and statistic retrieval</a>
+            <h3>A hand-checkable sequence</h3>
+            <p>For <code>[2, 4, 4, 4, 5, 5, 7, 9]</code>, the exact final values are <strong>n = 8, μ₈ = 5, SS₈ = 32, s₈² = 32/7</strong>. The table applies the shared recurrence at every step.</p>
+            <form id="welford-form" class="experiment" novalidate><label for="observations">Observations</label><input id="observations" type="text" value="2, 4, 4, 4, 5, 5, 7, 9" maxlength="2000" aria-describedby="observation-help"><p id="observation-help" class="field-help">1–32 finite numbers separated by commas or spaces; decimal and scientific notation.</p><div class="demo-actions"><button id="calculate" class="button button-primary" type="submit" disabled>Calculate running statistics</button></div><p id="example-status" role="status" aria-live="polite">Default example shown below; JavaScript enables recalculation.</p></form>
+            <div class="table-wrapper" tabindex="0" aria-labelledby="example-rows-caption"><table class="numeric-table"><caption id="example-rows-caption">Successive Welford updates · unbiased variance uses n−1</caption><thead><tr><th scope="col">n</th><th scope="col">New xₙ</th><th scope="col">Mean μₙ</th><th scope="col">Centered SSₙ</th><th scope="col">Sample sₙ²</th></tr></thead><tbody id="example-rows"><tr><td>1</td><td>2</td><td>2</td><td>0</td><td>Undefined</td></tr><tr><td>2</td><td>4</td><td>3</td><td>2</td><td>2</td></tr><tr><td>3</td><td>4</td><td>10/3</td><td>8/3</td><td>4/3</td></tr><tr><td>4</td><td>4</td><td>7/2</td><td>3</td><td>1</td></tr><tr><td>5</td><td>5</td><td>19/5</td><td>24/5</td><td>6/5</td></tr><tr><td>6</td><td>5</td><td>4</td><td>6</td><td>6/5</td></tr><tr><td>7</td><td>7</td><td>31/7</td><td>96/7</td><td>16/7</td></tr><tr><td>8</td><td>9</td><td>5</td><td>32</td><td>32/7</td></tr></tbody></table></div>
+            <noscript><p>The exact default table and derivation remain available without JavaScript.</p></noscript>
+          </section>
+          <section id="verification" aria-labelledby="verification-title">
+            <h2 id="verification-title"><span class="section-number" aria-hidden="true">04</span> Correctness, numerical stability and conclusions</h2>
+
+            <p>Independently, Σxᵢ = 40 and Σ(xᵢ−5)² = 32 verify the worked example. For <code>10¹² + [1,2,3,4]</code>, the exact SS is 5. JavaScript’s subtraction <code>Σxᵢ² − nμₙ²</code> yields 0 for this ordering, while Welford yields 5: subtracting two large, nearly equal numbers loses the small spread.</p>
+            <p>Welford uses centered differences in one pass, O(n) time and O(1) state. It reduces cancellation but cannot recover precision already lost when inputs are represented as floating-point numbers. Tests compare every prefix with an independent two-pass calculation, including constants, fractions, negatives, initialization and overflow.</p>
+            <p>The recurrence computes SS; dividing by n−1 supplies the unbiased estimator under iid sampling with finite variance. Unbiasedness follows from <code>E[SSₙ] = (n−1)σ²</code>, not from numerical stability. <a href="../exercise-2/">Exercise 2</a> reuses this module to study both estimators’ sampling variability.</p>
+          </section>
+          <section id="references" aria-labelledby="references-title"><h2 id="references-title">References</h2><ol class="references"><li>B. P. Welford (1962), <a href="https://doi.org/10.1080/00401706.1962.10490022">Note on a Method for Calculating Corrected Sums of Squares and Products</a>, <em>Technometrics</em> 4(3), 419–420. Original corrected-sums method.</li><li>G. Cowan / Particle Data Group (2024), <a href="https://pdg.lbl.gov/2024/reviews/rpp2024-rev-statistics.pdf">Statistics</a>, §40.2.1, equations (40.5)–(40.7): unbiased moment estimators and their sampling variances; §40.2: estimator properties.</li></ol><p class="field-help">The algebra, code and experimental interpretation are my own implementation; external sources support the named methods and sampling theory.</p></section>
+        </article>
+      </div>
+    </main>
+    <footer class="site-footer"><div class="container footer-inner"><p>Statistics · MSc in Cybersecurity · Sapienza University of Rome</p><a href="#top">Back to top ↑</a></div></footer>
+  </body>
+</html>

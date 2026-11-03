@@ -1,8 +1,8 @@
 # Statistics Lab · Statistics MSc
 
-An independent coursework website for the Statistics course in an MSc in Cybersecurity. Each homework has a standalone page combining the problem, mathematical reasoning, original JavaScript implementation, interactive demonstration, verification, and sources.
+An independent coursework website for the Statistics course in an MSc in Cybersecurity. Each homework links to a standalone report or a landing page with exercise reports. Reports combine the problem, mathematical reasoning, original JavaScript implementation, interactive demonstration, verification, and sources.
 
-**Current state: Homeworks 1.1, 1.2, and 2 published; Homework 3 implemented locally and ready for publication.** The site is [Statistics Lab](https://alopes0905.github.io/statistics-msc/), with [Homework 1.1](https://alopes0905.github.io/statistics-msc/homework-01/), [Homework 1.2](https://alopes0905.github.io/statistics-msc/homework-02/), and [Homework 2](https://alopes0905.github.io/statistics-msc/homework-2/) at their own URLs. The reusable template remains outside the publishing directory.
+**Homework 4 is implemented locally and awaiting review/publication.** The site is [Statistics Lab](https://alopes0905.github.io/statistics-msc/), with [Homework 1.1](https://alopes0905.github.io/statistics-msc/homework-01/), [Homework 1.2](https://alopes0905.github.io/statistics-msc/homework-02/), and [Homework 2](https://alopes0905.github.io/statistics-msc/homework-2/) at their own URLs. The reusable template remains outside the publishing directory.
 
 Homework 1.1 implements the professor’s [elliptic-curve assignment](https://github.com/alopes0905/statistics-msc/issues/1): repeated point addition on y² = x³ + 7 (mod 17), valid base/scalar selection, intermediate multiples, and a manual discrete SVG visualization. Its exhaustive subgroup experiment covers coordinate and bit frequencies, Pearson correlations, and adjacent-scalar Hamming distances, with explicit limitations. For G = (1, 5), k = 6, the calculated **toy public key is (5, 8)**; G has order 9, while the full curve has 18 elements.
 
@@ -51,6 +51,25 @@ The experiment illustrates probability theory under idealized independence, not 
 Implemented and verified, ready for publication. The public page must be checked after a successful GitHub Pages deployment. Intended URL:
 
 `https://alopes0905.github.io/statistics-msc/homework-3/`
+
+## Homework 4 — Welford recurrences and sampling statistics
+
+Homework 4 introduces a single submission page with two standalone exercise links. Multi-exercise assignments use one homepage card and a homework landing page, rather than separate homepage cards per exercise. Earlier homework URLs and labels are preserved.
+
+- **Exercise 1** derives Knuth’s mean update, Welford’s centered sum-of-squares recurrence and the unbiased sample-variance recurrence. The three-line core loads from the executed shared module; a small running-statistics table verifies `[2,4,4,4,5,5,7,9]` (mean 5, SS 32, sample variance 32/7). Empty means and sample variances for n < 2 are explicitly undefined.
+- **Exercise 2** assigns iid discrete-uniform scores on 0–10 (mean 5, variance 10, fourth central moment 178). Each hacker uses the same `docs/homework-4/shared/welford.js` implementation. The experiment reports averages of sample means and sample variances, histograms and variabilities across hackers, with exact benchmarks 10/n and [78+200/(n−1)]/n. Sample variances concentrate around **10**; their variability tends to zero.
+
+Defaults are m = 1,000, maximum n = 1,000, seed 2026; checkpoints are [2,5,10,20,50,100,500,1000]. The worker uses Park–Miller streams with fixed disjoint 1,000-draw blocks and equal-size integer score buckets. All checkpoint statistics reuse the same hacker prefixes. Changing m or n preserves existing paths. This reproducible simulation approximates iid sampling and does not model calibrated intrusion risk.
+
+One reference run gives, at n = 1,000, average sample mean 5.007095 and average sample variance 10.003132. Across-hacker variances of these individual estimators are 0.009460 and 0.081799 (theory 0.01 and 0.078200). These are measured finite-run outcomes, not fixed output constants.
+
+Run `npm run check` and `npm test` locally. Independent tests use two-pass calculations, exact worked prefixes, exhaustive n = 2 and n = 3 samples, stream allocation, prefix reuse, boundaries and histogram counts. No dependencies are required. The score simulation and inference explanations are separate from Homework 3, whose implementation stays unchanged.
+
+Implemented locally; publication is pending. Intended URLs after deployment:
+
+- Submission: `https://alopes0905.github.io/statistics-msc/homework-4/`
+- Exercise 1: `https://alopes0905.github.io/statistics-msc/homework-4/exercise-1/`
+- Exercise 2: `https://alopes0905.github.io/statistics-msc/homework-4/exercise-2/`
 
 ## Academic constraints
 
@@ -108,12 +127,20 @@ docs/                         GitHub Pages publishing directory
     js/charts.js              Native SVG plots with density-scaled comparisons
     js/app.js                 DOM rendering, input validation, and worker lifecycle
     js/simulation-worker.js   Bounded background simulation
+  homework-4/                 One submission landing page, two exercise reports
+    index.html                Exercise cards; one card on the course homepage
+    style.css                 Shared, scoped Homework 4 presentation
+    shared/welford.js          Validated three-line online accumulator
+    exercise-1/index.html     Derivation and worked running-statistics table
+    exercise-1/js/app.js      Small finite-number example and DOM rendering
+    exercise-2/index.html     Sampling experiment and inferential interpretation
+    exercise-2/js/            Simulation, theory, SVG charts, worker and UI
 templates/homework/           Unpublished reusable assignment template
   index.html                  Academic structure and example form
   style.css                   Assignment presentation
   js/statistics.js            Empty module for future pure algorithms
   js/app.js                   Template input validation and UI
-tests/                        Native tests, including homework-01, homework-02, homework-2, homework-3
+tests/                        Native tests, including homework-01, homework-02, homework-2, homework-3, homework-4
 tools/
   dev-server.js               Loopback static server and template preview
   check.js                    Syntax, links, assets, and structural checks
@@ -196,6 +223,15 @@ The pure core supports nonsingular small prime fields with 5 ≤ p ≤ 997 and n
 - Browser flows exercised both models, p = 0/0.35/1, model switching, m/n/epsilon changes, seed reproduction, all trajectory metrics and distributions, cancellation, stale-job protection, invalid inputs, unavailable-worker feedback, four real excerpts, keyboard skip navigation, sidebar/homepage navigation, no-JavaScript content, and the previous three assignments. Normal loading produced no console errors, uncaught exceptions, failed resources, or external runtime requests. The default Chrome run completed in about 122 ms on the development machine; performance depends on the device.
 - All existing homework files and shared assets remain unchanged. Two old homepage-link assertions were updated only to include the fourth card. Safari/Firefox, screen-reader output, and native clipboard permissions were not tested in this run. Homework 3 still needs publication and verification at its deployed URL.
 
+### Homework 4 verification record
+
+- `npm run check` passed: 9 pages including the virtual template, 48 resources and 37 JavaScript syntax checks. `npm test` passed all 174 tests (142 existing and 32 new), with no skips.
+- Independent two-pass calculations verify every worked prefix, large-offset stability and the actual hacker estimates. Exhaustive enumeration of all 121 n = 2 samples and 1,331 n = 3 samples verifies both unbiased targets and the exact fourth-moment variability formula. Tests also cover stream allocation, path-prefix reuse, n/m/seed boundaries and histogram counts.
+- Local headless Chrome checked the homepage, Homework 4 landing page and both exercises at 320, 390, 768 and 1,440 CSS pixels in light/dark themes without page overflow. Native 200% browser zoom was verified in both themes (1,440-pixel window, 720 CSS-pixel viewport, device pixel ratio 2). Desktop, mobile and zoom screenshots were inspected.
+- Browser checks exercised the exercise links, source excerpts, worked examples, validation, both trajectory modes, histogram n selection, seed reruns, m/n changes, cancellation and stale-result clearing. Plot markers match the full-precision simulation output; histogram counts sum to m. All four earlier homework pages also loaded without page overflow. No page exceptions, console errors, failed resources or external runtime requests occurred. Only earlier homepage-navigation expectations changed in existing tests.
+- This verification used Chrome; Safari/Firefox, screen-reader output and native clipboard permission were not tested in this run. Homework 4 has not been deployed; its public URL still needs verification after publication.
+
+
 ## Add a homework after its release
 
 1. Read the professor’s actual brief and identify its mathematical requirements. Start a local branch if useful.
@@ -243,7 +279,7 @@ Derive expected values independently of the implementation. Cover known mathemat
 
 ### Link the completed homework
 
-Add one card per completed assignment inside the landing page’s `.homework-list`:
+Add one card per completed homework inside the homepage’s `.homework-list`. A homework with multiple exercises links to its own landing page, which contains one card per exercise:
 
 ```html
 <a class="homework-card" href="./homework-01/">

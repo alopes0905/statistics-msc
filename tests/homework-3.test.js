@@ -264,7 +264,7 @@ test('HW3 page integrates four sections, accessible controls, real chart alterna
   const charts = await readFile(new URL('../docs/homework-3/js/charts.js', import.meta.url), 'utf8');
   assert.match(charts, /role: 'img'/); assert.match(charts, /'aria-labelledby'/); assert.match(charts, /node\('desc'/);
   const home = await readFile(new URL('../docs/index.html', import.meta.url), 'utf8');
-  assert.deepEqual([...home.matchAll(/<h3>(Homework [^<]+)<\/h3>/g)].map(m => m[1]), ['Homework 1.1', 'Homework 1.2', 'Homework 2', 'Homework 3']);
+  assert.deepEqual([...home.matchAll(/<h3>(Homework [^<]+)<\/h3>/g)].map(m => m[1]), ['Homework 1.1', 'Homework 1.2', 'Homework 2', 'Homework 3', 'Homework 4']);
 });
 
 test('HW3 is served with its worker, modules, and excerpts under the Pages project subpath', async t => {
