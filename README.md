@@ -2,7 +2,7 @@
 
 An independent coursework website for the Statistics course in an MSc in Cybersecurity. Each homework links to a standalone report or a landing page with exercise reports. Reports combine the problem, mathematical reasoning, original JavaScript implementation, interactive demonstration, verification, and sources.
 
-**Homework 4 is implemented locally and awaiting review/publication.** The site is [Statistics Lab](https://alopes0905.github.io/statistics-msc/), with [Homework 1.1](https://alopes0905.github.io/statistics-msc/homework-01/), [Homework 1.2](https://alopes0905.github.io/statistics-msc/homework-02/), and [Homework 2](https://alopes0905.github.io/statistics-msc/homework-2/) at their own URLs. The reusable template remains outside the publishing directory.
+**Homework 5 is implemented and verified; publication is pending.** The site is [Statistics Lab](https://alopes0905.github.io/statistics-msc/), with [Homework 1.1](https://alopes0905.github.io/statistics-msc/homework-01/), [Homework 1.2](https://alopes0905.github.io/statistics-msc/homework-02/), and [Homework 2](https://alopes0905.github.io/statistics-msc/homework-2/) at their own URLs. The reusable template remains outside the publishing directory.
 
 Homework 1.1 implements the professor’s [elliptic-curve assignment](https://github.com/alopes0905/statistics-msc/issues/1): repeated point addition on y² = x³ + 7 (mod 17), valid base/scalar selection, intermediate multiples, and a manual discrete SVG visualization. Its exhaustive subgroup experiment covers coordinate and bit frequencies, Pearson correlations, and adjacent-scalar Hamming distances, with explicit limitations. For G = (1, 5), k = 6, the calculated **toy public key is (5, 8)**; G has order 9, while the full curve has 18 elements.
 
@@ -48,7 +48,7 @@ The page includes three lattice-aligned density histograms, variance comparisons
 
 The experiment illustrates probability theory under idealized independence, not calibrated intrusion-risk forecasting. Real attacks may be dependent, heterogeneous, or adaptive. Increasing m improves Monte Carlo precision without changing the one-attacker theoretical law; increasing n changes that law.
 
-Implemented and verified, ready for publication. The public page must be checked after a successful GitHub Pages deployment. Intended URL:
+Homework 3 is published. HTTP 200 and the expected report were verified on 9 November 2026. Published URL:
 
 `https://alopes0905.github.io/statistics-msc/homework-3/`
 
@@ -65,11 +65,31 @@ One reference run gives, at n = 1,000, average sample mean 5.007095 and average 
 
 Run `npm run check` and `npm test` locally. Independent tests use two-pass calculations, exact worked prefixes, exhaustive n = 2 and n = 3 samples, stream allocation, prefix reuse, boundaries and histogram counts. No dependencies are required. The score simulation and inference explanations are separate from Homework 3, whose implementation stays unchanged.
 
-Implemented locally; publication is pending. Intended URLs after deployment:
+Homework 4 is published. HTTP 200 and the expected landing page were verified on 9 November 2026. URLs:
 
 - Submission: `https://alopes0905.github.io/statistics-msc/homework-4/`
 - Exercise 1: `https://alopes0905.github.io/statistics-msc/homework-4/exercise-1/`
 - Exercise 2: `https://alopes0905.github.io/statistics-msc/homework-4/exercise-2/`
+
+## Homework 5 — Integration and the normal CDF
+
+One homepage card links to `/homework-5/`, with two standalone exercise pages. Earlier assignment paths and labels are preserved. Homework 5 is implemented and verified; its published URL needs checking after deployment.
+
+- **Exercise 1** compares tagged domain sums (midpoint by default; optional left/right) with value-axis integration of genuine superlevel lengths M(t). The functions are x², sin(x), a step with values 1 and 3, |x−½|, an indicator, 1/√x and sinc on their documented domains. Analytical preimages are derived explicitly; sinc uses bounded bisection with every iteration/evaluation counted. No histogram of sampled values supplies the Lebesgue measures.
+- **Pathologies and limits:** Dirichlet’s rational/irrational sample families are symbolic or exact-index constructions, with nonconvergent Riemann behavior and Lebesgue integral zero. Thomae uses integer GCD reduction and the measure-zero discontinuity criterion. The unbounded 1/√x example distinguishes improper Riemann integration, finite value cutoff T, quadrature error and exact omitted tail 1/T.
+- **Exercise 2** implements composite Simpson, a recurrent erf series and the main tail-stable hybrid. On |x|≤2 it uses the central series; for 2<|x|≤10 it directly integrates the positive transformed tail with a generated/cached 32-point Gauss–Legendre rule on [0,8]. Both CDF and survival probabilities are retained. The erf identities and the differential-algebra form of Liouville’s theorem are derived/explained separately from numerical evaluation.
+
+References include NIST’s five-decimal normal table, DLMF definitions/series/quadrature, ETSU’s lecture notes, Churchill’s Liouville discussion and MathWorld. Independently generated 80-decimal-digit comparison data and their precision/reproduction are recorded in [the reference-data record](docs/homework-5/data/README.md). Neither numerical CDF implementation imports reference answers. mpmath was used only in an isolated offline verification environment; the project and website have zero external dependencies.
+
+Reference checks give Φ(−8) = 6.220960574271802e−16 and Φ(−10) = 7.61985302416055e−24 from the JavaScript hybrid. Observed relative small-tail error over 31 stored points stays below 4e−15 in the checked Node/Chrome runs; a separate 1,001-point high-precision check across [−10,10] found about 1.3e−14. These are measured validation results, not a universal roundoff theorem. Positive Φ(10) rounds to one while its complementary probability remains available.
+
+Both exercises compute convergence tables, actual operation counts and warmed median timings in cancellable workers. Timings depend on the machine and browser. Domain/range comparisons disclose the extra analytical information and enclosure work; CDF work comparisons use matched absolute or small-tail-relative accuracy. Parameters, iterations and partition counts are bounded. Edits clear stale results. Run `npm run check` and `npm test`; no installation is required.
+
+Intended URLs after publication:
+
+- Submission: `https://alopes0905.github.io/statistics-msc/homework-5/`
+- Exercise 1: `https://alopes0905.github.io/statistics-msc/homework-5/exercise-1/`
+- Exercise 2: `https://alopes0905.github.io/statistics-msc/homework-5/exercise-2/`
 
 ## Academic constraints
 
@@ -135,12 +155,22 @@ docs/                         GitHub Pages publishing directory
     exercise-1/js/app.js      Small finite-number example and DOM rendering
     exercise-2/index.html     Sampling experiment and inferential interpretation
     exercise-2/js/            Simulation, theory, SVG charts, worker and UI
+  homework-5/                 Two-exercise integration and normal-CDF submission
+    index.html                Exercise cards; one card on the course homepage
+    style.css                 Scoped Homework 5 presentation
+    shared/                   Compensated sums, timings, SVG axes and worker UI
+    exercise-1/index.html     Integration principles and preimage derivations
+    exercise-1/js/            Functions, domain/range rules, experiments, charts and UI
+    exercise-2/index.html     CDF theory, numerical methods and reference comparisons
+    exercise-2/js/            Original CDF algorithms, quadrature, experiments and UI
+    data/normal-reference.js  Separate high-precision/NIST comparison data
+    data/README.md            Sources, precision and independent reproduction
 templates/homework/           Unpublished reusable assignment template
   index.html                  Academic structure and example form
   style.css                   Assignment presentation
   js/statistics.js            Empty module for future pure algorithms
   js/app.js                   Template input validation and UI
-tests/                        Native tests, including homework-01, homework-02, homework-2, homework-3, homework-4
+tests/                        Native tests, including homework-01, homework-02, homework-2, homework-3, homework-4, homework-5
 tools/
   dev-server.js               Loopback static server and template preview
   check.js                    Syntax, links, assets, and structural checks
@@ -231,6 +261,15 @@ The pure core supports nonsingular small prime fields with 5 ≤ p ≤ 997 and n
 - Browser checks exercised the exercise links, source excerpts, worked examples, validation, both trajectory modes, histogram n selection, seed reruns, m/n changes, cancellation and stale-result clearing. Plot markers match the full-precision simulation output; histogram counts sum to m. All four earlier homework pages also loaded without page overflow. No page exceptions, console errors, failed resources or external runtime requests occurred. Only earlier homepage-navigation expectations changed in existing tests.
 - This verification used Chrome; Safari/Firefox, screen-reader output and native clipboard permission were not tested in this run. Homework 4 has not been deployed; its public URL still needs verification after publication.
 
+
+### Homework 5 verification record
+
+- `npm run check` passed: 12 pages including the virtual template, 69 resources and 54 JavaScript syntax checks. `npm test` passed all 220 tests (174 existing, 46 new), without skips.
+- Independent cases check actual domain nodes/widths, analytical and numerically inverted preimages, range enclosures and counts, strict step boundaries, sinc roots and work, singular cutoff/tail accounting, exact rational reduction and symbolic pathological families. Quadrature tests check cubic Simpson exactness and all monomials through degree 63 for the generated 32-point Gauss rule.
+- CDF tests use separate high-precision references and relative tolerances that reject zero at −8 and −10. Additional checks cover erf coefficients/stopping, branch transitions, symmetry, monotonicity, derivatives, truncation bounds, 64-node refinement, saturation and the unrepaired baseline limitations. An independent 1,001-point high-precision check across [−10,10] found maximum relative small-tail error about 1.3e−14.
+- Local headless Chrome checked the homepage, Homework 5 landing and both exercises at 320, 390, 768 and 1,440 CSS pixels in light/dark themes, without page overflow. Native 200% zoom passed in both themes (1,440-pixel window, 720 CSS-pixel viewport, device pixel ratio 2). Desktop, mobile and zoom screenshots were inspected.
+- Browser checks exercised all seven functions, preimage/cost tables, partition/rule/cutoff changes, singular and pathological cases, zero-error plots, CDF central/extreme inputs, independent-reference and unreferenced-input feedback, repeatability excluding timings, cancellation/stale results, source excerpts, navigation and keyboard skip-link operation. Unavailable-worker and no-JavaScript behavior were checked. All five earlier homeworks, including both Homework 4 exercises, also loaded. No uncaught exceptions, console errors, failed resources or external runtime requests occurred.
+- This review used Chrome. Safari/Firefox, screen-reader output and native clipboard permissions were not tested in this run. Homework 5’s public URL needs verification after deployment. Homeworks 3 and 4 returned HTTP 200 with their expected content on 9 November 2026, superseding the earlier publication-pending wording in their historical records above.
 
 ## Add a homework after its release
 
