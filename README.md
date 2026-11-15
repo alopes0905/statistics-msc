@@ -91,6 +91,24 @@ Intended URLs after publication:
 - Exercise 1: `https://alopes0905.github.io/statistics-msc/homework-5/exercise-1/`
 - Exercise 2: `https://alopes0905.github.io/statistics-msc/homework-5/exercise-2/`
 
+## Homework 6 — Statistical independence
+
+One homepage card links directly to `/homework-6/`. This single-exercise report is implemented and verified; its public URL needs verification after deployment.
+
+The synthetic cybersecurity dataset consists of six weighted `(X, F, Count)` records, not real penetration measurements. The contingency-table constructor also accepts raw `{X,F}` observations, arbitrary text or numeric category labels, repeated pairs and zero cells. CSV supports headers `X,F` or `X,F,Count`, quoted commas/newlines and doubled quotes. Input is bounded to 1,000,000 characters, 10,000 records and 20 categories per variable. Counts and their positive grand total must be safe integers; zero marginal categories are rejected explicitly, never silently removed. Weighted rows are aggregated without expansion.
+
+The report derives joint/marginal frequencies, both conditional directions and expected counts `Eᵢⱼ = RᵢCⱼ/N`. All expected margins are checked numerically. It calculates the uncorrected Pearson statistic, per-cell contributions, signed Pearson residuals, `df = (r−1)(c−1)` and Cramér’s V. A single native SVG chart displays F given X; the full numerical tables remain available. Edits clear stale results, and α changes only the inference.
+
+Default observed rows are `[30,10]`, `[20,20]`, `[10,30]`: row totals 40 each, column totals 60 each, N = 120. Conditional success proportions are 75%, 50%, 25%, versus marginal 50%. All six expected counts equal 20; contributions are `[5,5]`, `[0,0]`, `[5,5]`. Thus **χ² = 20, df = 2, p = exp(−10) ≈ 0.0000453999297625, V ≈ 0.4082482905**. At α = 0.05 the example rejects H₀, illustrating association rather than establishing causality or a real-world security finding.
+
+The dependency-free p-value is the chi-square survival `Q(df/2,χ²/2)`: a convergent lower-gamma series in its safe region and a directly evaluated upper-tail continued fraction elsewhere, normalized with shifted Stirling log-gamma. Iterations/convergence and finite parameters are checked. Supported df are 1–1,000; the category limit requires at most 361. Log probabilities survive floating-point underflow; the UI reports an inequality rather than mathematical zero. References are Penn State, NIST and DLMF; no reference answers are imported by the numerical core.
+
+Expected-count diagnostics report the minimum, cells/percentage below 5 and cells below 1. The page conservatively flags any expected count below 5 and also explains the broader no-count-below-1 / at-least-80%-at-5 guideline. Sparse examples retain descriptive results but qualify the asymptotic p-value and decision; Fisher’s exact test is mentioned for suitable small 2×2 tables. Sampling design and independent observational units cannot be established from the CSV alone. Failure to reject H₀ does not prove independence; statistical significance and effect size answer different questions.
+
+Verification uses hand-checked tables, factorial/half-integer identities, critical values, independent finite-sum formulas for even df and the separately implemented HW5 normal-tail recurrence for odd df. Tiny-tail tests use relative error, not an absolute tolerance that would accept zero. The exactly factorizing preset gives χ² = 0, p = 1, V = 0; the sparse preset has E = 0.5 in every cell and a prominent approximation warning. Run `npm run check` and `npm test`; headless Chrome verification covered the homepage and HW6 at 320, 390, 768 and 1440 pixels in light/dark themes, native 200% zoom, keyboard navigation, CSV/presets/α changes, malformed input, stale clearing, long labels, a 20×20 table, source loading and no-JavaScript fallback. No page overflow, browser errors, failed resources or external runtime calls were found. Safari, Firefox and assistive-technology testing were not performed. The full suite passes **248 tests** (220 existing and 28 new); `npm run check` passes 13 pages, 76 resources and 60 JavaScript syntax checks. All previous homework implementations and shared assets are preserved.
+
+Intended public URL after publication: `https://alopes0905.github.io/statistics-msc/homework-6/`.
+
 ## Academic constraints
 
 - Use modern standard JavaScript with ES modules; modules are strict by specification. Prefer `const`, use `let` when needed, and never use `var`.
@@ -165,12 +183,20 @@ docs/                         GitHub Pages publishing directory
     exercise-2/js/            Original CDF algorithms, quadrature, experiments and UI
     data/normal-reference.js  Separate high-precision/NIST comparison data
     data/README.md            Sources, precision and independent reproduction
+  homework-6/                 Single report: categorical independence and chi-square
+    index.html                Four sections, editable CSV, tables and interpretation
+    style.css                 Scoped report and conditional-proportions chart styles
+    js/dataset.js             Strict CSV parsing, bounds and contingency construction
+    js/statistics.js          Frequencies, Pearson statistic, diagnostics and interpretation
+    js/chi-square.js          Gamma survival probability and log-gamma normalization
+    js/charts.js              Accessible native SVG conditional-proportions chart
+    js/app.js                 Safe DOM rendering, alpha changes and stale clearing
 templates/homework/           Unpublished reusable assignment template
   index.html                  Academic structure and example form
   style.css                   Assignment presentation
   js/statistics.js            Empty module for future pure algorithms
   js/app.js                   Template input validation and UI
-tests/                        Native tests, including homework-01, homework-02, homework-2, homework-3, homework-4, homework-5
+tests/                        Native tests, including homeworks 1.1, 1.2 and 2–6
 tools/
   dev-server.js               Loopback static server and template preview
   check.js                    Syntax, links, assets, and structural checks
