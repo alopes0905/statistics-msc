@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Homework 7, Exercise 1: Modes of Convergence. Four meanings of convergence, the laws of large numbers and the scale of sampling fluctuations.">
+    <meta name="color-scheme" content="light dark">
+    <title>Homework 7 · Exercise 1 · Modes of Convergence · Statistics Lab</title>
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../style.css">
+    <script type="module" src="../../assets/js/site.js"></script>
+    <script type="module" src="./js/app.js"></script>
+  </head>
+  <body id="top" class="hw7-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header"><div class="container header-inner"><a class="brand" href="../../" aria-label="Statistics Lab home"><span class="brand-mark" aria-hidden="true">Σ</span><span>Statistics Lab<span class="brand-context">MSc in Cybersecurity</span></span></a></div></header>
+    <main id="main" tabindex="-1" class="container hw7-report">
+      <header class="homework-header">
+        <a class="back-link" href="../"><span aria-hidden="true">←</span> Homework 7</a>
+        <p class="eyebrow">Homework 7 · Exercise 1</p>
+        <h1>Modes of Convergence</h1>
+        <p>Four meanings of convergence, the laws of large numbers and the scale of sampling fluctuations.</p>
+        <p class="exercise-link"><a href="../exercise-2/">Exercise 2 · Conditional Probability and Bayesian Inference →</a></p>
+      </header>
+      <div class="homework-layout">
+        <nav class="contents-nav" aria-label="Page contents"><p class="eyebrow">On this page</p><ol><li><a href="#modes-section">01 · Four modes</a></li><li><a href="#implications">02 · Implications</a></li><li><a href="#limit-theorems">03 · LLN, CLT &amp; √n</a></li><li><a href="#experiment">04 · Simulation</a></li><li><a class="references-link" href="#references">References</a></li></ol></nav>
+        <article class="homework-article" aria-label="Exercise 1 report">
+          <section id="modes-section" aria-labelledby="modes-section-title">
+            <h2 id="modes-section-title"><span class="section-number" aria-hidden="true">01</span> The four modes of convergence</h2>
+            <p>Let X₁, X₂, … be random variables with candidate limit X. The first three modes compare variables on a common probability space. For convergence in distribution, only their laws are needed. Write Fₙ(x) = P(Xₙ ≤ x) and F(x) = P(X ≤ x).</p>
+            <div class="table-wrapper" tabindex="0" role="region" aria-labelledby="modes-caption">
+              <table class="numeric-table">
+                <caption id="modes-caption">Four meanings of convergence as n tends to infinity</caption>
+                <thead><tr><th scope="col">Mode</th><th scope="col">Definition</th><th scope="col">What it controls</th></tr></thead>
+                <tbody id="modes">
+                  <tr><th scope="row">In probability</th><td>For every ε &gt; 0, P(|Xₙ−X| &gt; ε) → 0.</td><td>Fixed-size errors become unlikely.</td></tr>
+                  <tr><th scope="row">Almost surely (a.s.)</th><td>P({ω : limₙ Xₙ(ω) = X(ω)}) = 1.</td><td>Almost every path eventually stays within each tolerance.</td></tr>
+                  <tr><th scope="row">Mean square (L²)</th><td>Xₙ, X ∈ L² and E[(Xₙ−X)²] → 0.</td><td>Average squared error vanishes.</td></tr>
+                  <tr><th scope="row">In distribution</th><td>Fₙ(x) → F(x) at every continuity point of F.</td><td>The CDFs approach the limiting CDF.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+          <section id="implications" aria-labelledby="implications-title">
+            <h2 id="implications-title"><span class="section-number" aria-hidden="true">02</span> Implications and counterexamples</h2>
+            <div class="equation" aria-label="Almost sure and mean-square convergence each imply convergence in probability, which implies convergence in distribution."><code>Almost sure → In probability → In distribution<br>L² → In probability → In distribution</code></div>
+            <p>Almost sure convergence makes the probability of any ε-error somewhere after index n tend to zero, by continuity of probability for decreasing events. For L², Markov’s inequality bounds the ε-error probability by E[(Xₙ−X)²]/ε². Convergence in probability implies convergence in distribution by bounding Fₙ(x) between F(x−ε) and F(x+ε) with an error at most P(|Xₙ−X| &gt; ε), then taking ε down to zero at a continuity point. For a constant limit c, the two CDF values at c−ε and c+ε also give the converse.</p>
+            <dl class="examples">
+              <dt>Almost surely, without L²</dt>
+              <dd>For U uniform on [0,1), let Xₙ = √n · 1{U ≤ 1/n}. Each U &gt; 0 eventually lies outside the shrinking event. The probability of a nonzero value is 1/n, while E[Xₙ²] = n · (1/n) = 1. The rare spikes keep the squared error from vanishing.</dd>
+              <dt>L², without almost sure convergence</dt>
+              <dd>In the typewriter sequence write n = 2ᵏ+j, where k ≥ 0 and 0 ≤ j &lt; 2ᵏ, and use Xₙ = 1{j/2ᵏ ≤ U &lt; (j+1)/2ᵏ}. The interval length gives E[Xₙ²] = 2⁻ᵏ → 0. Every U in [0,1) belongs to exactly one interval in each stage, so each path has infinitely many ones and infinitely many zeros.</dd>
+              <dt>In distribution, without convergence in probability to X</dt>
+              <dd>For a fair Rademacher variable X with values ±1, take Xₙ = (−1)ⁿX. All Xₙ have the law of X. At odd indices |Xₙ−X| = 2 almost surely, so P(|Xₙ−X| &gt; 1) alternates between 0 and 1.</dd>
+            </dl>
+            <p>The first two examples make a.s. and L² convergence incomparable in general. Together they also disprove the two reverse implications from convergence in probability.</p>
+          </section>
+          <section id="limit-theorems" aria-labelledby="limit-theorems-title">
+            <h2 id="limit-theorems-title"><span class="section-number" aria-hidden="true">03</span> LLN, CLT and √n scaling</h2>
+            <p>Let Sₙ = Σᵢ Xᵢ and X̄ₙ = Sₙ/n for iid observations with mean μ and finite variance σ². Linearity gives E[X̄ₙ] = μ. Expanding the variance of the sum gives:</p>
+            <p class="equation"><code>Var(Sₙ) = Σᵢ Var(Xᵢ) + 2Σᵢ&lt;ⱼ Cov(Xᵢ,Xⱼ) = nσ².<br>SD(Sₙ) = σ√n. Var(X̄ₙ) = σ²/n. SD(X̄ₙ) = σ/√n.</code></p>
+            <p>The last equality for Var(Sₙ) uses independence. Pairwise zero covariance also suffices for adding the variances. Dependence can change their growth: if all Xᵢ are the same variable, Var(Sₙ) = n²σ². Some weakly dependent processes retain √n scaling with a long-run variance that includes covariances. With infinite variance the classical variance derivation does not apply.</p>
+            <p><strong>Weak LLN.</strong> Chebyshev gives <code>P(|X̄ₙ−μ| ≥ ε) ≤ σ²/(nε²) → 0</code>. Thus X̄ₙ converges in probability to μ. This proves the finite-variance version. <strong>Strong LLN.</strong> For iid observations with E|X₁| &lt; ∞, X̄ₙ → μ almost surely, even without a finite variance.</p>
+            <p><strong>L² consistency.</strong> In the finite-variance case E[(X̄ₙ−μ)²] = σ²/n. For any square-integrable estimator T of θ, expanding (T−E[T]+E[T]−θ)² eliminates the cross term upon taking expectation, giving <code>MSE(T) = Var(T) + Bias(T)²</code>. This is risk under squared-error loss. Vanishing MSE implies consistency in probability.</p>
+            <p><strong>Classical iid CLT.</strong> For 0 &lt; σ² &lt; ∞, multiplying the centered mean by √n restores variance σ². Dividing by σ gives variance 1 at every n. The CLT identifies the limiting <em>law</em> of those fluctuations:</p>
+            <p class="equation"><code>Zₙ = √n(X̄ₙ−μ)/σ = (Sₙ−nμ)/(σ√n) →ᵈ N(0,1).</code></p>
+            <p>The LLN concerns the unscaled mean approaching μ. The CLT concerns the CDF of Zₙ and makes no assertion of almost sure convergence or convergence in probability of Zₙ to a normal variable. The normal law approximates a sampling distribution, which is distinct from the population law.</p>
+            <p>For the sample mean the standard error is σ/√n, estimated by s/√n. With the iid assumptions above and a consistent s, this scale supports approximate confidence intervals such as X̄ₙ ± 1.96s/√n and standardized hypothesis tests. Other asymptotically normal estimators may have their own variance formulas. Variance scaling alone does not establish a CLT.</p>
+          </section>
+          <section id="experiment" aria-labelledby="experiment-title">
+            <h2 id="experiment-title"><span class="section-number" aria-hidden="true">04</span> Reproducible numerical demonstration</h2>
+            <p>Bernoulli(p) takes values 0 and 1 with μ = p and σ² = p(1−p). Rademacher takes −1 and +1 with equal probability, giving μ = 0 and σ² = 1. Each trajectory supplies a single prefix at each checkpoint.</p>
+            <form id="simulation-form" class="experiment" novalidate>
+              <div class="control-grid">
+                <div><label for="model">Sampling model</label><select id="model"><option value="bernoulli">Bernoulli</option><option value="rademacher">Rademacher</option></select></div>
+                <div><label for="p">Bernoulli probability p</label><input id="p" type="number" value="0.35" min="0" max="1" step="any" required></div>
+                <div><label for="max-n">Maximum sample size n</label><select id="max-n"><option>1000</option></select></div>
+                <div><label for="m">Trajectories m</label><input id="m" type="number" value="1000" min="2" max="2000" required></div>
+                <div><label for="epsilon">Tolerance ε</label><input id="epsilon" type="number" value="0.1" min="0.001" max="2" step="any" required></div>
+                <div><label for="seed">Seed</label><input id="seed" type="number" value="2026" min="1" max="2147483646" required></div>
+              </div>
+              <p class="field-help">Checkpoints 10, 20, 50, 100, 200, 500 and 1,000. Limits are 2–2,000 trajectories, ε from 0.001 to 2, and integer seeds from 1 to 2,147,483,646.</p>
+              <div class="demo-actions"><button id="run" class="button button-primary" type="submit" disabled>Run simulation</button><button id="cancel" class="button button-secondary" type="button" disabled>Cancel</button></div>
+              <p id="status" role="status" aria-live="polite">JavaScript and Web Workers enable the simulation.</p>
+            </form>
+            <div id="simulation-results" hidden>
+              <div class="chart-grid">
+                <figure class="chart-figure"><figcaption>First six paths or fewer · dashed line marks μ</figcaption><div class="chart-image" id="trajectories"></div></figure>
+                <figure class="chart-figure"><figcaption>Empirical MSE · dashed line marks σ²/n</figcaption><div class="chart-image" id="mse"></div></figure>
+              </div>
+            <p class="field-help">Variances use m−1, and empirical MSE uses m. Wide tables scroll horizontally.</p>
+            <div class="table-wrapper" tabindex="0" role="region" aria-labelledby="snapshots-caption">
+              <table class="numeric-table">
+                <caption id="snapshots-caption">Results by sample size</caption>
+                <thead><tr><th scope="col">n</th><th scope="col">Mean of X̄ₙ</th><th scope="col">Var. of X̄ₙ</th><th scope="col">MSE</th><th scope="col">Theory var. and MSE</th><th scope="col">Fraction ≥ ε</th><th scope="col">Chebyshev</th><th scope="col">Mean of Zₙ</th><th scope="col">Var. of Zₙ</th></tr></thead>
+                <tbody id="snapshots"></tbody>
+              </table>
+            </div>
+              <div class="metric-control"><label for="distribution-n">Histogram sample size n</label><select id="distribution-n"><option>1000</option></select></div>
+              <p id="histogram-note" role="status"></p>
+              <div id="histogram-results">
+                <figure class="chart-figure"><figcaption>Standardized sample means · bar areas represent relative frequency</figcaption><div class="chart-image" id="histogram"></div></figure>
+                <details><summary>View histogram bin counts and densities</summary>
+            <div class="table-wrapper" tabindex="0" role="region" aria-labelledby="bins-caption">
+              <table class="numeric-table">
+                <caption id="bins-caption">Counts and densities from all trajectories at selected n</caption>
+                <thead><tr><th scope="col">Interval in Zₙ</th><th scope="col">Count</th><th scope="col">Density</th></tr></thead>
+                <tbody id="bins"></tbody>
+              </table>
+            </div>
+                </details>
+              </div>
+            </div>
+            <p>Park–Miller uses fixed blocks of 1,000 draws per trajectory, so increasing m or the maximum n preserves existing prefixes. The stream is deterministic and approximates iid sampling. Chebyshev is a bound capped at 1, and the deviation count compares integer sums with exact decimal thresholds so equality is included. More trajectories reduce Monte Carlo noise in the summaries. The sampling law of one mean depends on n and the chosen model.</p>
+            <p>Both models have discrete finite-n laws. The density histogram and normal overlay illustrate the CLT comparison, whose quality depends on n, p and binning. Finite paths illustrate the LLN and cannot establish almost sure convergence. The exact variance and MSE formulas explain the decay seen in the simulation.</p>
+            <details><summary>View Sample-mean moments and standardization in JavaScript</summary>
+              <figure class="source-figure"><figcaption id="mean-and-scaling-caption">Sample-mean moments and standardization · executed source</figcaption>
+                <div class="source-viewer" data-source="./js/convergence.js" data-region="mean-and-scaling">
+                  <div class="source-toolbar"><strong>Sample-mean moments and standardization</strong><button class="copy-button" type="button" data-copy-source disabled aria-label="Copy Sample-mean moments and standardization">Copy code</button></div>
+                  <pre tabindex="0" aria-labelledby="mean-and-scaling-caption"><code data-source-code>Source preview requires JavaScript.</code></pre>
+                  <p class="source-status" role="status" data-source-status>The excerpt will load from its source file.</p>
+                </div>
+              </figure>
+              <a class="source-link" href="./js/convergence.js">Complete source file</a>
+            </details>
+            <details><summary>View Seeded simulation and shared prefixes in JavaScript</summary>
+              <figure class="source-figure"><figcaption id="shared-prefixes-caption">Seeded simulation and shared prefixes · executed source</figcaption>
+                <div class="source-viewer" data-source="./js/convergence.js" data-region="shared-prefixes">
+                  <div class="source-toolbar"><strong>Seeded simulation and shared prefixes</strong><button class="copy-button" type="button" data-copy-source disabled aria-label="Copy Seeded simulation and shared prefixes">Copy code</button></div>
+                  <pre tabindex="0" aria-labelledby="shared-prefixes-caption"><code data-source-code>Source preview requires JavaScript.</code></pre>
+                  <p class="source-status" role="status" data-source-status>The excerpt will load from its source file.</p>
+                </div>
+              </figure>
+              <a class="source-link" href="./js/convergence.js">Complete source file</a>
+            </details>
+          </section>
+          <section id="references" aria-labelledby="references-title"><h2 id="references-title">References</h2><ul class="references">
+            <li><a href="https://ocw.mit.edu/courses/6-262-discrete-stochastic-processes-spring-2011/8891e7baac9405a64ac253a253e91b3f_MIT6_262S11_lec03.pdf">MIT 6.262, Lecture 3 · Laws of Large Numbers and Convergence</a>. Mean square, sample-path convergence and the distinction between LLN and CLT.</li>
+            <li><a href="https://ocw.mit.edu/courses/res-6-012-introduction-to-probability-spring-2018/pages/part-ii-inference-limit-theorems/">MIT Introduction to Probability, Part II · Inference and Limit Theorems</a>. Lectures 18–19 on Chebyshev, the WLLN and the CLT.</li>
+          </ul></section>
+        </article>
+      </div>
+    </main>
+    <footer class="site-footer"><div class="container footer-inner"><p>Statistics · MSc in Cybersecurity · Sapienza University of Rome</p><a href="#top">Back to top ↑</a></div></footer>
+  </body>
+</html>

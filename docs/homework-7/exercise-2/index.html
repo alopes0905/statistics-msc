@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Homework 7, Exercise 2: Conditional Probability and Bayesian Inference. I use a hypothetical detector and a Beta–Binomial model to distinguish hypothesis updating from parameter inference.">
+    <meta name="color-scheme" content="light dark">
+    <title>Homework 7 · Exercise 2 · Conditional Probability and Bayesian Inference · Statistics Lab</title>
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../style.css">
+    <script type="module" src="../../assets/js/site.js"></script>
+    <script type="module" src="./js/app.js"></script>
+  </head>
+  <body id="top" class="hw7-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header"><div class="container header-inner"><a class="brand" href="../../" aria-label="Statistics Lab home"><span class="brand-mark" aria-hidden="true">Σ</span><span>Statistics Lab<span class="brand-context">MSc in Cybersecurity</span></span></a></div></header>
+    <main id="main" tabindex="-1" class="container hw7-report">
+      <header class="homework-header">
+        <a class="back-link" href="../"><span aria-hidden="true">←</span> Homework 7</a>
+        <p class="eyebrow">Homework 7 · Exercise 2</p>
+        <h1>Conditional Probability and Bayesian Inference</h1>
+        <p>I use a hypothetical detector and a Beta–Binomial model to distinguish hypothesis updating from parameter inference.</p>
+        <p class="exercise-link"><a href="../exercise-1/">Exercise 1 · Modes of Convergence →</a></p>
+      </header>
+      <div class="homework-layout">
+        <nav class="contents-nav" aria-label="Page contents"><p class="eyebrow">On this page</p><ol><li><a href="#conditional">01 · Conditional probability</a></li><li><a href="#updating">02 · Bayesian updating</a></li><li><a href="#examples">03 · Worked examples</a></li><li><a href="#interpretation">04 · Interpretation</a></li><li><a class="references-link" href="#references">References</a></li></ol></nav>
+        <article class="homework-article" aria-label="Exercise 2 report">
+          <section id="conditional" aria-labelledby="conditional-title">
+            <h2 id="conditional-title"><span class="section-number" aria-hidden="true">01</span> Conditional probability and Bayes’ theorem</h2>
+            <p>For P(B) &gt; 0, conditioning on B restricts attention to B and rescales its probability to one. Thus <code>P(A | B) = P(A ∩ B)/P(B)</code>. The product rule follows by multiplication. If P(A) &gt; 0 as well, the same joint event has two factorizations:</p>
+            <p class="equation"><code>P(A ∩ B) = P(A | B)P(B) = P(B | A)P(A).<br>P(A | B) = P(B | A)P(A)/P(B).</code></p>
+            <p>The two conditionals use different denominators. For a mutually exclusive, exhaustive set of hypotheses Hᵢ, the intersections E ∩ Hᵢ partition E. Adding their probabilities gives the evidence, then dividing gives the updated probability:</p>
+            <p class="equation"><code>P(E) = Σᵢ P(E | Hᵢ)P(Hᵢ).<br>P(Hⱼ | E) = P(E | Hⱼ)P(Hⱼ)/P(E), for P(E) &gt; 0.</code></p>
+            <p>Zero-prior cases contribute zero joint probability. In a specified model these are probability calculations. In statistics the conditional model often depends on unknown quantities to be estimated or assigned a prior.</p>
+          </section>
+          <section id="updating" aria-labelledby="updating-title">
+            <h2 id="updating-title"><span class="section-number" aria-hidden="true">02</span> Prior, likelihood and posterior</h2>
+            <dl class="examples">
+              <dt>Prior</dt><dd>P(H), or density π(θ), describes uncertainty before the current data. Earlier observations, studies, domain expertise or reference models can inform it. Informative priors concentrate on plausible values. Weakly informative priors leave more room for the data. Both involve modeling choices.</dd>
+              <dt>Likelihood</dt><dd>L(θ; D) = p(D | θ) holds the observed data D fixed and varies θ. It measures how the model at each θ accounts for those data. It need not integrate to one over θ. For an alert, P(+ | A) is evidence given a hypothesis. The posterior P(A | +) answers the reverse question.</dd>
+              <dt>Posterior</dt><dd>The updated probability of a hypothesis, or the updated distribution of θ, is proportional to likelihood times prior. For continuous θ, divide L(θ; D)π(θ) by the evidence ∫L(t; D)π(t)dt when positive and finite. A posterior predictive probability averages the model for new data over this posterior.</dd>
+            </dl>
+            <p>After D₁, the posterior can serve as the prior for the next update. In general <code>π(θ | D₁,D₂) ∝ p(D₂ | θ,D₁)π(θ | D₁)</code>. Conditional independence given θ permits replacing the first factor with p(D₂ | θ). Correlated evidence requires a model for that dependence.</p>
+          </section>
+          <section id="examples" aria-labelledby="examples-title">
+            <h2 id="examples-title"><span class="section-number" aria-hidden="true">03</span> Two numerical examples</h2>
+            <h3>Intrusion alerts and base rates</h3>
+            <p>In this hypothetical detector model, A denotes an intrusion and + denotes an alert. With P(A) = 0.02, sensitivity 0.90 and false-positive rate 0.05, the two contributions to P(+) are 0.018 and 0.049. The resulting positive-alert probability is 0.067 and P(A | +) = 0.018/0.067 ≈ 26.87%. The model expects 180 true alerts and 490 false alerts per 10,000 cases. The larger non-intrusion group explains why false alerts can outnumber true ones even with a low false-positive rate.</p>
+            <p>For no alert, use the complementary likelihoods 0.10 and 0.95 to obtain P(A | −) = 0.002/0.933 ≈ 0.214%. The positive likelihood ratio LR+ = P(+ | A)/P(+ | Aᶜ) is 18. Dividing the two Bayes numerators gives posterior odds = prior odds × LR+ whenever the ratios and product are defined. The likelihood ratio quantifies the change in odds, which still start at the prior odds.</p>
+            <form class="experiment" id="alert-form" novalidate>
+              <div class="control-grid">
+                <div><label for="prior">Intrusion prior P(A)</label><input id="prior" type="number" value="0.02" min="0" max="1" step="any" required></div>
+                <div><label for="sensitivity">Sensitivity P(+ | A)</label><input id="sensitivity" type="number" value="0.90" min="0" max="1" step="any" required></div>
+                <div><label for="false-positive">False-positive rate P(+ | Aᶜ)</label><input id="false-positive" type="number" value="0.05" min="0" max="1" step="any" required></div>
+              </div>
+              <p class="field-help">Probabilities from 0 to 1. The calculations update as inputs change. Impossible evidence has an undefined conditional posterior.</p>
+              <p id="alert-status" role="status" aria-live="polite">JavaScript enables recalculation.</p>
+            </form>
+            <div id="alert-results" hidden>
+            <div class="table-wrapper" tabindex="0" role="region" aria-labelledby="alert-metrics-caption">
+              <table class="numeric-table">
+                <caption id="alert-metrics-caption">Prior, likelihoods, posterior probabilities and odds</caption>
+                <thead><tr><th scope="col">Quantity</th><th scope="col">Value</th></tr></thead>
+                <tbody id="alert-metrics"></tbody>
+              </table>
+            </div>
+            <div class="table-wrapper" tabindex="0" role="region" aria-labelledby="confusion-caption">
+              <table class="numeric-table">
+                <caption id="confusion-caption">Expected counts in 10,000 hypothetical cases</caption>
+                <thead><tr><th scope="col">Actual state</th><th scope="col">Alert</th><th scope="col">No alert</th><th scope="col">Total</th></tr></thead>
+                <tbody id="confusion"></tbody>
+              </table>
+            </div>
+            <div class="table-wrapper" tabindex="0" role="region" aria-labelledby="alert-sensitivity-caption">
+              <table class="numeric-table">
+                <caption id="alert-sensitivity-caption">Prior sensitivity at the current detector settings</caption>
+                <thead><tr><th scope="col">Intrusion prior</th><th scope="col">P(+)</th><th scope="col">P(A | +)</th></tr></thead>
+                <tbody id="alert-sensitivity"></tbody>
+              </table>
+            </div>
+            </div>
+            <details><summary>View Finite-hypothesis Bayes update in JavaScript</summary>
+              <figure class="source-figure"><figcaption id="bayes-update-caption">Finite-hypothesis Bayes update · executed source</figcaption>
+                <div class="source-viewer" data-source="./js/bayes.js" data-region="bayes-update">
+                  <div class="source-toolbar"><strong>Finite-hypothesis Bayes update</strong><button class="copy-button" type="button" data-copy-source disabled aria-label="Copy Finite-hypothesis Bayes update">Copy code</button></div>
+                  <pre tabindex="0" aria-labelledby="bayes-update-caption"><code data-source-code>Source preview requires JavaScript.</code></pre>
+                  <p class="source-status" role="status" data-source-status>The excerpt will load from its source file.</p>
+                </div>
+              </figure>
+              <a class="source-link" href="./js/bayes.js">Complete source file</a>
+            </details>
+            <h3>Learning an unknown success probability</h3>
+            <p>Let θ be the success probability of an attempt under a common model. Suppose θ has a Beta(α,β) prior and the n outcomes are independent conditional on θ. Then the success count s has likelihood <code>C(n,s) θ<sup>s</sup>(1−θ)<sup>n−s</sup></code>. Multiplying by the prior kernel θ<sup>α−1</sup>(1−θ)<sup>β−1</sup> adds the exponents. The binomial coefficient is constant as a function of θ, and normalizing the resulting kernel gives:</p>
+            <p class="equation"><code>θ | data ∼ Beta(α+s, β+n−s).<br>E[θ | data] = (α+s)/(α+β+n).<br>Var(Beta(a,b)) = ab / [(a+b)²(a+b+1)].</code></p>
+            <p>With Beta(2,8) and 7 successes in 20 trials, Beta(9,21) has mean 0.30, between the prior mean 0.20 and observed proportion 0.35. For another conditionally independent trial at the same θ, P(next success | data) = ∫θ π(θ | data)dθ = 0.30. This prediction averages over parameter uncertainty.</p>
+            <p>Processing a success adds one to α and processing a failure adds one to β. Seven success updates take Beta(2,8) to Beta(9,8), and thirteen failure updates take it to Beta(9,21). The order leaves the final exponents unchanged under the same conditionally iid Bernoulli model.</p>
+            <form class="experiment" id="beta-form" novalidate>
+              <div class="control-grid">
+                <div><label for="alpha">Prior shape α</label><input id="alpha" type="number" value="2" max="1000000" step="any" required></div>
+                <div><label for="beta">Prior shape β</label><input id="beta" type="number" value="8" max="1000000" step="any" required></div>
+                <div><label for="trials">Trials n</label><input id="trials" type="number" value="20" min="0" max="10000" required></div>
+                <div><label for="successes">Successes s</label><input id="successes" type="number" value="7" min="0" max="10000" required></div>
+              </div>
+              <p class="field-help">Positive shapes up to 1,000,000 and integer counts with 0 ≤ s ≤ n ≤ 10,000. With n = 0 the posterior equals the prior.</p>
+              <p id="beta-status" role="status" aria-live="polite">JavaScript enables recalculation.</p>
+            </form>
+            <div id="beta-results" hidden>
+            <div class="table-wrapper" tabindex="0" role="region" aria-labelledby="beta-metrics-caption">
+              <table class="numeric-table">
+                <caption id="beta-metrics-caption">Beta moments before and after the current observations</caption>
+                <thead><tr><th scope="col">Quantity</th><th scope="col">Prior</th><th scope="col">Posterior</th></tr></thead>
+                <tbody id="beta-metrics"></tbody>
+              </table>
+            </div>
+              <p id="beta-predictive"></p><p id="beta-sequential"></p>
+              <figure class="chart-figure"><figcaption>Prior mean, observed proportion and posterior mean</figcaption><div class="chart-image" id="beta-chart"></div></figure>
+            <div class="table-wrapper" tabindex="0" role="region" aria-labelledby="beta-sensitivity-caption">
+              <table class="numeric-table">
+                <caption id="beta-sensitivity-caption">Three priors, same observations</caption>
+                <thead><tr><th scope="col">Prior</th><th scope="col">Prior mean</th><th scope="col">Concentration</th><th scope="col">Posterior</th><th scope="col">Posterior mean</th></tr></thead>
+                <tbody id="beta-sensitivity"></tbody>
+              </table>
+            </div>
+            </div>
+            <details><summary>View Beta–Binomial posterior and prediction in JavaScript</summary>
+              <figure class="source-figure"><figcaption id="beta-update-caption">Beta–Binomial posterior and prediction · executed source</figcaption>
+                <div class="source-viewer" data-source="./js/bayes.js" data-region="beta-update">
+                  <div class="source-toolbar"><strong>Beta–Binomial posterior and prediction</strong><button class="copy-button" type="button" data-copy-source disabled aria-label="Copy Beta–Binomial posterior and prediction">Copy code</button></div>
+                  <pre tabindex="0" aria-labelledby="beta-update-caption"><code data-source-code>Source preview requires JavaScript.</code></pre>
+                  <p class="source-status" role="status" data-source-status>The excerpt will load from its source file.</p>
+                </div>
+              </figure>
+              <a class="source-link" href="./js/bayes.js">Complete source file</a>
+            </details>
+          </section>
+          <section id="interpretation" aria-labelledby="interpretation-title">
+            <h2 id="interpretation-title"><span class="section-number" aria-hidden="true">04</span> Statistical interpretation and limitations</h2>
+            <p>The alert example treats prevalence and detector rates as given. In practice they require representative labeled data and can change across populations or over time. Holding the detector fixed isolates the base-rate effect. The Beta example instead learns an unknown θ and makes the prior’s influence visible.</p>
+            <p>With 7 successes in 20 trials, the posterior means under Beta(1,1), Beta(2,8) and Beta(20,80) are 8/22 ≈ 0.363636, 9/30 = 0.30 and 27/120 = 0.225. The latter two priors share mean 0.20 but have concentrations 10 and 100. The posterior mean weights the prior mean by (α+β)/(α+β+n) and, for n &gt; 0, the observed proportion by n/(α+β+n). For a fixed proper Beta prior under this model, the prior weight tends to zero as n grows.</p>
+            <p>Bayesian inference represents uncertainty explicitly, combines earlier information with current data, and supports sequential updates and predictive probabilities under the model. With limited data, the prior can substantially affect the conclusion. Comparing plausible priors exposes that sensitivity.</p>
+            <p>Selection bias, unrepresentative cases, a changing success probability or dependence across attempts can undermine the likelihood. Complex posterior models may require costly computation. The examples make model-based probability and prediction statements. A causal conclusion would require a suitable design and causal assumptions.</p>
+          </section>
+          <section id="references" aria-labelledby="references-title"><h2 id="references-title">References</h2><ul class="references">
+            <li>Jeremy Orloff and Jonathan Bloom, <a href="https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/mit18_05_s22_class11-prep.pdf">MIT 18.05, Class 11 · Bayesian Updating with Discrete Priors</a>. Total probability, normalization and updating.</li>
+            <li>Orloff and Bloom, <a href="https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/mit18_05_s22_class13-prep-a.pdf">Class 13 · Bayesian Updating with Continuous Priors</a>. Likelihoods, posterior densities and prediction.</li>
+            <li>Orloff and Bloom, <a href="https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/mit18_05_s22_class15-prep.pdf">Class 15 · Conjugate Priors: Beta and Normal</a>. Beta moments and the conjugate update.</li>
+          </ul></section>
+        </article>
+      </div>
+    </main>
+    <footer class="site-footer"><div class="container footer-inner"><p>Statistics · MSc in Cybersecurity · Sapienza University of Rome</p><a href="#top">Back to top ↑</a></div></footer>
+  </body>
+</html>

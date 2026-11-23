@@ -109,6 +109,25 @@ Verification uses hand-checked tables, factorial/half-integer identities, critic
 
 Intended public URL after publication: `https://alopes0905.github.io/statistics-msc/homework-6/`.
 
+## Homework 7 — Modes of convergence and Bayesian inference
+
+The homepage links to one Homework 7 landing page. The two exercises have separate reports and share the same navigation, stylesheet and SVG and table helpers.
+
+- **Exercise 1** compares almost sure, mean-square, probability and distribution convergence. The general implications are a.s. → probability → distribution and L² → probability → distribution. The shrinking spike and dyadic typewriter sequence show that a.s. and L² are incomparable. Alternating the sign of a single Rademacher variable preserves its law without convergence in probability to that variable. The report distinguishes the WLLN, SLLN and CLT and derives the √n scale from variance additivity, including the covariance terms that matter under dependence.
+- **Exercise 2** derives conditional probability, total probability and Bayes’ theorem. The alert example separates prevalence, sensitivity and false-positive rate from the positive and negative posteriors. Defaults (0.02, 0.90, 0.05) give P(+) = 0.067, P(A | +) = 180/670 and P(A | −) = 20/9330. The hypothetical confusion matrix contains expected counts. The Beta–Binomial example updates Beta(2,8) with 7 successes in 20 trials to Beta(9,21), whose mean and one-step predictive probability are both 0.30. The sequential and batch updates agree under the common conditional Bernoulli model. For the same data, Beta(1,1), Beta(2,8) and Beta(20,80) give posterior means 8/22, 0.30 and 0.225.
+
+Exercise 1 uses a worker and fixed blocks of 1,000 Park–Miller draws. With Bernoulli p = 0.35, 1,000 trajectories and seed 2026, the n = 1,000 checkpoint gives mean 0.349498 and empirical MSE 0.000217676, compared with theoretical MSE 0.0002275. At n = 20, the inclusive deviation fraction for ε = 0.1 is 0.473. Integer sums and exact decimal thresholds keep equality cases in that count. The table reports variance across trajectories with denominator m−1, while empirical MSE uses m. The three plots show the first paths, MSE and a density-scaled histogram with a normal reference. Finite simulation and the PRNG grid approximate the mathematical model.
+
+The Bayesian results use the current inputs. Impossible evidence yields an undefined posterior. Very small evidence products use log rescaling for the posterior. The Beta chart compares means and the observed proportion on a probability scale. Detector rates and attempted-success probabilities are hypothetical. Prior choice, representative observations and conditional independence affect the interpretation.
+
+The Homework 7 tests cover exact finite examples, independently computed seeded fixtures, trajectory prefix reuse, both conditioning directions, boundary cases and site integration. Run `npm run check` and `npm test` to verify the reports.
+
+URLs after publication:
+
+- Submission: `https://alopes0905.github.io/statistics-msc/homework-7/`
+- Exercise 1: `https://alopes0905.github.io/statistics-msc/homework-7/exercise-1/`
+- Exercise 2: `https://alopes0905.github.io/statistics-msc/homework-7/exercise-2/`
+
 ## Academic constraints
 
 - Use modern standard JavaScript with ES modules; modules are strict by specification. Prefer `const`, use `let` when needed, and never use `var`.
@@ -191,12 +210,18 @@ docs/                         GitHub Pages publishing directory
     js/chi-square.js          Gamma survival probability and log-gamma normalization
     js/charts.js              Accessible native SVG conditional-proportions chart
     js/app.js                 Safe DOM rendering, alpha changes and stale clearing
+  homework-7/                 Convergence modes and Bayesian inference
+    index.html                Landing page with two exercise links
+    style.css                 Scoped report and chart layout
+    shared/                   Native SVG charts and presentation helpers
+    exercise-1/               Convergence, seeded prefix simulation and worker
+    exercise-2/               Bayesian report, alert and Beta update modules
 templates/homework/           Unpublished reusable assignment template
   index.html                  Academic structure and example form
   style.css                   Assignment presentation
   js/statistics.js            Empty module for future pure algorithms
   js/app.js                   Template input validation and UI
-tests/                        Native tests, including homeworks 1.1, 1.2 and 2–6
+tests/                        Native tests, including homeworks 1.1, 1.2 and 2–7
 tools/
   dev-server.js               Loopback static server and template preview
   check.js                    Syntax, links, assets, and structural checks
