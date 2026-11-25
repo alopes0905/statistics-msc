@@ -8,11 +8,13 @@ const BOTTOM = 178;
 
 const tick = value => Number(value.toPrecision(3)).toString();
 
-function svg(title, content, height = HEIGHT) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${WIDTH} ${height}" role="img" aria-label="${title}"><title>${title}</title>${content}</svg>`;
+function svg(title, content, height = HEIGHT, description = '') {
+  const detail = description ? `<desc id="beta-plot-description">${description}</desc>` : '';
+  const describedBy = description ? ' aria-describedby="beta-plot-description"' : '';
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${WIDTH} ${height}" role="img" aria-label="${title}"${describedBy}><title>${title}</title>${detail}${content}</svg>`;
 }
 
-function axes(title, xRange, yRange, xTicks, yTicks, labels, logX = false) {
+function axes(title, xRange, yRange, xTicks, yTicks, labels, logX = false, description = '') {
   const transform = logX ? Math.log : value => value;
   const x = value => LEFT + (RIGHT - LEFT) * (transform(value) - transform(xRange[0])) / (transform(xRange[1]) - transform(xRange[0]));
   const y = value => BOTTOM - (BOTTOM - TOP) * (value - yRange[0]) / (yRange[1] - yRange[0]);
@@ -21,7 +23,7 @@ function axes(title, xRange, yRange, xTicks, yTicks, labels, logX = false) {
   const ticks = xTicks.map(value => `<text x="${x(value)}" y="196" text-anchor="middle">${tick(value)}</text>`).join('');
   return {
     x, y, line,
-    draw: marks => svg(title, `${grid}${ticks}${marks}<text x="${LEFT}" y="15">${labels[1]}</text><text x="${(LEFT + RIGHT) / 2}" y="217" text-anchor="middle">${labels[0]}</text>`)
+    draw: marks => svg(title, `${grid}${ticks}${marks}<text x="${LEFT}" y="15">${labels[1]}</text><text x="${(LEFT + RIGHT) / 2}" y="217" text-anchor="middle">${labels[0]}</text>`, HEIGHT, description)
   };
 }
 
@@ -76,4 +78,26 @@ export function betaMeanChart(prior, observed, posterior) {
     return `<text x="12" y="${y - 9}">${label} · ${value === null ? 'Undefined' : tick(value)}</text><path class="grid-line" d="M12 ${y}H388"/>${value === null ? '' : `<circle class="empirical-point" cx="${x(value)}" cy="${y}" r="5"/>`}`;
   }).join('');
   return svg('Prior mean, observed proportion and posterior mean on a shared probability scale', marks + '<text x="12" y="151">0</text><text x="388" y="151" text-anchor="end">1</text>', 160);
+}
+
+export function dependenceChart(rows, rho) {
+  const title = `Sample-mean standard deviations at correlation ρ = ${rho.toFixed(2)}`;
+  const plot = axes(title, [1, 1000], [0, 1], [1, 10, 100, 1000], [0, 0.25, 0.5, 0.75, 1], ['Sample size n (log scale)', 'Standard deviation'], true);
+  return plot.draw(
+    plot.line(rows.map(({ n, correlatedSD }) => [n, correlatedSD]), 'empirical-line') +
+    plot.line(rows.map(({ n, independentSD }) => [n, independentSD]), 'reference-path')
+  );
+}
+
+export function betaDensityChart([prior, likelihood, posterior]) {
+  const peak = Math.max(...[prior, likelihood, posterior].flatMap(points => points.map(([, y]) => y)));
+  const ymax = Math.ceil(peak);
+  const description = 'Dashed prior density, dotted likelihood rescaled to unit area, and solid posterior density over the success probability.';
+  const plot = axes('Prior, rescaled likelihood and posterior', [0, 1], [0, ymax], [0, 0.25, 0.5, 0.75, 1], [0, ymax / 2, ymax], ['Success probability θ', 'Density / rescaled likelihood'], false, description);
+  // Draw the solid line first so dashed and dotted curves remain visible when they coincide.
+  return plot.draw(
+    plot.line(posterior, 'density-posterior') +
+    plot.line(likelihood, 'density-likelihood') +
+    plot.line(prior, 'density-prior')
+  );
 }

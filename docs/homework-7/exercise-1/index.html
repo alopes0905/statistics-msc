@@ -61,6 +61,32 @@
             <p>Let Sₙ = Σᵢ Xᵢ and X̄ₙ = Sₙ/n for iid observations with mean μ and finite variance σ². Linearity gives E[X̄ₙ] = μ. Expanding the variance of the sum gives:</p>
             <p class="equation"><code>Var(Sₙ) = Σᵢ Var(Xᵢ) + 2Σᵢ&lt;ⱼ Cov(Xᵢ,Xⱼ) = nσ².<br>SD(Sₙ) = σ√n. Var(X̄ₙ) = σ²/n. SD(X̄ₙ) = σ/√n.</code></p>
             <p>The last equality for Var(Sₙ) uses independence. Pairwise zero covariance also suffices for adding the variances. Dependence can change their growth: if all Xᵢ are the same variable, Var(Sₙ) = n²σ². Some weakly dependent processes retain √n scaling with a long-run variance that includes covariances. With infinite variance the classical variance derivation does not apply.</p>
+            <h3>Persistent correlation changes the standard error</h3>
+            <p>Suppose the observations share mean μ, finite variance σ² &gt; 0 and common pairwise correlation ρ ∈ [0,1]. Then each distinct pair has covariance ρσ². There are n(n−1)/2 such pairs, and each appears twice in Var(Sₙ). Dividing by n² gives the variance of the mean.</p>
+            <p class="equation"><code>Var(Sₙ) = nσ² + n(n−1)ρσ²<br>Var(X̄ₙ) = σ²[ρ + (1−ρ)/n]<br>SD(X̄ₙ) = σ√[ρ + (1−ρ)/n]</code></p>
+            <p>At ρ = 0 this gives σ²/n and σ/√n, the same variance and standard deviation as under independence. Zero covariance establishes these identities alone. Independence is a stronger condition, and a CLT needs additional assumptions. For fixed ρ &gt; 0, the variance approaches ρσ² and the standard deviation approaches σ√ρ. The variance of √n(X̄ₙ−μ) equals σ²[1+(n−1)ρ] and grows without bound. Here the correlation persists across all pairs. With decaying covariances and suitable weak-dependence assumptions, √n scaling may still apply.</p>
+            <div id="dependence-demo" hidden>
+              <div class="metric-control">
+                <label for="correlation">Pairwise correlation ρ</label>
+                <input id="correlation" type="range" min="0" max="1" step="0.05" value="0.10" aria-describedby="correlation-status">
+              </div>
+              <p id="correlation-status" role="status" aria-live="polite"></p>
+              <figure class="chart-figure">
+                <figcaption>Sample-mean standard deviation with σ² = 1</figcaption>
+                <ul class="curve-legend">
+                  <li class="legend-dashed">Independent observations</li>
+                  <li>Common correlation ρ</li>
+                </ul>
+                <div class="chart-image" id="dependence-chart"></div>
+              </figure>
+              <div class="table-wrapper" tabindex="0" role="region" aria-labelledby="dependence-caption">
+                <table class="numeric-table">
+                  <caption id="dependence-caption">Analytical standard deviations</caption>
+                  <thead><tr><th scope="col">n</th><th scope="col">Independent</th><th scope="col">Correlated</th></tr></thead>
+                  <tbody id="dependence-rows"></tbody>
+                </table>
+              </div>
+            </div>
             <p><strong>Weak LLN.</strong> Chebyshev gives <code>P(|X̄ₙ−μ| ≥ ε) ≤ σ²/(nε²) → 0</code>. Thus X̄ₙ converges in probability to μ. This proves the finite-variance version. <strong>Strong LLN.</strong> For iid observations with E|X₁| &lt; ∞, X̄ₙ → μ almost surely, even without a finite variance.</p>
             <p><strong>L² consistency.</strong> In the finite-variance case E[(X̄ₙ−μ)²] = σ²/n. For any square-integrable estimator T of θ, expanding (T−E[T]+E[T]−θ)² eliminates the cross term upon taking expectation, giving <code>MSE(T) = Var(T) + Bias(T)²</code>. This is risk under squared-error loss. Vanishing MSE implies consistency in probability.</p>
             <p><strong>Classical iid CLT.</strong> For 0 &lt; σ² &lt; ∞, multiplying the centered mean by √n restores variance σ². Dividing by σ gives variance 1 at every n. The CLT identifies the limiting <em>law</em> of those fluctuations:</p>

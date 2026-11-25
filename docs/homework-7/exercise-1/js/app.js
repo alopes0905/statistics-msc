@@ -1,6 +1,24 @@
-import { CHECKPOINTS, histogram } from './convergence.js';
+import { CHECKPOINTS, dependenceScaling, histogram } from './convergence.js';
 import { byId, format, numberInput, showSVG, tableRows } from '../../shared/ui.js';
-import { trajectoryChart, mseChart, distributionChart } from '../../shared/charts.js';
+import { trajectoryChart, mseChart, distributionChart, dependenceChart } from '../../shared/charts.js';
+
+const correlation = byId('correlation');
+const dependenceSizes = [...new Set(Array.from({ length: 101 }, (_, i) => Math.round(10 ** (3 * i / 100))))];
+
+function renderDependence() {
+  const rho = correlation.valueAsNumber;
+  const rows = dependenceSizes.map(n => ({ n, ...dependenceScaling(n, rho) }));
+  showSVG('dependence-chart', dependenceChart(rows, rho));
+  tableRows('dependence-rows', [10, 100, 1000].map(n => {
+    const { independentSD, correlatedSD } = dependenceScaling(n, rho);
+    return [n, independentSD, correlatedSD];
+  }));
+  byId('correlation-status').textContent = `ρ = ${rho.toFixed(2)}. Limiting correlated standard deviation: ${format(Math.sqrt(rows[0].limitingVariance))}.`;
+}
+
+correlation.addEventListener('input', renderDependence);
+renderDependence();
+byId('dependence-demo').hidden = false;
 
 const form = byId('simulation-form');
 const run = byId('run');

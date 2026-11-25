@@ -5,10 +5,11 @@ import { extractCodeRegion } from '../docs/assets/js/code-viewer.js';
 import { scanHTML } from '../tools/check.js';
 import {
   DEFAULTS, modelMoments, sampleMeanTheory, standardizedMean, simulate,
-  summarize, histogram, spike, typewriterInterval
+  summarize, histogram, spike, typewriterInterval, dependenceScaling
 } from '../docs/homework-7/exercise-1/js/convergence.js';
 import { conditional, updateHypotheses, analyzeAlert, betaMoments, updateBeta, sequentialBeta } from '../docs/homework-7/exercise-2/js/bayes.js';
-import { trajectoryChart, mseChart, distributionChart, betaMeanChart } from '../docs/homework-7/shared/charts.js';
+import { betaDensity, densityComparison, logGamma, logBeta } from '../docs/homework-7/exercise-2/js/beta-density.js';
+import { trajectoryChart, mseChart, distributionChart, betaMeanChart, dependenceChart, betaDensityChart } from '../docs/homework-7/shared/charts.js';
 
 const read = path => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
 function close(actual, expected, tolerance = 2e-14) {
@@ -234,7 +235,9 @@ test('HW7 reports retain required qualifications, relative routes and executed s
     assert.ok(page.includes(`href="../exercise-${3 - i}/"`));
     assert.match(page, /href="\.\.\/"|id="references"/);
     const sourceTags = scanHTML(page).filter(tag => tag.attributes.has('data-source'));
-    assert.equal(sourceTags.length, 2);
+    assert.deepEqual(sourceTags.map(({ attributes }) => attributes.get('data-region')), i === 1
+      ? ['mean-and-scaling', 'shared-prefixes']
+      : ['bayes-update', 'beta-update', 'beta-density']);
     for (const { attributes } of sourceTags) {
       const file = await read(`${base}/exercise-${i}/${attributes.get('data-source')}`);
       assert.match(extractCodeRegion(file, attributes.get('data-region')), /export function/);
@@ -246,4 +249,159 @@ test('HW7 reports retain required qualifications, relative routes and executed s
   assert.match(ex1, /2Σᵢ&lt;ⱼ Cov\(Xᵢ,Xⱼ\)/);
   assert.match(ex1, /zero covariance also suffices/);
   assert.match(ex1, /makes no assertion of almost sure convergence/);
+});
+
+test('HW7 common correlation changes the variance and standard deviation rates', () => {
+  const fixtures = [
+    [10, 0.1, 0.19, 0.31622776601683794, 0.43588989435406733, 1.9],
+    [100, 0.01, 0.109, 0.1, 0.3301514803843836, 10.9],
+    [1000, 0.001, 0.1009, 0.03162277660168379, 0.3176476034853718, 100.9]
+  ];
+  for (const [n, iv, cv, isd, csd, normalized] of fixtures) {
+    const row = dependenceScaling(n, 0.1);
+    close(row.independentVariance, iv);
+    close(row.correlatedVariance, cv);
+    close(row.independentSD, isd);
+    close(row.correlatedSD, csd);
+    close(row.normalizedVariance, normalized);
+    assert.equal(row.limitingVariance, 0.1);
+  }
+  close(dependenceScaling(1e12, 0.1).correlatedVariance, 0.1, 1e-12);
+});
+
+test('HW7 common correlation at zero and one and sample size one retains exact identities', () => {
+  for (const n of [1, 10, 100, 1000]) {
+    const zero = dependenceScaling(n, 0), one = dependenceScaling(n, 1);
+    assert.equal(zero.independentSD, zero.correlatedSD);
+    assert.equal(zero.independentVariance, zero.correlatedVariance);
+    assert.equal(zero.normalizedVariance, 1);
+    assert.equal(one.correlatedSD, 1);
+    assert.equal(one.correlatedVariance, 1);
+    assert.equal(one.normalizedVariance, n);
+  }
+  assert.equal(dependenceScaling(1, 0.35).correlatedSD, 1);
+  for (const n of [0, -1, 1.5, NaN, Infinity, Number.MAX_SAFE_INTEGER + 1, '10']) {
+    assert.throws(() => dependenceScaling(n, 0.1), RangeError);
+  }
+  for (const rho of [-0.01, 1.01, NaN, Infinity, '0.1']) {
+    assert.throws(() => dependenceScaling(10, rho), RangeError);
+  }
+});
+
+test('HW7 dependence chart has finite coordinates at every slider position', () => {
+  for (let i = 0; i <= 20; i++) {
+    const rho = i / 20;
+    const svg = dependenceChart([1, 10, 100, 1000].map(n => ({ n, ...dependenceScaling(n, rho) })), rho);
+    assert.match(svg, /Sample size n \(log scale\)/);
+    assert.equal([...svg.matchAll(/<polyline /g)].length, 2);
+    assert.doesNotMatch(svg, /NaN|Infinity/);
+    if (i === 0) {
+      const points = [...svg.matchAll(/points="([^"]+)"/g)];
+      assert.equal(points[0][1], points[1][1]);
+    }
+  }
+});
+
+test('HW7 log-gamma and log-beta match exact and independently computed constants', () => {
+  close(logGamma(0.5), Math.log(Math.PI) / 2);
+  close(logGamma(1), 0);
+  close(logGamma(1.5), Math.log(Math.PI) / 2 - Math.log(2));
+  close(logGamma(16), Math.log(1307674368000));
+  close(logGamma(256), 1161.7121011184006, 5e-13); // Python math.lgamma.
+  close(logBeta(0.5, 0.5), Math.log(Math.PI));
+  close(logBeta(9, 21), -Math.log(90135045), 5e-14);
+  close(logBeta(128, 128), -178.60520467180464, 5e-13); // Exact factorial ratio, then logarithm.
+});
+
+test('HW7 Beta densities agree with exact integer normalizers on the teaching examples', () => {
+  // B(a,b)^−1 = (a+b−1) × C(a+b−2,a−1) for integer shapes.
+  for (const [a, b, normalizer] of [[1, 1, 1], [2, 2, 6], [2, 8, 72], [8, 14, 1627920], [9, 21, 90135045]]) {
+    const density = betaDensity(a, b);
+    for (const x of [0.1, 0.3, 0.35, 0.5, 0.9]) {
+      close(density(x), normalizer * x ** (a - 1) * (1 - x) ** (b - 1), 3e-13);
+    }
+  }
+  const density = betaDensity(128, 128);
+  close(density(0.5), 12.753692143651879, 7e-12);
+});
+
+test('HW7 Beta teaching densities integrate to one, and the displayed lines preserve their areas', () => {
+  // Composite Simpson at h = 1/2048. For these smooth polynomials its error is
+  // O(h^4); the sample polyline has larger O(h^2) interpolation error.
+  for (const [a, b] of [[2, 8], [8, 14], [9, 21]]) {
+    const f = betaDensity(a, b);
+    const n = 2048;
+    let sum = f(0) + f(1);
+    for (let i = 1; i < n; i++) sum += (i % 2 === 0 ? 2 : 4) * f(i / n);
+    close(sum / (3 * n), 1, 1e-9);
+  }
+  const { curves } = densityComparison(updateBeta(2, 8, 20, 7), 20, 7);
+  for (const points of curves) {
+    const area = total(points.slice(1).map(([x, y], i) => (x - points[i][0]) * (y + points[i][1]) / 2));
+    close(area, 1, 4e-5);
+  }
+  const [mode, height] = curves[1].reduce((peak, point) => point[1] > peak[1] ? point : peak);
+  close(mode, 0.35);
+  close(height, 3.8724249140625564, 3e-13);
+});
+
+test('HW7 support boundaries, endpoint limits and truncated curves are explicit', () => {
+  for (const [a, b, left, right] of [
+    [0.5, 0.5, Infinity, Infinity], [1, 2, 2, 0], [2, 1, 0, 2], [2, 2, 0, 0], [1, 1, 1, 1]
+  ]) {
+    const f = betaDensity(a, b);
+    assert.equal(f(0), left);
+    assert.equal(f(1), right);
+  }
+  const density = betaDensity(0.5, 0.5);
+  close(density(0.25), 4 / (Math.PI * Math.sqrt(3)));
+  for (const x of [-0.1, 1.1, Infinity, NaN]) assert.throws(() => density(x), RangeError);
+  for (const a of [-1, 0, Number.MIN_VALUE, 130, Infinity, NaN]) {
+    assert.throws(() => betaDensity(a, 2), RangeError);
+  }
+  for (const x of [0, 257, Infinity, NaN]) assert.throws(() => logGamma(x), RangeError);
+  const { curves, note } = densityComparison(updateBeta(0.5, 0.5, 10, 10), 10, 10);
+  assert.equal(curves[0][0][0], 0.005);
+  assert.equal(curves[0].at(-1)[0], 0.995);
+  assert.equal(curves[1][0][0], 0);
+  assert.equal(curves[2].at(-1)[0], 0.995);
+  assert.match(note, /diverge at θ = 0.*diverge at θ = 1/);
+  assert.doesNotMatch(betaDensityChart(curves), /Infinity|NaN/);
+});
+
+test('HW7 zero and single-outcome datasets give the correct rescaled likelihoods', () => {
+  const empty = densityComparison(updateBeta(2, 8, 0, 0), 0, 0);
+  assert.deepEqual(empty.curves[0], empty.curves[2]);
+  for (const [, y] of empty.curves[1]) close(y, 1);
+  assert.match(empty.note, /rescaled likelihood is uniform/);
+  for (const successes of [0, 20]) {
+    const { curves } = densityComparison(updateBeta(2, 8, 20, successes), 20, successes);
+    assert.equal(curves[1][0][1], successes === 0 ? 21 : 0);
+    assert.equal(curves[1].at(-1)[1], successes === 0 ? 0 : 21);
+    assert.doesNotMatch(betaDensityChart(curves), /Infinity|NaN/);
+  }
+});
+
+test('HW7 density plot uses current shapes and preserves the moments for extreme inputs', () => {
+  const start = densityComparison(updateBeta(2, 8, 20, 7), 20, 7);
+  const priorEdit = densityComparison(updateBeta(3, 9, 20, 7), 20, 7);
+  const dataEdit = densityComparison(updateBeta(2, 8, 30, 15), 30, 15);
+  assert.notDeepEqual(start.curves[0], priorEdit.curves[0]);
+  assert.deepEqual(start.curves[1], priorEdit.curves[1]);
+  assert.notDeepEqual(start.curves[2], priorEdit.curves[2]);
+  assert.deepEqual(start.curves[0], dataEdit.curves[0]);
+  assert.notDeepEqual(start.curves[1], dataEdit.curves[1]);
+  assert.notDeepEqual(start.curves[2], dataEdit.curves[2]);
+  const bounded = densityComparison(updateBeta(128, 128, 0, 0), 0, 0);
+  assert.ok(bounded.curves[0].some(([x, y]) => x === 0.5 && y > 12));
+  assert.doesNotMatch(betaDensityChart(bounded.curves), /Infinity|NaN/);
+  assert.match(betaDensityChart(start.curves), /aria-describedby="beta-plot-description"/);
+  for (const args of [[1e6, 1e6, 10000, 7000], [2, 8, 1000, 500], [128, 1, 1, 1], [0.2, 0.2, 0, 0], [0.5, 21, 0, 0]]) {
+    const update = updateBeta(...args);
+    const { curves, note } = densityComparison(update, args[2], args[3]);
+    assert.equal(curves, null);
+    assert.match(note, /Showing means/);
+    assert.ok(Number.isFinite(update.posterior.variance));
+    assert.doesNotMatch(betaMeanChart(update.prior.mean, update.sampleProportion, update.posterior.mean), /Infinity|NaN/);
+  }
 });

@@ -35,6 +35,23 @@ export function sampleMeanTheory(model, p, n, epsilon) {
 export function standardizedMean(mean, n, moments) {
   return moments.variance === 0 ? null : Math.sqrt(n) * (mean - moments.mean) / Math.sqrt(moments.variance);
 }
+
+/** Analytical comparison at marginal variance σ² = 1. */
+export function dependenceScaling(n, rho) {
+  integer(n, 1, Number.MAX_SAFE_INTEGER, 'Sample size n');
+  if (!Number.isFinite(rho) || rho < 0 || rho > 1) {
+    throw new RangeError('Correlation ρ must be between 0 and 1.');
+  }
+  const independentVariance = 1 / n;
+  const correlatedVariance = n === 1 ? 1 : rho + (1 - rho) / n;
+  return {
+    independentVariance, correlatedVariance,
+    independentSD: Math.sqrt(independentVariance),
+    correlatedSD: Math.sqrt(correlatedVariance),
+    limitingVariance: rho,
+    normalizedVariance: 1 + (n - 1) * rho
+  };
+}
 // #endregion mean-and-scaling
 
 export function spike(n) {

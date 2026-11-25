@@ -1,6 +1,7 @@
 import { analyzeAlert, updateBeta, sequentialBeta } from './bayes.js';
+import { densityComparison } from './beta-density.js';
 import { byId, format, numberInput, showSVG, tableRows } from '../../shared/ui.js';
-import { betaMeanChart } from '../../shared/charts.js';
+import { betaDensityChart, betaMeanChart } from '../../shared/charts.js';
 
 function evidence(update) {
   return update.underflow ? 'Below floating-point range' : update.evidence;
@@ -32,6 +33,20 @@ function renderAlert() {
 
 const betaLabel = ({ alpha, beta }) => `Beta(${format(alpha)}, ${format(beta)})`;
 
+function renderBetaChart(result, n, successes) {
+  const { curves, note } = densityComparison(result, n, successes);
+  byId('beta-chart-caption').textContent = curves
+    ? 'Prior, rescaled likelihood and posterior'
+    : 'Prior mean, observed proportion and posterior mean';
+  byId('beta-legend').hidden = curves === null;
+  const plotNote = byId('beta-plot-note');
+  plotNote.textContent = note;
+  plotNote.hidden = note === '';
+  showSVG('beta-chart', curves
+    ? betaDensityChart(curves)
+    : betaMeanChart(result.prior.mean, result.sampleProportion, result.posterior.mean));
+}
+
 function renderBeta() {
   const alpha = numberInput('alpha');
   const beta = numberInput('beta');
@@ -50,7 +65,7 @@ function renderBeta() {
   const outcomes = Array.from({ length: n }, (_, i) => Number(i < successes));
   const step = sequentialBeta(alpha, beta, outcomes);
   byId('beta-sequential').textContent = `Processing ${successes} successes and ${n - successes} failures one at a time gives ${betaLabel(step)}. The batch update gives ${betaLabel(result.posterior)}.`;
-  showSVG('beta-chart', betaMeanChart(result.prior.mean, result.sampleProportion, result.posterior.mean));
+  renderBetaChart(result, n, successes);
   tableRows('beta-sensitivity', [[1, 1], [2, 8], [20, 80]].map(([a, b]) => {
     const item = updateBeta(a, b, n, successes);
     return [betaLabel(item.prior), item.prior.mean, item.prior.concentration, betaLabel(item.posterior), item.posterior.mean];

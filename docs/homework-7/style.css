@@ -104,4 +104,32 @@
 .hw7-page .examples dd { margin-inline: 0; }
 .hw7-page .numeric-table th { min-width: 4.5rem; }
 .hw7-page #modes-section td { min-width: 11rem; white-space: normal; }
+.hw7-page #correlation { padding: 0; accent-color: var(--color-accent); }
+.hw7-page #dependence-demo { max-width: 32rem; margin-block: var(--space-4); }
+.hw7-page .curve-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin-block: var(--space-2);
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-small);
+}
+.hw7-page .curve-legend li::before {
+  display: inline-block;
+  width: 1.4rem;
+  margin-inline-end: var(--space-2);
+  vertical-align: middle;
+  border-top: 2px solid var(--color-accent);
+  content: "";
+}
+.hw7-page .curve-legend .legend-dashed::before { border-color: var(--color-text); border-top-style: dashed; }
+.hw7-page .curve-legend .legend-dotted::before { border-color: var(--color-focus); border-top-style: dotted; }
+.hw7-page :is(.density-prior, .density-likelihood, .density-posterior) {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+.hw7-page .density-prior { stroke: var(--color-text); stroke-width: 1.75; stroke-dasharray: 6 4; }
+.hw7-page .density-likelihood { stroke: var(--color-focus); stroke-width: 2; stroke-dasharray: 1 4; stroke-linecap: round; }
+.hw7-page .density-posterior { stroke: var(--color-accent); stroke-width: 2.5; }
 .hw7-page [hidden] { display: none; }

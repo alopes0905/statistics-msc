@@ -95,6 +95,7 @@
             <p class="equation"><code>θ | data ∼ Beta(α+s, β+n−s).<br>E[θ | data] = (α+s)/(α+β+n).<br>Var(Beta(a,b)) = ab / [(a+b)²(a+b+1)].</code></p>
             <p>With Beta(2,8) and 7 successes in 20 trials, Beta(9,21) has mean 0.30, between the prior mean 0.20 and observed proportion 0.35. For another conditionally independent trial at the same θ, P(next success | data) = ∫θ π(θ | data)dθ = 0.30. This prediction averages over parameter uncertainty.</p>
             <p>Processing a success adds one to α and processing a failure adds one to β. Seven success updates take Beta(2,8) to Beta(9,8), and thirteen failure updates take it to Beta(9,21). The order leaves the final exponents unchanged under the same conditionally iid Bernoulli model.</p>
+            <p>I plot the prior and posterior densities alongside the likelihood, which I divide by its integral over θ solely for comparison. That curve is Beta(s+1,n−s+1), the posterior that would result from a uniform Beta(1,1) prior. With 7 successes in 20 trials, it peaks at 0.35. The Beta(2,8) prior favors smaller values, and their product, normalized to unit area, gives a Beta(9,21) posterior with mean 0.30. Its variance is smaller in this example. Posterior uncertainty can also increase for other priors and observations.</p>
             <form class="experiment" id="beta-form" novalidate>
               <div class="control-grid">
                 <div><label for="alpha">Prior shape α</label><input id="alpha" type="number" value="2" max="1000000" step="any" required></div>
@@ -114,7 +115,16 @@
               </table>
             </div>
               <p id="beta-predictive"></p><p id="beta-sequential"></p>
-              <figure class="chart-figure"><figcaption>Prior mean, observed proportion and posterior mean</figcaption><div class="chart-image" id="beta-chart"></div></figure>
+              <figure class="chart-figure">
+                <figcaption id="beta-chart-caption">Prior, rescaled likelihood and posterior</figcaption>
+                <ul class="curve-legend" id="beta-legend">
+                  <li class="legend-dashed">Prior density</li>
+                  <li class="legend-dotted">Likelihood (rescaled to unit area)</li>
+                  <li>Posterior density</li>
+                </ul>
+                <div class="chart-image" id="beta-chart"></div>
+                <p class="field-help" id="beta-plot-note" role="status" hidden></p>
+              </figure>
             <div class="table-wrapper" tabindex="0" role="region" aria-labelledby="beta-sensitivity-caption">
               <table class="numeric-table">
                 <caption id="beta-sensitivity-caption">Three priors, same observations</caption>
@@ -132,6 +142,16 @@
                 </div>
               </figure>
               <a class="source-link" href="./js/bayes.js">Complete source file</a>
+            </details>
+            <details><summary>View Beta density normalization in JavaScript</summary>
+              <figure class="source-figure"><figcaption id="beta-density-caption">Beta density normalization · executed source</figcaption>
+                <div class="source-viewer" data-source="./js/beta-density.js" data-region="beta-density">
+                  <div class="source-toolbar"><strong>Beta density normalization</strong><button class="copy-button" type="button" data-copy-source disabled aria-label="Copy Beta density normalization">Copy code</button></div>
+                  <pre tabindex="0" aria-labelledby="beta-density-caption"><code data-source-code>Source preview requires JavaScript.</code></pre>
+                  <p class="source-status" role="status" data-source-status>The excerpt will load from its source file.</p>
+                </div>
+              </figure>
+              <a class="source-link" href="./js/beta-density.js">Complete source file</a>
             </details>
           </section>
           <section id="interpretation" aria-labelledby="interpretation-title">

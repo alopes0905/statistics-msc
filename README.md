@@ -118,9 +118,13 @@ The homepage links to one Homework 7 landing page. The two exercises have separa
 
 Exercise 1 uses a worker and fixed blocks of 1,000 Park–Miller draws. With Bernoulli p = 0.35, 1,000 trajectories and seed 2026, the n = 1,000 checkpoint gives mean 0.349498 and empirical MSE 0.000217676, compared with theoretical MSE 0.0002275. At n = 20, the inclusive deviation fraction for ε = 0.1 is 0.473. Integer sums and exact decimal thresholds keep equality cases in that count. The table reports variance across trajectories with denominator m−1, while empirical MSE uses m. The three plots show the first paths, MSE and a density-scaled histogram with a normal reference. Finite simulation and the PRNG grid approximate the mathematical model.
 
-The Bayesian results use the current inputs. Impossible evidence yields an undefined posterior. Very small evidence products use log rescaling for the posterior. The Beta chart compares means and the observed proportion on a probability scale. Detector rates and attempted-success probabilities are hypothetical. Prior choice, representative observations and conditional independence affect the interpretation.
+The separate analytical comparison uses σ² = 1 and 0 ≤ ρ ≤ 1. At fixed ρ > 0, the standard error approaches √ρ, and the variance of the √n-scaled error grows as 1+(n−1)ρ. The chart compares this with the independent 1/√n rate on a logarithmic sample-size axis. At ρ = 0.10 and n = 1,000 the two standard deviations are 0.31764760 and 0.03162278, respectively.
 
-The Homework 7 tests cover exact finite examples, independently computed seeded fixtures, trajectory prefix reuse, both conditioning directions, boundary cases and site integration. Run `npm run check` and `npm test` to verify the reports.
+The Bayesian results use the current inputs. Impossible evidence yields an undefined posterior. Very small evidence products use log rescaling for the posterior. Detector rates and attempted-success probabilities are hypothetical. Prior choice, representative observations and conditional independence affect the interpretation.
+
+The Beta chart overlays the prior and posterior densities with the likelihood rescaled to unit area as Beta(s+1,n−s+1). Densities use log B(a,b) from the log-gamma identity, a shifted Stirling expansion, and `Math.log1p(-x)` in the log-density. The plot accepts shapes from 0.5 to 128, with an opposite shape of at most 20 for a divergent endpoint. It omits the interval within 0.005 of each divergent endpoint on the affected curve and labels the omission. Outside these limits, the chart compares means and the observed proportion while keeping the numerical results. The formulas follow the [NIST beta integral](https://dlmf.nist.gov/5.12.E1) and [log-gamma expansion](https://dlmf.nist.gov/5.11.E1).
+
+Verification passed all 273 tests and `npm run check`. New checks cover the analytical variance, exact Beta normalizers, numerical integration, finite SVG coordinates and plot fallback. Chrome verified both refinements with keyboard input, light and dark themes, 320/390/768/1440 px viewports and native 200% zoom.
 
 URLs after publication:
 
